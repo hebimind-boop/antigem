@@ -52,7 +52,7 @@ object MiniAppNet {
     class Owner(val context: Context, val app: MiniApp)
     /** Tag for a request that must not send or store cookies (fetch with credentials: "omit"). */
     object NoCookies
-    /** Tag for AntiGem's own requests made for an app (the developer tools' scripts): not limited to the app's hosts. */
+    /** Tag for BoopIDE's own requests made for an app (the developer tools' scripts): not limited to the app's hosts. */
     object SystemRequest
 
     // ---------------- where an app may connect ----------------
@@ -185,7 +185,7 @@ object MiniAppNet {
             .build()
     }
 
-    /** AntiGem's own requests for an app (developer tools): any host, but still never this phone's servers. */
+    /** BoopIDE's own requests for an app (developer tools): any host, but still never this phone's servers. */
     private fun systemClient(context: Context, app: MiniApp): OkHttpClient = clients.getOrPut("\u0000system:" + app.id) {
         base.newBuilder().socketFactory(GuardedSockets(context.applicationContext, app)).build()
     }
@@ -212,7 +212,7 @@ object MiniAppNet {
     }
 
     private fun ua(context: Context): String = userAgent ?: runCatching { WebSettings.getDefaultUserAgent(context) }.getOrDefault("Mozilla/5.0 (Linux; Android)")
-        .plus(" AntiGemMiniApp/${MiniApps.SDK_VERSION}").also { userAgent = it }
+        .plus(" BoopIDEMiniApp/${MiniApps.SDK_VERSION}").also { userAgent = it }
 
     private fun check(context: Context, app: MiniApp, url: HttpUrl) {
         MiniAppPermissions.checkNetwork(context, app, url.host, url.port)?.let { throw MiniAppError("NotAllowedError", "Network request to ${url.host} blocked: $it") }
@@ -222,7 +222,7 @@ object MiniAppNet {
 
     /**
      * p: {rid, url, method, headers: [[k, v]], body?: base64, redirect?: "follow"|"manual"|"error"}
-     * → {status, statusText, headers: [[k, v]], url, redirected, sid?}. The body is read from /_antigem/net/<sid>.
+     * → {status, statusText, headers: [[k, v]], url, redirected, sid?}. The body is read from /_boopide/net/<sid>.
      */
     fun fetch(context: Context, app: MiniApp, pageId: String, p: JSONObject, reply: (Result<Any?>) -> Unit) {
         val url = p.optString("url").toHttpUrlOrNull() ?: return reply(Result.failure(MiniAppError("TypeError", "Invalid URL: ${p.optString("url")}")))
@@ -295,7 +295,7 @@ object MiniAppNet {
         calls.remove(rid)?.second?.cancel()
     }
 
-    /** The response body for /_antigem/net/<sid>, streamed as it arrives. One use only. */
+    /** The response body for /_boopide/net/<sid>, streamed as it arrives. One use only. */
     fun openStream(sid: String): WebResourceResponse? {
         val pending = streams.remove(sid) ?: return null
         val body = pending.response.body ?: return null

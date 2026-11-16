@@ -176,9 +176,9 @@ class MainActivity : ComponentActivity() {
 
             LaunchedEffect(isFloatingDiagnosticsEnabled) {
                 if (isFloatingDiagnosticsEnabled) {
-                    com.example.gemini.data.remote.core.AntiGemLiveDiagnostics.start()
+                    com.example.gemini.data.remote.core.BoopIDELiveDiagnostics.start()
                 } else {
-                    com.example.gemini.data.remote.core.AntiGemLiveDiagnostics.stop()
+                    com.example.gemini.data.remote.core.BoopIDELiveDiagnostics.stop()
                 }
             }
 
@@ -723,7 +723,7 @@ class MainActivity : ComponentActivity() {
     }
 
     /**
-     * Files opened with or shared to AntiGem. Shared conversations (.antigem) import directly; everything else (one file,
+     * Files opened with or shared to BoopIDE. Shared conversations (.boopide) import directly; everything else (one file,
      * many files, or plain text / code) asks first: open in the code editor, preview, or save to a folder.
      */
     private fun handleIncomingFileIntent(intent: Intent?) {
@@ -744,17 +744,17 @@ class MainActivity : ComponentActivity() {
         if (items.size == 1) {
             val item = items.first()
             val lower = item.name.lowercase()
-            if (lower.endsWith(".antigem")) {
+            if (lower.endsWith(".boopide")) {
                 chatViewModel.loadSharedConversationFromUri(this, item.uri!!)
                 return
             }
-            // a mini app package opened with / shared to "AntiGem" instead of "Mini app installer": install it
+            // a mini app package opened with / shared to "BoopIDE" instead of "Mini app installer": install it
             if (lower.endsWith(".agapp") || intent.type == com.example.gemini.data.miniapps.MiniAppSigning.MIME) {
                 startActivity(Intent(this, com.example.gemini.ui.miniapps.MiniAppInstallActivity::class.java).setAction(Intent.ACTION_VIEW)
                     .setDataAndType(item.uri, com.example.gemini.data.miniapps.MiniAppSigning.MIME).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
                 return
             }
-            // exported trajectories can arrive without the .antigem name: peek at the header
+            // exported trajectories can arrive without the .boopide name: peek at the header
             val kind = item.kind
             if (kind == com.example.gemini.data.files.FileKind.DATA || kind == com.example.gemini.data.files.FileKind.TEXT ||
                 kind == com.example.gemini.data.files.FileKind.BINARY
@@ -768,7 +768,7 @@ class MainActivity : ComponentActivity() {
                 } catch (_: Exception) {
                     ""
                 }
-                if (header.contains("\"antigem_trajectory\"")) {
+                if (header.contains("\"boopide_trajectory\"")) {
                     chatViewModel.loadSharedConversationFromUri(this, item.uri!!)
                     return
                 }

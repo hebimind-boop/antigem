@@ -42,12 +42,12 @@ object MiniAppSigning {
     const val DIGEST = "META-INF/AGAPP.json"
     const val CERT = "META-INF/AGAPP.CERT.json"
     const val SIG = "META-INF/AGAPP.SIG"
-    /** The type .agapp files are shared and opened with (AntiGem's file provider reports it for *.agapp). */
+    /** The type .agapp files are shared and opened with (BoopIDE's file provider reports it for *.agapp). */
     const val MIME = "application/vnd.boopide.app"
 
     /** A zip with a signed file list: what to treat as a package before verifying it. */
     fun looksLikePackage(file: File): Boolean = runCatching { ZipFile(file).use { it.getEntry(DIGEST) != null } }.getOrDefault(false)
-    private const val WRAP_ALIAS = "antigem_miniapp_devkey_wrap"
+    private const val WRAP_ALIAS = "boopide_miniapp_devkey_wrap"
     private val ID_RE = Regex("^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
     fun sha256Hex(bytes: ByteArray): String = MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
@@ -272,9 +272,9 @@ object MiniAppSigning {
 }
 
 /**
- * Backups of the developer key. The key itself lives in AntiGem's private storage, which is wiped when AntiGem is
+ * Backups of the developer key. The key itself lives in BoopIDE's private storage, which is wiped when BoopIDE is
  * uninstalled or its data is cleared: without a backup every app signed with it could never be updated again. A backup
- * is the password-protected .agkey, saved to the phone's public Download/AntiGem folder (it outlives AntiGem) and offered
+ * is the password-protected .agkey, saved to the phone's public Download/BoopIDE folder (it outlives BoopIDE) and offered
  * to the share sheet (Drive, email…). The password is typed only on the phone.
  */
 object MiniAppKeyBackup {
@@ -299,34 +299,34 @@ object MiniAppKeyBackup {
             .putLong("key_backup_at", System.currentTimeMillis()).apply()
     }
 
-    /** Saves the encrypted key to Download/AntiGem; returns the shown path and a private copy for the share sheet. */
+    /** Saves the encrypted key to Download/BoopIDE; returns the shown path and a private copy for the share sheet. */
     fun save(context: Context, password: String): Pair<String, File> {
         val (developer, fp) = MiniAppSigning.keyInfo(context) ?: throw MiniAppError("NotFoundError", "There is no developer key")
         val bytes = MiniAppSigning.exportKey(context, password).toString(2).toByteArray()
         val safe = developer.replace(Regex("[^A-Za-z0-9_-]+"), "-").trim('-').take(30).ifBlank { "developer" }
-        val name = "antigem-key-$safe-${fp.take(8).lowercase()}.agkey"
+        val name = "boopide-key-$safe-${fp.take(8).lowercase()}.agkey"
         val shown: String = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
             val values = android.content.ContentValues().apply {
                 put(android.provider.MediaStore.MediaColumns.DISPLAY_NAME, name)
                 put(android.provider.MediaStore.MediaColumns.MIME_TYPE, "application/octet-stream")
-                put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "${android.os.Environment.DIRECTORY_DOWNLOADS}/AntiGem")
+                put(android.provider.MediaStore.MediaColumns.RELATIVE_PATH, "${android.os.Environment.DIRECTORY_DOWNLOADS}/BoopIDE")
                 put(android.provider.MediaStore.MediaColumns.IS_PENDING, 1)
             }
             val r = context.contentResolver
             val uri = r.insert(android.provider.MediaStore.Downloads.getContentUri(android.provider.MediaStore.VOLUME_EXTERNAL_PRIMARY), values)
-                ?: throw MiniAppError("InvalidStateError", "Couldn't create the file in Download/AntiGem")
-            r.openOutputStream(uri)?.use { it.write(bytes) } ?: throw MiniAppError("InvalidStateError", "Couldn't write Download/AntiGem/$name")
+                ?: throw MiniAppError("InvalidStateError", "Couldn't create the file in Download/BoopIDE")
+            r.openOutputStream(uri)?.use { it.write(bytes) } ?: throw MiniAppError("InvalidStateError", "Couldn't write Download/BoopIDE/$name")
             values.clear(); values.put(android.provider.MediaStore.MediaColumns.IS_PENDING, 0)
             r.update(uri, values, null, null)
             // the name it really got (Android adds " (1)" when one exists)
             val real = r.query(uri, arrayOf(android.provider.MediaStore.MediaColumns.DISPLAY_NAME), null, null, null)?.use { c -> if (c.moveToFirst()) c.getString(0) else null } ?: name
-            "Download/AntiGem/$real"
+            "Download/BoopIDE/$real"
         } else {
-            val dir = File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "AntiGem").also { it.mkdirs() }
+            val dir = File(android.os.Environment.getExternalStoragePublicDirectory(android.os.Environment.DIRECTORY_DOWNLOADS), "BoopIDE").also { it.mkdirs() }
             var f = File(dir, name); var n = 1
             while (f.exists()) f = File(dir, name.removeSuffix(".agkey") + " (${n++}).agkey")
             f.writeBytes(bytes)
-            "Download/AntiGem/${f.name}"
+            "Download/BoopIDE/${f.name}"
         }
         val copy = File(context.cacheDir, "key-backup").also { it.deleteRecursively(); it.mkdirs() }.let { File(it, name) }
         copy.writeBytes(bytes)

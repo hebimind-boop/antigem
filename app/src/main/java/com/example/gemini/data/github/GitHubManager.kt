@@ -33,8 +33,8 @@ object GitHubManager {
     private const val HOST = "github.com"
     /** Extra scopes on top of gh's defaults (repo, read:org, gist): workflow lets git push .github/workflows files. */
     private const val EXTRA_SCOPES = "workflow"
-    private const val LOGIN_PID_FILE = "\"\${TMPDIR:-/tmp}/antigem-gh-login.pid\""
-    const val TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo,read:org,gist,workflow&description=AntiGem"
+    private const val LOGIN_PID_FILE = "\"\${TMPDIR:-/tmp}/boopide-gh-login.pid\""
+    const val TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo,read:org,gist,workflow&description=BoopIDE"
     const val INSTALL_DOCS_URL = "https://github.com/cli/cli#installation"
 
     data class Account(
@@ -158,7 +158,7 @@ object GitHubManager {
         // Local commands take no stdin: [stdin] goes through a private temp file instead of the command line
         var stdinFile: File? = null
         val redirect = if (stdin != null) {
-            stdinFile = File(LocalEnvironmentManager.getTmpDir(appContext), "antigem-gh-${System.nanoTime()}.in").apply {
+            stdinFile = File(LocalEnvironmentManager.getTmpDir(appContext), "boopide-gh-${System.nanoTime()}.in").apply {
                 writeText(stdin)
                 setReadable(false, false); setReadable(true, true)
             }
@@ -564,7 +564,7 @@ object GitHubManager {
         val log = mutableListOf<String>()
         var path: String? = null
         val sink: (String) -> Unit = { line ->
-            if (line.startsWith("ANTIGEM_CLONED_PATH=")) path = line.removePrefix("ANTIGEM_CLONED_PATH=").trim()
+            if (line.startsWith("BOOPIDE_CLONED_PATH=")) path = line.removePrefix("BOOPIDE_CLONED_PATH=").trim()
             else if (line.isNotBlank() && !line.contains('%')) log += line
         }
         val exit = if (remote) {

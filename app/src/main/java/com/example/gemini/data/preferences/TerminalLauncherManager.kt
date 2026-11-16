@@ -6,13 +6,16 @@ import android.content.pm.PackageManager
 import android.util.Log
 
 object TerminalLauncherManager {
-    const val STYLE_ANTITERM = "ANTITERM"
+    const val STYLE_BOOPTERM = "BOOPTERM"
+    const val STYLE_BOOPTERM = STYLE_BOOPTERM
     const val STYLE_TERMUX = "TERMUX"
 
     private const val TAG = "TerminalLauncherMgr"
 
-    fun getAntiTermComponent(context: Context): ComponentName =
-        ComponentName(context.packageName, "com.example.gemini.TermuxAntiTermAlias")
+    fun getBoopTermComponent(context: Context): ComponentName =
+        ComponentName(context.packageName, "com.example.gemini.TermuxBoopTermAlias")
+
+    fun getBoopTermComponent(context: Context): ComponentName = getBoopTermComponent(context)
 
     fun getTermuxClassicComponent(context: Context): ComponentName =
         ComponentName(context.packageName, "com.example.gemini.TermuxClassicAlias")
@@ -26,15 +29,15 @@ object TerminalLauncherManager {
     fun isLauncherEnabled(context: Context): Boolean {
         return try {
             val pm = context.packageManager
-            val antiTermState = pm.getComponentEnabledSetting(getAntiTermComponent(context))
+            val boopTermState = pm.getComponentEnabledSetting(getBoopTermComponent(context))
             val classicState = pm.getComponentEnabledSetting(getTermuxClassicComponent(context))
 
             // both aliases are disabled in the manifest, so only an explicit "enabled" from Settings shows an icon
             // (TermuxActivity itself has no launcher entry, so it never adds one)
-            val isAntiTermActive = antiTermState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+            val isBoopTermActive = boopTermState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
             val isClassicActive = classicState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED
 
-            isAntiTermActive || isClassicActive
+            isBoopTermActive || isClassicActive
         } catch (_: Exception) {
             false
         }
@@ -50,10 +53,10 @@ object TerminalLauncherManager {
             if (classicState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED) {
                 STYLE_TERMUX
             } else {
-                STYLE_ANTITERM
+                STYLE_BOOPTERM
             }
         } catch (_: Exception) {
-            STYLE_ANTITERM
+            STYLE_BOOPTERM
         }
     }
 
@@ -62,11 +65,11 @@ object TerminalLauncherManager {
      *
      * @param context Application context
      * @param enabled Whether the standalone terminal icon should appear in launcher / app drawer
-     * @param style Either [STYLE_ANTITERM] or [STYLE_TERMUX]
+     * @param style Either [STYLE_BOOPTERM] or [STYLE_TERMUX]
      */
     fun applyLauncherSetting(context: Context, enabled: Boolean, style: String) {
         val pm = context.packageManager
-        val antiTerm = getAntiTermComponent(context)
+        val boopTerm = getBoopTermComponent(context)
         val classic = getTermuxClassicComponent(context)
         val direct = getDirectActivityComponent(context)
 
@@ -85,18 +88,18 @@ object TerminalLauncherManager {
 
             if (!enabled) {
                 // Disable both aliases
-                setComponentSafe(pm, antiTerm, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
+                setComponentSafe(pm, boopTerm, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
                 setComponentSafe(pm, classic, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
                 Log.d(TAG, "Standalone Terminal Launcher icon disabled")
             } else {
                 if (style == STYLE_TERMUX) {
-                    setComponentSafe(pm, antiTerm, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
+                    setComponentSafe(pm, boopTerm, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
                     setComponentSafe(pm, classic, PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
                     Log.d(TAG, "Enabled Termux Classic launcher alias (Termux)")
                 } else {
                     setComponentSafe(pm, classic, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
-                    setComponentSafe(pm, antiTerm, PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
-                    Log.d(TAG, "Enabled AntiTerm launcher alias (AntiTerm)")
+                    setComponentSafe(pm, boopTerm, PackageManager.COMPONENT_ENABLED_STATE_ENABLED)
+                    Log.d(TAG, "Enabled BoopTerm launcher alias (BoopTerm)")
                 }
             }
         } catch (e: Exception) {
@@ -108,7 +111,7 @@ object TerminalLauncherManager {
         try {
             pm.setComponentEnabledSetting(component, state, PackageManager.DONT_KILL_APP)
         } catch (e: Exception) {
-            Log.w(TAG, "Component ${component.shortClassName} update warning: ${e.message}")
+            Log.e(TAG, "Failed setting component state for $component: ${e.message}")
         }
     }
 }

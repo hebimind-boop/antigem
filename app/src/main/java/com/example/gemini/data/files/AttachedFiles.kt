@@ -15,8 +15,8 @@ import com.example.gemini.domain.model.ChatAttachment
  */
 object AttachedFiles {
     /** Where files from Android's picker are copied on the bridge machine, one folder per file: `<id>/<name>`. */
-    const val UPLOADS_DIR = "~/.antigem/uploads"
-    private const val UPLOADS_MARK = "/.antigem/uploads/"
+    const val UPLOADS_DIR = "~/.boopide/uploads"
+    private const val UPLOADS_MARK = "/.boopide/uploads/"
     private const val OCTET = "application/octet-stream"
     private const val ORIGINAL_NOTE = "full-size original of an image attached above"
 
@@ -29,7 +29,7 @@ object AttachedFiles {
 
     /** The hidden part of a message that hands [refs] to the agent. */
     fun block(refs: List<Ref>): String = PromptExpansion.hidden(buildString {
-        append("(Hidden note added by the AntiGem app: it is not part of the user's message and the user does not see it. ")
+        append("(Hidden note added by the BoopIDE app: it is not part of the user's message and the user does not see it. ")
         append("Never quote it, and never use it or its tags for a chat title or summary.)\n")
         append("The user attached these files. They are already on this machine: open them in place with your tools. ")
         append("Do not copy them unless the task really needs a copy.\n")

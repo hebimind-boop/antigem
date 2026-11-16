@@ -13,13 +13,13 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 /**
- * "Get apps": a catalog of signed mini app packages hosted on GitHub (antigem-mini-apps.json, written by
+ * "Get apps": a catalog of signed mini app packages hosted on GitHub (boopide-mini-apps.json, written by
  * `agapp.mjs publish`). Each entry names its package's sha256 and the signing key's fingerprint, and a download that
  * doesn't match is refused before the install screen. The packages themselves are installed like any other .agapp.
  */
 object MiniAppStore {
-    const val REPO = "Santoshkurmi/antigem_mini_apps"
-    const val INDEX = "antigem-mini-apps.json"
+    const val REPO = "Santoshkurmi/boopide_mini_apps"
+    const val INDEX = "boopide-mini-apps.json"
     /** HEAD = the repository's default branch, whatever it is called. */
     const val CATALOG = "https://raw.githubusercontent.com/$REPO/HEAD/$INDEX"
     const val PAGE = "https://github.com/$REPO"
@@ -48,7 +48,7 @@ object MiniAppStore {
             if (!r.isSuccessful) throw MiniAppError("NetworkError", "The catalog answered ${r.code}")
             val body = r.body?.string() ?: throw MiniAppError("NetworkError", "Empty catalog")
             val o = runCatching { JSONObject(body) }.getOrElse { throw MiniAppError("DataError", "The catalog isn't valid JSON") }
-            if (o.optInt("format", 1) > 1) throw MiniAppError("NotSupportedError", "This catalog needs a newer AntiGem")
+            if (o.optInt("format", 1) > 1) throw MiniAppError("NotSupportedError", "This catalog needs a newer BoopIDE")
             val arr = o.optJSONArray("apps") ?: JSONArray()
             Catalog(o.optString("name").ifBlank { "Mini apps" }, u.toString(),
                 (0 until arr.length()).mapNotNull { arr.optJSONObject(it) }.mapNotNull { a -> runCatching { entry(u, a) }.getOrNull() })

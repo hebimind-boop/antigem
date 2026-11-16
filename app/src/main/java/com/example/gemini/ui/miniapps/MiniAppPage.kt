@@ -121,7 +121,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
             mediaPlaybackRequiresUserGesture = false
             setSupportMultipleWindows(false)
             javaScriptCanOpenWindowsAutomatically = false
-            userAgentString = "$userAgentString AntiGemMiniApp/${MiniApps.SDK_VERSION}"
+            userAgentString = "$userAgentString BoopIDEMiniApp/${MiniApps.SDK_VERSION}"
         }
         if (WebViewFeature.isFeatureSupported(WebViewFeature.SAFE_BROWSING_ENABLE)) WebSettingsCompat.setSafeBrowsingEnabled(settings, false)
         overScrollMode = View.OVER_SCROLL_NEVER
@@ -130,14 +130,14 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         webViewClient = Client()
         webChromeClient = Chrome()
         if (WebViewFeature.isFeatureSupported(WebViewFeature.WEB_MESSAGE_LISTENER)) {
-            WebViewCompat.addWebMessageListener(this, "__antigemNative", setOf(app.origin)) { _, message, _, isMainFrame, proxy ->
+            WebViewCompat.addWebMessageListener(this, "__boopideNative", setOf(app.origin)) { _, message, _, isMainFrame, proxy ->
                 val text = message.data ?: return@addWebMessageListener
                 onMessage(text, isMainFrame) { json -> proxy.postMessage(json) }
                 if (isMainFrame && mainProxy !== proxy && text.contains("\"m\":\"hello\"")) mainProxy = proxy
             }
         } else {
             legacy = true
-            addJavascriptInterface(LegacyBridge(), "__antigemNativeLegacy")
+            addJavascriptInterface(LegacyBridge(), "__boopideNativeLegacy")
         }
         applyDark(this, host.isDark)
     }
@@ -288,15 +288,15 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         val path = url.path ?: "/"
         return try {
             when {
-                path == "/_antigem/sdk.js" -> text("text/javascript", 200, "OK", sdkScript())
-                path == "/_antigem/worker-sdk.js" -> text("text/javascript", 200, "OK", workerSdkScript())
-                path == "/_antigem/ui.css" -> text("text/css", 200, "OK", Sdk.asset(ctx, "ui.css"))
-                path.startsWith("/_antigem/net/") -> MiniAppNet.openStream(path.removePrefix("/_antigem/net/")) ?: text("text/plain", 404, "Not Found", "Gone")
-                path == "/_antigem/fs" -> MiniAppFs.serve(ctx, app, url.getQueryParameter("p").orEmpty(), request.requestHeaders?.entries?.firstOrNull { it.key.equals("range", true) }?.value,
+                path == "/_boopide/sdk.js" -> text("text/javascript", 200, "OK", sdkScript())
+                path == "/_boopide/worker-sdk.js" -> text("text/javascript", 200, "OK", workerSdkScript())
+                path == "/_boopide/ui.css" -> text("text/css", 200, "OK", Sdk.asset(ctx, "ui.css"))
+                path.startsWith("/_boopide/net/") -> MiniAppNet.openStream(path.removePrefix("/_boopide/net/")) ?: text("text/plain", 404, "Not Found", "Gone")
+                path == "/_boopide/fs" -> MiniAppFs.serve(ctx, app, url.getQueryParameter("p").orEmpty(), request.requestHeaders?.entries?.firstOrNull { it.key.equals("range", true) }?.value,
                     url.getQueryParameter("thumb")?.toIntOrNull())
-                path == "/_antigem/background.html" && task != null -> text("text/html", 200, "OK", inject(backgroundHtml()))
-                path == "/_antigem/icon" -> app.iconFile?.let { WebResourceResponse(MiniAppNet.guessMime(it.name), null, 200, "OK", headers(), FileInputStream(it)) } ?: text("text/plain", 404, "Not Found", "")
-                path.startsWith("/_antigem/") -> text("text/plain", 404, "Not Found", "")
+                path == "/_boopide/background.html" && task != null -> text("text/html", 200, "OK", inject(backgroundHtml()))
+                path == "/_boopide/icon" -> app.iconFile?.let { WebResourceResponse(MiniAppNet.guessMime(it.name), null, 200, "OK", headers(), FileInputStream(it)) } ?: text("text/plain", 404, "Not Found", "")
+                path.startsWith("/_boopide/") -> text("text/plain", 404, "Not Found", "")
                 else -> serveFile(path, url.getQueryParameter("__agw"))
             }
         } catch (e: Exception) {
@@ -347,7 +347,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
     /** Puts the SDK (and a viewport, when missing) first in <head>, before any app script runs. */
     private fun inject(html: String): String {
         val viewport = if (viewportRe.containsMatchIn(html)) "" else "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover\">"
-        val tags = "$viewport<script src=\"/_antigem/sdk.js\"></script>"
+        val tags = "$viewport<script src=\"/_boopide/sdk.js\"></script>"
         val at = (headRe.find(html) ?: htmlRe.find(html) ?: doctypeRe.find(html))?.range?.last?.plus(1) ?: 0
         return html.substring(0, at) + tags + html.substring(at)
     }
@@ -357,7 +357,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
      * "use strict" directive so it stays a directive).
      */
     private fun injectWorker(js: String, module: Boolean): String {
-        val load = if (module) "import \"/_antigem/worker-sdk.js\";" else "importScripts(\"/_antigem/worker-sdk.js\");"
+        val load = if (module) "import \"/_boopide/worker-sdk.js\";" else "importScripts(\"/_boopide/worker-sdk.js\");"
         val directive = Regex("^\\s*(['\"])use strict\\1;?").find(js)
         return if (directive != null) js.substring(0, directive.range.last + 1) + load + js.substring(directive.range.last + 1) else load + js
     }
@@ -537,7 +537,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         "nav.push" -> { host.push(p.optString("path")); null }
         "nav.back" -> { host.closePage(); null }
         "nav.close" -> { host.closeApp(); null }
-        // ---- AntiGem MCP tools
+        // ---- BoopIDE MCP tools
         "mcp.list", "mcp.call" -> mcp(m, p)
         // ---- dev
         "dev.console" -> { host.showConsole(); null }
@@ -546,7 +546,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         else -> throw MiniAppError("NotSupportedError", "Unknown method $m")
     }
 
-    /** ops: [{a: "l" (localStorage) | "s" (AntiGem.storage) | "ss" (sessionStorage), op: set|del|clear, k, v}] */
+    /** ops: [{a: "l" (localStorage) | "s" (BoopIDE.storage) | "ss" (sessionStorage), op: set|del|clear, k, v}] */
     private fun kv(p: JSONObject) {
         val ops = p.optJSONArray("ops") ?: return
         val shared = JSONArray()
@@ -571,7 +571,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
     }
 
     /**
-     * AntiGem.intent.send: the user picks which app gets it (mini apps that declared they accept it, or Android's
+     * BoopIDE.intent.send: the user picks which app gets it (mini apps that declared they accept it, or Android's
      * own share sheet). A file goes along as a one-day read grant for that file only.
      */
     private suspend fun sendIntent(p: JSONObject): Any? {
@@ -611,7 +611,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         return JSONObject().put("to", target.id)
     }
 
-    /** Items for the native viewer: paths are permission-checked like AntiGem.fs, URLs like the network layer. */
+    /** Items for the native viewer: paths are permission-checked like BoopIDE.fs, URLs like the network layer. */
     private fun mediaItems(a: JSONArray): List<MediaItem> = (0 until minOf(a.length(), 5000)).mapNotNull { i ->
         val o = a.opt(i)
         val src = (if (o is JSONObject) o.optString("src") else o?.toString()).orEmpty().trim()
@@ -642,7 +642,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
         }
     }
 
-    /** AntiGem.fs.pickFolder: the user chooses a folder in AntiGem's file explorer; the app gets the manifest's "pick" access to it. */
+    /** BoopIDE.fs.pickFolder: the user chooses a folder in BoopIDE's file explorer; the app gets the manifest's "pick" access to it. */
     private suspend fun pickFolder(): Any? {
         val access = app.storagePick ?: throw MiniAppError("NotAllowedError", "The manifest doesn't allow picking folders (permissions.storage.pick)")
         val folder = host.pickFolder("Choose a folder for ${app.name}") ?: return JSONObject.NULL
@@ -728,7 +728,7 @@ class MiniAppPage(private val host: MiniAppHost, app: MiniApp, override val path
     }
 
     /**
-     * AntiGem.mcp: only what the manifest declared and the user allowed (the whole server, its read-only tools, or
+     * BoopIDE.mcp: only what the manifest declared and the user allowed (the whole server, its read-only tools, or
      * single tools), and, where asked for, the user's OK before each call.
      */
     private suspend fun mcp(m: String, p: JSONObject): Any? {

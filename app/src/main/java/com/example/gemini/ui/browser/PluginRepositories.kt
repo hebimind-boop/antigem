@@ -48,19 +48,19 @@ object PluginVersions {
 }
 
 /**
- * The user's plugin repositories and what each offers. Listing (from a repo's `antigem-plugins.json`, or its
+ * The user's plugin repositories and what each offers. Listing (from a repo's `boopide-plugins.json`, or its
  * top-level folders with a manifest.json) and installing a single folder are done by the IDE bridge.
  */
 object PluginRepositories {
-    const val INDEX = "antigem-plugins.json"
+    const val INDEX = "boopide-plugins.json"
     private const val PREFS = "plugin_repositories"
     /**
      * The official repositories, each added once (for new and existing users) under its own "added" flag, so a
      * repository added later still reaches users who already got the earlier ones. A removed one stays removed.
      */
     private val DEFAULT_REPOS = listOf(
-        "dipeshkrydv/antigem_plugins" to "default_repo_added",
-        "Santoshkurmi/antigem_plugins" to "default_repo_added_santoshkurmi"
+        "dipeshkrydv/boopide_plugins" to "default_repo_added",
+        "Santoshkurmi/boopide_plugins" to "default_repo_added_santoshkurmi"
     )
     private val NAME = "[A-Za-z0-9_.-]+"
 

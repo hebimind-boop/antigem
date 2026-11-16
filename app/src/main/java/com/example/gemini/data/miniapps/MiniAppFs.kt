@@ -14,7 +14,7 @@ import java.io.InputStream
 import java.io.RandomAccessFile
 
 /**
- * AntiGem.fs: every path goes through [MiniAppPermissions.resolve] (own "data/" folder always; anything else only
+ * BoopIDE.fs: every path goes through [MiniAppPermissions.resolve] (own "data/" folder always; anything else only
  * inside what the storage permission granted, never other apps' data or the dot folders in home).
  */
 object MiniAppFs {
@@ -31,7 +31,7 @@ object MiniAppFs {
             "fs.read" -> {
                 val f = MiniAppPermissions.resolve(context, app, path, MiniAppPermissions.Need.READ)
                 if (!f.isFile) throw MiniAppError("NotFoundError", "No such file: $path")
-                if (f.length() > MAX_READ) throw MiniAppError("QuotaExceededError", "File too large to read at once; use AntiGem.fs.url()")
+                if (f.length() > MAX_READ) throw MiniAppError("QuotaExceededError", "File too large to read at once; use BoopIDE.fs.url()")
                 if (p.optString("enc") == "base64") Base64.encodeToString(f.readBytes(), Base64.NO_WRAP) else f.readText()
             }
             "fs.write" -> {
@@ -112,7 +112,7 @@ object MiniAppFs {
         MiniAppPermissions.grants(context, app).distinctBy { it.root.path }.forEach { put(JSONObject().put("path", it.root.path).put("access", it.access).put("source", it.source)) }
     }
 
-    /** /_antigem/fs?p=<path>: streams a file (with Range support, so video seeking works). */
+    /** /_boopide/fs?p=<path>: streams a file (with Range support, so video seeking works). */
     fun serve(context: Context, app: MiniApp, path: String, range: String?, thumb: Int? = null): WebResourceResponse {
         val f = try { MiniAppPermissions.resolve(context, app, path, MiniAppPermissions.Need.READ) } catch (e: MiniAppError) {
             return plain(403, "Forbidden", e.message ?: "Forbidden")

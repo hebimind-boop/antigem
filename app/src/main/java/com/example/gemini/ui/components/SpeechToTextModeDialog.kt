@@ -78,10 +78,10 @@ fun SpeechToTextModeDialog(
 
                 Spacer(modifier = Modifier.height(18.dp))
 
-                // Option 1: Auto Transcribe (Record & Transcribe via AGY Hub)
+                // Option 1: Auto Transcribe (Record & Transcribe via Boop Hub)
                 SpeechModeOptionCard(
                     title = "Auto Transcribe",
-                    subtitle = "Record a voice clip and convert it into text using AGY transcription",
+                    subtitle = "Record a voice clip and convert it into text using Boop Hub transcription",
                     icon = Icons.Rounded.GraphicEq,
                     accentColor = ClaudeTerracotta,
                     onClick = onSelectAutoTranscribe

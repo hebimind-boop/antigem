@@ -11,7 +11,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 
 # ==============================================================================
-# antiGem IDE & AGY Projects Restorer
+# BoopIDE IDE & AGY Projects Restorer
 # ==============================================================================
 set -euo pipefail
 
@@ -26,7 +26,7 @@ CONFLICT_STRATEGY="${2:-bak}" # "bak" (move existing to .bak.<timestamp>) or "ov
 CUSTOM_RESTORE_DIR="${3:-}"
 
 echo "================================================"
-echo "       antiGem Projects Archive Restorer        "
+echo "       BoopIDE Projects Archive Restorer        "
 echo "================================================"
 echo "Input Archive     : ${INPUT_ZIP:-<none>}"
 echo "Conflict Strategy : $CONFLICT_STRATEGY (bak / overwrite)"
@@ -47,7 +47,7 @@ if [ ! -f "$INPUT_ZIP" ]; then
     exit 1
 fi
 
-STAGE_DIR="${TMP_ROOT}/antigem_restore_stage_${TIMESTAMP}_$$"
+STAGE_DIR="${TMP_ROOT}/boopide_restore_stage_${TIMESTAMP}_$$"
 rm -rf "$STAGE_DIR"
 mkdir -p "$STAGE_DIR"
 
@@ -62,11 +62,11 @@ echo "      ✅ Archive integrity verified."
 
 # 2. Extract manifest
 echo "[2/4] Reading project manifest..."
-unzip -q "$INPUT_ZIP" "antigem_project_manifest.json" -d "$STAGE_DIR" 2>/dev/null || true
-MANIFEST_FILE="$STAGE_DIR/antigem_project_manifest.json"
+unzip -q "$INPUT_ZIP" "boopide_project_manifest.json" -d "$STAGE_DIR" 2>/dev/null || true
+MANIFEST_FILE="$STAGE_DIR/boopide_project_manifest.json"
 
 if [ ! -f "$MANIFEST_FILE" ]; then
-    echo "⚠️ Warning: 'antigem_project_manifest.json' not found in archive. Attempting direct folder extraction..."
+    echo "⚠️ Warning: 'boopide_project_manifest.json' not found in archive. Attempting direct folder extraction..."
     # Fallback for standard zip archive without manifest
     TARGET_DIR="${CUSTOM_RESTORE_DIR:-${HOME_DIR}/restored_project_${TIMESTAMP}}"
     if [ -d "$TARGET_DIR" ] && [ "$CONFLICT_STRATEGY" = "bak" ]; then

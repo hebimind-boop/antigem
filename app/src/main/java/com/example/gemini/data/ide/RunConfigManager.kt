@@ -30,11 +30,11 @@ object RunConfigManager {
     private const val TAG = "RunConfigManager"
 
     /** The project's run commands, shared by the IDE's Run button, the Run panel and the agents. */
-    const val PROJECT_FILE = ".antigem/run.json"
+    const val PROJECT_FILE = ".boopide/run.json"
     /** Where the IDE kept them before; still read when a project has no [PROJECT_FILE] yet. */
     const val LEGACY_FILE = ".ide/launch.json"
     /** Commands for any folder (Run panel → Global), in the Termux home. */
-    const val GLOBAL_FILE = ".antigem/global-run.json"
+    const val GLOBAL_FILE = ".boopide/global-run.json"
 
     private val json = Json {
         prettyPrint = true

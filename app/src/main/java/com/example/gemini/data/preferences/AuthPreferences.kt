@@ -96,11 +96,11 @@ class AuthPreferences(private val context: Context) {
         val AGY_BINARY_PATH = stringPreferencesKey("agy_binary_path")
         val CLAUDE_BINARY_PATH = stringPreferencesKey("claude_binary_path")
         val HAS_SEEN_TERMINAL_LAUNCHER_ONBOARDING = androidx.datastore.preferences.core.booleanPreferencesKey("has_seen_terminal_launcher_onboarding")
-        val TERMINAL_LAUNCHER_STYLE = stringPreferencesKey("terminal_launcher_style") // "ANTITERM" or "TERMUX"
+        val TERMINAL_LAUNCHER_STYLE = stringPreferencesKey("terminal_launcher_style") // "BOOPTERM" or "TERMUX"
         val IS_TERMINAL_LAUNCHER_ENABLED = androidx.datastore.preferences.core.booleanPreferencesKey("is_terminal_launcher_enabled")
 
         const val DEFAULT_BRIDGE_BINARY_PATH = "~/../usr/bin/agy_ide_bridge"
-        const val DEFAULT_UBUNTU_BRIDGE_BINARY_PATH = "/antigem/bin/agy_ide_bridge"
+        const val DEFAULT_UBUNTU_BRIDGE_BINARY_PATH = "/boopide/bin/agy_ide_bridge"
         const val DEFAULT_AGY_BINARY_PATH = "~/.local/bin/agy"
         const val DEFAULT_UBUNTU_AGY_BINARY_PATH = "/root/.local/bin/agy"
         /** The app's Claude Code launcher (glibc loader); Claude's updater never touches it. */
@@ -149,7 +149,7 @@ class AuthPreferences(private val context: Context) {
             set(value) { storedSecurityToken = value }
 
         // ---- Server mode: an extra header the reverse proxy (nginx / Apache / Caddy) in front of the server checks ----
-        const val DEFAULT_EDGE_HEADER_NAME = "X-AntiGem-Key"
+        const val DEFAULT_EDGE_HEADER_NAME = "X-BoopIDE-Key"
         const val EDGE_VALUE_LENGTH = 20
         private const val EDGE_CHARSET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 
@@ -178,7 +178,7 @@ class AuthPreferences(private val context: Context) {
         val currentFramedHeader: String
             get() = buildFramedHeader(currentSecurityToken)
 
-        // per app (see the build flavors): com.antigem uses other ports than com.termux so both can run together
+        // per app (see the build flavors): com.boopide uses other ports than com.termux so both can run together
         val DEFAULT_HUB_URL = "http://127.0.0.1:${com.example.gemini.BuildConfig.HUB_PORT}"
         val DEFAULT_BRIDGE_HTTP_URL = "http://127.0.0.1:${com.example.gemini.BuildConfig.BRIDGE_PORT}"
 
@@ -780,10 +780,10 @@ class AuthPreferences(private val context: Context) {
     }
 
     /** Where on the server the app keeps the bridge it uploads and starts (relative to the SSH user's home). */
-    fun getRemoteInstallDirSync(): String = syncPrefs.getString("remote_install_dir", ".antigem") ?: ".antigem"
+    fun getRemoteInstallDirSync(): String = syncPrefs.getString("remote_install_dir", ".boopide") ?: ".boopide"
 
     fun saveRemoteInstallDirSync(dir: String) {
-        syncPrefs.edit().putString("remote_install_dir", dir.trim().ifBlank { ".antigem" }).apply()
+        syncPrefs.edit().putString("remote_install_dir", dir.trim().ifBlank { ".boopide" }).apply()
     }
 
     suspend fun saveAgyHubUrl(url: String) {
@@ -1144,7 +1144,7 @@ class AuthPreferences(private val context: Context) {
     }
 
     val terminalLauncherStyle: Flow<String> = context.dataStore.data.map {
-        it[TERMINAL_LAUNCHER_STYLE] ?: "ANTITERM"
+        it[TERMINAL_LAUNCHER_STYLE] ?: "BOOPTERM"
     }
 
     suspend fun setTerminalLauncherStyle(style: String) {

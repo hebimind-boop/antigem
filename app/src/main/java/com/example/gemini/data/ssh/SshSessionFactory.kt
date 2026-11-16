@@ -57,7 +57,7 @@ object SshSessionFactory {
         if (usingKey) {
             val passphrase = if (privateKey != null) "" else AuthPreferences.currentSshKeyPassphrase
             jsch.addIdentity(
-                "antigem-key",
+                "boopide-key",
                 (key.trim() + "\n").toByteArray(Charsets.UTF_8),
                 null,
                 if (passphrase.isEmpty()) null else passphrase.toByteArray(Charsets.UTF_8)
@@ -136,7 +136,7 @@ object SshSessionFactory {
         override fun add(hostkey: HostKey?, ui: UserInfo?) {}
         override fun remove(host: String?, type: String?) {}
         override fun remove(host: String?, type: String?, key: ByteArray?) {}
-        override fun getKnownHostsRepositoryID(): String = "antigem-pinned"
+        override fun getKnownHostsRepositoryID(): String = "boopide-pinned"
         override fun getHostKey(): Array<HostKey> = emptyArray()
         override fun getHostKey(host: String?, type: String?): Array<HostKey> = emptyArray()
     }

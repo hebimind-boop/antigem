@@ -347,8 +347,8 @@ class BrowserSessionManager private constructor() {
                     // 4. Force 1280px desktop viewport width with pinch zoom-in and zoom-out fully enabled
                     function applyDesktopViewport() {
                         try {
-                            if (window.__antigemInputLock) {
-                                window.__antigemInputLock.applyViewport();
+                            if (window.__boopideInputLock) {
+                                window.__boopideInputLock.applyViewport();
                                 return;
                             }
                             var meta = document.querySelector('meta[name="viewport"]');
@@ -432,7 +432,7 @@ class BrowserSessionManager private constructor() {
     fun loadShortcutsIfNeeded(context: Context) {
         if (shortcutsLoaded) return
         shortcutsLoaded = true
-        val prefs = context.applicationContext.getSharedPreferences("antigem_browser_shortcuts", Context.MODE_PRIVATE)
+        val prefs = context.applicationContext.getSharedPreferences("boopide_browser_shortcuts", Context.MODE_PRIVATE)
         val json = prefs.getString("shortcuts_json", null) ?: return
         try {
             val arr = JSONArray(json)
@@ -457,7 +457,7 @@ class BrowserSessionManager private constructor() {
     fun loadHistoryIfNeeded(context: Context) {
         if (historyLoaded) return
         historyLoaded = true
-        val prefs = context.applicationContext.getSharedPreferences("antigem_browser_history", Context.MODE_PRIVATE)
+        val prefs = context.applicationContext.getSharedPreferences("boopide_browser_history", Context.MODE_PRIVATE)
         val json = prefs.getString("typed_history_json", null) ?: return
         try {
             val arr = JSONArray(json)
@@ -507,7 +507,7 @@ class BrowserSessionManager private constructor() {
     }
 
     private fun saveHistory(context: Context) {
-        val prefs = context.applicationContext.getSharedPreferences("antigem_browser_history", Context.MODE_PRIVATE)
+        val prefs = context.applicationContext.getSharedPreferences("boopide_browser_history", Context.MODE_PRIVATE)
         try {
             val arr = JSONArray()
             typedHistory.forEach { item ->
@@ -535,7 +535,7 @@ class BrowserSessionManager private constructor() {
     }
 
     private fun saveShortcuts(context: Context) {
-        val prefs = context.applicationContext.getSharedPreferences("antigem_browser_shortcuts", Context.MODE_PRIVATE)
+        val prefs = context.applicationContext.getSharedPreferences("boopide_browser_shortcuts", Context.MODE_PRIVATE)
         try {
             val arr = JSONArray()
             shortcuts.forEach { sc ->

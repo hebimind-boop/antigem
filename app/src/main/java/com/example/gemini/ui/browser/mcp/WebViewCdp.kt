@@ -365,7 +365,7 @@ object BrowserCdp {
         val manager = BrowserSessionManager.instance
         repeat(2) {
             // The same tag the extension host uses to tell WebViews apart; a navigation can wipe it, hence the retry
-            manager.evaluateJs(tab.id, "window.__antigemTabId=${JSONObject.quote(tab.id)};true").getOrElse { return null }
+            manager.evaluateJs(tab.id, "window.__boopideTabId=${JSONObject.quote(tab.id)};true").getOrElse { return null }
             val currentUrl = withContext(Dispatchers.Main) { tab.webView?.url.orEmpty() }
             val claimed = sessions.values.filter { !it.closed }.map { it.targetId }.toSet()
             val found = withContext(Dispatchers.IO) {
@@ -376,7 +376,7 @@ object BrowserCdp {
                 for (target in pages) {
                     val session = runCatching { CdpSession.open(target.getString("id")) }.getOrNull() ?: continue
                     val marker = runCatching {
-                        session.send("Runtime.evaluate", JSONObject().put("expression", "window.__antigemTabId").put("returnByValue", true), 3000)
+                        session.send("Runtime.evaluate", JSONObject().put("expression", "window.__boopideTabId").put("returnByValue", true), 3000)
                             .optJSONObject("result")?.optString("value")
                     }.getOrNull()
                     if (marker == tab.id) return@withContext session

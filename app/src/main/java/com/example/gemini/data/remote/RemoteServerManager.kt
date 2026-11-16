@@ -43,7 +43,7 @@ import java.security.MessageDigest
 object RemoteServerManager {
 
     private const val TAG = "RemoteServerManager"
-    private const val TMUX_SESSION = "antigem-bridge"
+    private const val TMUX_SESSION = "boopide-bridge"
 
     data class SshState(val connected: Boolean, val message: String)
 
@@ -381,7 +381,7 @@ object RemoteServerManager {
     const val DEFAULT_OPENCODE_BIN = "~/.opencode/bin/opencode"
     const val DEFAULT_CODEX_BIN = "~/.local/bin/codex"
     fun defaultBridgeBin(installDir: String): String =
-        "~/" + installDir.trim().trim('/').ifBlank { ".antigem" } + "/agy_ide_bridge"
+        "~/" + installDir.trim().trim('/').ifBlank { ".boopide" } + "/agy_ide_bridge"
 
     private fun effectiveBridgeBin(prefs: AuthPreferences): String =
         prefs.getRemoteBridgeBinSync().trim().ifBlank { defaultBridgeBin(prefs.getRemoteInstallDirSync()) }
@@ -632,7 +632,7 @@ object RemoteServerManager {
     }
 
     /**
-     * Connect to PC: the bridge on the PC belongs to AntiGem in VS Code. Only connect (SSH, tunnels, token) and check
+     * Connect to PC: the bridge on the PC belongs to BoopIDE in VS Code. Only connect (SSH, tunnels, token) and check
      * that it answers; never install, start or stop anything there.
      */
     private suspend fun attachToPc() {
@@ -642,7 +642,7 @@ object RemoteServerManager {
             _detail.value = "Connecting to ${pc.pcName}…"
             val s = session()
             syncTunnels(s)
-            _detail.value = "Checking AntiGem on ${pc.pcName}…"
+            _detail.value = "Checking BoopIDE on ${pc.pcName}…"
             var up = false
             for (i in 0 until 12) {
                 if (bridgeReachable()) { up = true; break }
@@ -653,7 +653,7 @@ object RemoteServerManager {
                 LocalServerManager.publishRemoteStatus(LocalServerStatus.Running())
             } else {
                 LocalServerManager.publishRemoteStatus(LocalServerStatus.Error(
-                    "Connected to ${pc.pcName}, but AntiGem's bridge is not running there. Open VS Code with AntiGem on the PC " +
+                    "Connected to ${pc.pcName}, but BoopIDE's bridge is not running there. Open VS Code with BoopIDE on the PC " +
                         "(if it was stopped, press ▶ in its side bar), then tap Retry."
                 ))
             }
@@ -758,7 +758,7 @@ object RemoteServerManager {
     // Browser-plugin host (Node.js) on the server
     // ---------------------------------------------------------------------------------------------------------
 
-    private const val EXT_TMUX = "antigem-exthost"
+    private const val EXT_TMUX = "boopide-exthost"
     private val extLock = Mutex()
 
     /** True once the plugin host answers on the server. */
@@ -829,7 +829,7 @@ object RemoteServerManager {
 
         val home = exec(s, "printf %s \"\$HOME\"").second.trim()
         if (home.isBlank()) throw IllegalStateException("Could not read the server's home directory.")
-        val base = "$home/.antigem"
+        val base = "$home/.boopide"
         val runtimeDir = "$base/browser-runtime"
         val rootDir = "$base/browser-extensions"
         exec(s, "mkdir -p ${q(runtimeDir)} ${q(rootDir)}")
@@ -857,7 +857,7 @@ object RemoteServerManager {
         // plugin folders that exist now (the bridge puts installs in ~/extensions)
         val roots = exec(
             s,
-            "for d in \"\$HOME/extensions\" \"\$HOME/projects/antiGem/extensions\" \"\$HOME/.antigem/extensions\"; do [ -d \"\$d\" ] && echo \"\$d\"; done; true"
+            "for d in \"\$HOME/extensions\" \"\$HOME/projects/BoopIDE/extensions\" \"\$HOME/.boopide/extensions\"; do [ -d \"\$d\" ] && echo \"\$d\"; done; true"
         ).second.lines().filter { it.startsWith("/") }
         val log = "$base/extension-host.log"
         val core = buildString {

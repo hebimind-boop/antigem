@@ -76,12 +76,12 @@ data class BrowserExtension(
     }
 }
 
-/** Written as `.antigem-source.json` into plugins installed from a repository, so updates can be found later. */
+/** Written as `.boopide-source.json` into plugins installed from a repository, so updates can be found later. */
 data class PluginSource(val repo: String, val ref: String, val path: String) {
     fun toJson(): JSONObject = JSONObject().put("repo", repo).put("ref", ref).put("path", path)
 
     companion object {
-        const val FILE = ".antigem-source.json"
+        const val FILE = ".boopide-source.json"
         fun read(dir: File): PluginSource? = runCatching {
             JSONObject(File(dir, FILE).readText()).let { PluginSource(it.getString("repo"), it.optString("ref"), it.getString("path")) }
         }.getOrNull()
@@ -298,12 +298,12 @@ class BrowserExtensionManager private constructor() {
         try {
             val homeDir = LocalEnvironmentManager.getHomeDir(context)
             list.add(File(homeDir, "extensions"))
-            list.add(File(LocalEnvironmentManager.getProjectsDir(context), "antiGem/extensions"))
+            list.add(File(LocalEnvironmentManager.getProjectsDir(context), "BoopIDE/extensions"))
         } catch (_: Exception) {}
 
         list.add(File(context.filesDir, "extensions"))
         list.add(File(context.filesDir, "browser-extensions"))
-        val extStorage = File("/sdcard/antiGem/extensions")
+        val extStorage = File("/sdcard/BoopIDE/extensions")
         if (extStorage.exists()) list.add(extStorage)
         return list.distinctBy { it.absolutePath }
     }

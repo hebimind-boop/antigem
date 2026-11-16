@@ -59,7 +59,7 @@ import com.example.gemini.theme.GeminiBlue
 import kotlinx.coroutines.runBlocking
 
 /** The address the preview page is served from; nothing goes to the internet for it (every request is intercepted). */
-private const val PREVIEW_HOST = "preview.cloud.antigem"
+private const val PREVIEW_HOST = "preview.cloud.boopide"
 private val LOCAL_HOSTS = setOf("localhost", "127.0.0.1", "0.0.0.0")
 
 /** Ports a web server in the chat probably listens on (from the agent's commands and their output), most recent first. */

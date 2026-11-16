@@ -54,7 +54,7 @@ import com.example.gemini.ui.components.ClaudeAccent
 import com.example.gemini.ui.components.CodexAccent
 import com.example.gemini.ui.components.OpenCodeAccent
 
-/** What the user wants out of a repository AntiGem could not install by itself. */
+/** What the user wants out of a repository BoopIDE could not install by itself. */
 enum class RepoSetupKind(val label: String) { ALL("All"), SKILLS("Skills"), PLUGINS("Plugin / marketplace") }
 
 private fun agentName(agent: AgentKind) = when (agent) {
@@ -149,7 +149,7 @@ fun repoSetupPrompt(source: String, agent: AgentKind, kind: RepoSetupKind): Stri
 }
 
 /**
- * Shown when AntiGem could not add a repository by itself (no skills, no plugin or marketplace it can read): the
+ * Shown when BoopIDE could not add a repository by itself (no skills, no plugin or marketplace it can read): the
  * request to paste into an AI agent, which reads the README and sets it up. Nothing opens by itself: the user copies
  * it into the chat they want. [agent]: the agent whose settings page this came from (picked first).
  */

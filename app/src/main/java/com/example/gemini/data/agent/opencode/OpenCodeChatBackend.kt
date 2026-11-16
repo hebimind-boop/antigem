@@ -1253,7 +1253,7 @@ class OpenCodeChatBackend(
                     rule("websearch", "ask"),
                     rule("external_directory", "ask"),
                     // files the app copied for the chat (OpenCode's `*` also matches across folders; last match wins)
-                    rule("external_directory", "allow", "*/.antigem/uploads/*")
+                    rule("external_directory", "allow", "*/.boopide/uploads/*")
                 ))
                 else -> null
             }

@@ -1,11 +1,11 @@
 {
-  "version_code": 131,
-  "version_name": "1.2.2",
+  "version_code": 132,
+  "version_name": "1.2.3",
   "min_supported_version_code": 1,
   "changelog": [
-    "Complete user-facing BoopIDE & BoopTerm rebranding across onboarding, settings, notifications and tools",
-    "Optimized release build pipeline for standalone standard flavor",
-    "Seamless in-app auto-update directly to BoopIDE v1.2.2"
+    "Exhaustive 100% rebranding cleanup across all UI screens, splash screen, onboarding and assets",
+    "Complete elimination of legacy branding from terminal, bridge server, and tools",
+    "Seamless in-app update to BoopIDE v1.2.3"
   ],
   "is_critical": false
 }

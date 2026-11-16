@@ -32,8 +32,8 @@ import java.util.concurrent.TimeUnit
  * Kotlin / Java / Jetpack Compose with Gradle, Flutter and React Native, in the proot-distro Ubuntu container of the
  * terminal (com.termux builds only). It is the same container REA uses, so Java 21 and Node.js are shared.
  *
- * Nothing ships in the APK: the setup scripts live in the antigem_plugins repository
- * (android-dev/skills/android-dev/scripts) and are downloaded into $PREFIX/share/antigem-android when needed. Every
+ * Nothing ships in the APK: the setup scripts live in the boopide_plugins repository
+ * (android-dev/skills/android-dev/scripts) and are downloaded into $PREFIX/share/boopide-android when needed. Every
  * install step runs `android-setup.sh <step>`, the same script the Android Development skill tells agents to run.
  * Agents build with the `adev` command (a command in the container with the tools on PATH) and create projects
  * with `adev-new`.
@@ -150,7 +150,7 @@ object AndroidDevManager {
 
     private val prefix get() = LocalEnvironmentManager.getPrefixDir(appContext)
     private val home get() = LocalEnvironmentManager.getHomeDir(appContext)
-    private val shareDir get() = File(prefix, "share/antigem-android")
+    private val shareDir get() = File(prefix, "share/boopide-android")
     private val pidFile get() = File(shareDir, ".task.pid")
     private fun rootfs() = File(prefix, "var/lib/proot-distro/containers/$CONTAINER/rootfs")
     val setupScriptPath: String get() = File(shareDir, "android-setup.sh").absolutePath
@@ -335,7 +335,7 @@ object AndroidDevManager {
                     android.content.Intent(android.provider.Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, android.net.Uri.parse("package:${ctx.packageName}"))
                         .addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
                 )
-                report("Allow AntiGem to install apps, then tap Install again.")
+                report("Allow BoopIDE to install apps, then tap Install again.")
                 return
             }
             val uri = androidx.core.content.FileProvider.getUriForFile(ctx, "${ctx.packageName}.fileprovider", File(path))
@@ -456,7 +456,7 @@ object AndroidDevManager {
     private fun acquireWakeLock() {
         runCatching {
             val pm = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AntiGem:android-dev-setup").apply {
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "BoopIDE:android-dev-setup").apply {
                 setReferenceCounted(false)
                 acquire(3 * 60 * 60 * 1000L)
             }
@@ -490,7 +490,7 @@ object AndroidDevManager {
     }
 
     private suspend fun httpGet(url: String): String = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url(url).header("User-Agent", "AntiGem/${BuildConfig.VERSION_NAME}").build()
+        val request = Request.Builder().url(url).header("User-Agent", "BoopIDE/${BuildConfig.VERSION_NAME}").build()
         http.newCall(request).execute().use { response ->
             if (response.code == 404) throw IllegalStateException("Not found: $url (is the repository pushed and the source right?)")
             if (!response.isSuccessful) throw IllegalStateException("Download failed (HTTP ${response.code}): $url")

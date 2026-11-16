@@ -102,13 +102,13 @@ fun ReaScreen(
         }
         if (!state.termuxBuild) {
             InfoCard("Needs a com.termux build", cardBg, BorderStroke(1.dp, Amber.copy(alpha = 0.5f))) {
-                Hint("REA runs in a proot-distro Ubuntu container installed with Termux packages, which only work in AntiGem's com.termux builds. Install one of those builds from AntiGem's releases to use REA.")
+                Hint("REA runs in a proot-distro Ubuntu container installed with Termux packages, which only work in BoopIDE's com.termux builds. Install one of those builds from BoopIDE's releases to use REA.")
             }
             return@Column
         }
         if (!state.bootstrapInstalled) {
             InfoCard("Install the terminal first", cardBg, cardBorder) {
-                Hint("REA installs into AntiGem's terminal. Install it in Settings → Terminal & Shell, then come back here.")
+                Hint("REA installs into BoopIDE's terminal. Install it in Settings → Terminal & Shell, then come back here.")
             }
             return@Column
         }
@@ -124,7 +124,7 @@ fun ReaScreen(
             cardBg, cardBorder,
             badgeColor = if (state.filesUpdate != null) Amber else QuotaGreen
         ) {
-            Hint("REA's setup scripts (rea-setup.sh, the rea-mcp launcher and the default tool groups) are not part of the app. They are downloaded from the AntiGem plugins repository when you need them.")
+            Hint("REA's setup scripts (rea-setup.sh, the rea-mcp launcher and the default tool groups) are not part of the app. They are downloaded from the BoopIDE plugins repository when you need them.")
             SourceRow(state.source, enabled = !busy)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 when {
@@ -246,7 +246,7 @@ private fun ReaIntroCard(state: ReaManager.State, cardBg: Color, cardBorder: Bor
                     else -> Pill("Not set up", MaterialTheme.colorScheme.primary)
                 }
             }
-            Hint("Let agents take apart Android apps (APK, Flutter, React Native) and native code: decompile classes, read manifests and resources, inspect .so libraries, look at installed apps. REA is an open-source MCP server; AntiGem runs it in an Ubuntu container (proot-distro) inside the terminal.")
+            Hint("Let agents take apart Android apps (APK, Flutter, React Native) and native code: decompile classes, read manifests and resources, inspect .so libraries, look at installed apps. REA is an open-source MCP server; BoopIDE runs it in an Ubuntu container (proot-distro) inside the terminal.")
             Hint("Install only the parts you need. Everything for APK analysis takes about 1 GB.")
             TextButton(onClick = { openReaUrl(context, ReaManager.REA_HOMEPAGE) }, contentPadding = PaddingValues(0.dp)) {
                 Text("About REA (github.com/morluto/rea)", fontSize = 12.5.sp)
@@ -270,7 +270,7 @@ private fun SourceRow(source: String, enabled: Boolean) {
     OutlinedTextField(
         value = text, onValueChange = { text = it; error = null }, singleLine = true,
         label = { Text("owner/repo@branch") }, isError = error != null,
-        supportingText = { Text(error ?: "A fork of the AntiGem plugins repository, for testing changes to the setup.") },
+        supportingText = { Text(error ?: "A fork of the BoopIDE plugins repository, for testing changes to the setup.") },
         modifier = Modifier.fillMaxWidth()
     )
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -348,7 +348,7 @@ private fun InstallStep(state: ReaManager.State, cardBg: Color, cardBorder: Bord
             }
             if (!state.filesReady) Hint("The setup files are downloaded first.")
         } else {
-            Hint("Keep AntiGem open: the screen stays on while this runs. Stopping half way is safe; install the part again to finish it.")
+            Hint("Keep BoopIDE open: the screen stays on while this runs. Stopping half way is safe; install the part again to finish it.")
             OutlinedButton(onClick = ReaManager::stop, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
                 Icon(Icons.Outlined.StopCircle, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Stop")
             }
@@ -469,7 +469,7 @@ private fun SkillPluginCard(
         "REA skill for agents (optional)", cardBg, cardBorder,
         pill = if (state.pluginInstalled) "v${state.pluginVersion ?: "?"}" to QuotaGreen else "Optional" to MaterialTheme.colorScheme.primary
     ) {
-        Hint("A skills-only plugin from the AntiGem plugins repository. It teaches agents how to use REA well (installed apps, split APKs, Flutter, React Native, native code), to check that REA works and tell you what to fix, and how to install REA from the terminal if you prefer that to this page.")
+        Hint("A skills-only plugin from the BoopIDE plugins repository. It teaches agents how to use REA well (installed apps, split APKs, Flutter, React Native, native code), to check that REA works and tell you what to fix, and how to install REA from the terminal if you prefer that to this page.")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(enabled = !busy, onClick = ReaManager::installSkillPlugin) {
                 Icon(Icons.Outlined.Extension, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp))
@@ -488,16 +488,16 @@ private fun SkillPluginCard(
 private fun ManualSetupCard(state: ReaManager.State, cardBg: Color, cardBorder: BorderStroke) {
     var open by remember { mutableStateOf(false) }
     val repo = runCatching { com.example.gemini.ui.browser.PluginRepositories.parse(state.source) }.getOrNull()
-    val raw = "https://raw.githubusercontent.com/${repo?.slug ?: "Santoshkurmi/antigem_plugins"}/${repo?.ref?.ifBlank { "main" } ?: "main"}/rea/skills/rea/scripts"
+    val raw = "https://raw.githubusercontent.com/${repo?.slug ?: "Santoshkurmi/boopide_plugins"}/${repo?.ref?.ifBlank { "main" } ?: "main"}/rea/skills/rea/scripts"
     val steps = listOf(
         "1. Download the setup files" to
-            "mkdir -p \$PREFIX/share/antigem-rea && cd \$PREFIX/share/antigem-rea && for f in files.json rea-setup.sh rea-mcp rea-shell rea-filter.mjs groups.default.json; do curl -fsSLO $raw/\$f; done",
-        "2. See every step" to "bash \$PREFIX/share/antigem-rea/rea-setup.sh help",
+            "mkdir -p \$PREFIX/share/boopide-rea && cd \$PREFIX/share/boopide-rea && for f in files.json rea-setup.sh rea-mcp rea-shell rea-filter.mjs groups.default.json; do curl -fsSLO $raw/\$f; done",
+        "2. See every step" to "bash \$PREFIX/share/boopide-rea/rea-setup.sh help",
         "3. Install what APK analysis needs (or name single steps: container base java node rea jadx apktool native launcher)" to
-            "bash \$PREFIX/share/antigem-rea/rea-setup.sh android",
-        "4. Optional extras" to "bash \$PREFIX/share/antigem-rea/rea-setup.sh adb hermes debug firmware",
+            "bash \$PREFIX/share/boopide-rea/rea-setup.sh android",
+        "4. Optional extras" to "bash \$PREFIX/share/boopide-rea/rea-setup.sh adb hermes debug firmware",
         "5. Check it" to "rea-mcp --doctor",
-        "6. Connect it to an agent: in the app, use the REA preset in the agent's MCP settings. By hand, a stdio MCP server with this command and env (REA_MODE lazy = on demand, ≈0.7k tokens; direct = every tool, each costs context; REA_GROUPS all or group ids from ~/.config/antigem/rea/groups.json)" to
+        "6. Connect it to an agent: in the app, use the REA preset in the agent's MCP settings. By hand, a stdio MCP server with this command and env (REA_MODE lazy = on demand, ≈0.7k tokens; direct = every tool, each costs context; REA_GROUPS all or group ids from ~/.config/boopide/rea/groups.json)" to
             "${ReaManager.LAUNCHER}   REA_MODE=lazy  REA_GROUPS=all",
         "7. Run REA's tools by hand (hbc-decompiler, apktool, rea …) inside the container" to "rea-shell"
     )

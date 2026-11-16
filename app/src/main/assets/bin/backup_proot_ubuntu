@@ -1,12 +1,12 @@
 #!/bin/bash
 # ==============================================================================
-# AntiGem Ubuntu (PRoot) Rootfs Packager - run INSIDE the Ubuntu container
+# BoopIDE Ubuntu (PRoot) Rootfs Packager - run INSIDE the Ubuntu container
 # Entries are stored relative to the rootfs root (etc/, usr/, root/, ...).
 # ==============================================================================
 set -euo pipefail
 trap 'echo -e "\n\033[1;31m[ERROR]\033[0m Backup failed at line $LINENO: \x27$BASH_COMMAND\x27" >&2' ERR
 
-BACKUP_DIR="/sdcard/Download/Antigem/backups"
+BACKUP_DIR="/sdcard/Download/Boopide/backups"
 TIMESTAMP="$(date +"%Y-%m-%d-%H-%M-%S")"
 OUTPUT_ZIP="${1:-${BACKUP_DIR}/ubuntu_${TIMESTAMP}.zip}"
 TEMP_ZIP="/tmp/ubuntu-rootfs-bundle-${TIMESTAMP}.zip"
@@ -35,7 +35,7 @@ if ! apt-get clean 2>/dev/null; then
 fi
 
 # Virtual / Android bind-mounted paths: keep the empty directory, skip contents
-SKIP_CONTENT_DIRS=(proc sys dev tmp sdcard storage apex system system_ext vendor odm product data linkerconfig antigem)
+SKIP_CONTENT_DIRS=(proc sys dev tmp sdcard storage apex system system_ext vendor odm product data linkerconfig boopide)
 # Android bind-mounted files at rootfs root: skip entirely
 SKIP_FILES=(plat_property_contexts property_contexts)
 
@@ -49,7 +49,7 @@ EXCLUDE_PATTERNS=(
     "root/.gemini/*token*"
     "root/.bash_history"
     "root/.zsh_history"
-    "root/.antigem_bridge/*token*"
+    "root/.boopide_bridge/*token*"
     "support/*"
     "var/cache/apt/*.bin"
     "var/cache/apt/archives/*.deb"
@@ -93,7 +93,7 @@ TOTAL_FILES=$( { find . "${FIND_PRUNE[@]}" \
        -a ! -path "./root/.gemini/*token*" \
        -a ! -path "./root/.bash_history" \
        -a ! -path "./root/.zsh_history" \
-       -a ! -path "./root/.antigem_bridge/*token*" \
+       -a ! -path "./root/.boopide_bridge/*token*" \
        -a ! -path "./support/*" \
        -a ! -path "./var/cache/apt/*.bin" \
        -a ! -path "./var/lib/apt/lists/*_*" \
@@ -142,7 +142,7 @@ if [ ! -s "$TEMP_ZIP" ]; then
     exit 1
 fi
 
-echo "[2/3] Exporting archive to Antigem backups storage..."
+echo "[2/3] Exporting archive to Boopide backups storage..."
 mkdir -p "$(dirname "$OUTPUT_ZIP")"
 cp "$TEMP_ZIP" "$OUTPUT_ZIP"
 rm -f "$TEMP_ZIP"

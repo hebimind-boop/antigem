@@ -610,7 +610,7 @@ class AgyBridgeService(
                 if (filename.isBlank()) {
                     val sanitized = title.replace(Regex("[^a-zA-Z0-9._-]"), "_").take(40).ifBlank { "conversation" }
                     val timeStamp = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.US).format(java.util.Date())
-                    filename = "${sanitized}_${timeStamp}.antigem"
+                    filename = "${sanitized}_${timeStamp}.boopide"
                 }
 
                 Result.success(ExportedArchiveResult(bytes, filename, title))
@@ -684,7 +684,7 @@ class AgyBridgeService(
 
     /**
      * Clones a public https repository on the machine the bridge runs on and reports its output line by line.
-     * Returns the exit code (0 = cloned). The last lines are `ANTIGEM_CLONED_PATH=<dir>` or `ANTIGEM_EXIT=<code>`.
+     * Returns the exit code (0 = cloned). The last lines are `BOOPIDE_CLONED_PATH=<dir>` or `BOOPIDE_EXIT=<code>`.
      */
     suspend fun cloneRepository(
         repoUrl: String,
@@ -709,8 +709,8 @@ class AgyBridgeService(
                 response.body?.source()?.let { source ->
                     while (true) {
                         val line = source.readUtf8Line() ?: break
-                        if (line.startsWith("ANTIGEM_EXIT=")) exit = line.removePrefix("ANTIGEM_EXIT=").trim().toIntOrNull() ?: 1
-                        if (line.startsWith("ANTIGEM_CLONED_PATH=")) exit = 0
+                        if (line.startsWith("BOOPIDE_EXIT=")) exit = line.removePrefix("BOOPIDE_EXIT=").trim().toIntOrNull() ?: 1
+                        if (line.startsWith("BOOPIDE_CLONED_PATH=")) exit = 0
                         onLine(line)
                     }
                 }

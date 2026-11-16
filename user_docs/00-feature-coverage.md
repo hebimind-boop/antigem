@@ -1,6 +1,6 @@
 # 00 — Feature Coverage Matrix & Verification Proof
 
-This document provides exhaustive, code-verified proof that every UI component, screen folder, settings section, and assistant page in AntiGem is documented for users without exception.
+This document provides exhaustive, code-verified proof that every UI component, screen folder, settings section, and assistant page in BoopIDE is documented for users without exception.
 
 ## 1. Documentation File to Source File Audit Matrix
 
@@ -23,8 +23,8 @@ Every user guide in this documentation suite was audited against specific Kotlin
 | `13-settings-reference.md` | Complete Settings Reference | `ui/settings/SettingsDialog.kt`<br>`ui/settings/SettingsRows.kt`<br>`ui/settings/ServersSettingsScreen.kt`<br>`ui/settings/GitHubScreen.kt`<br>`ui/settings/AdbConnectScreen.kt`<br>`ui/settings/AndroidAutomationScreen.kt`<br>`ui/settings/X11DesktopScreen.kt`<br>`ui/settings/ChangelogScreen.kt`<br>`ui/settings/ThemeGallery.kt`<br>`ui/settings/ThemeQuickPanel.kt`<br>`ui/settings/SkillsAndPluginsSubScreen.kt`<br>`ui/settings/WebViewExtensionsScreen.kt`<br>`ui/settings/CustomSlashCommandsScreen.kt`<br>`ui/settings/ManageSpaceActivity.kt` | every SettingsSection entry, including the Jarvis sub-pages and the Manage space screen, conditional visibility logic (`com.termux`, local vs remote), exact toggle/button labels. |
 | `14-troubleshooting-and-diagnostics.md` | Diagnostics & Troubleshooting | `ui/settings/SettingsDialog.kt` (Diagnostics sub-screen)<br>`ui/components/FloatingDiagnosticsOverlay.kt`<br>`ui/components/NetworkInspectorDialog.kt`<br>`ui/components/FloatingNetworkInspectorBubble.kt` | Diagnostics sub-screen, floating diagnostics HUD, network inspector dialog & bubble, connection logs, troubleshooting symptoms and recovery walkthroughs. |
 | `15-faq-and-glossary.md` | FAQ & Technical Glossary | cross-cutting, no single source file | Conceptual definitions, terminology, architecture comparisons, token types, and tool execution principles synthesized across the entire app. |
-| `16-reverse-engineering-rea.md` | Reverse Engineering with REA | `ui/settings/ReaScreen.kt`<br>`ui/settings/ReaGroupsScreen.kt`<br>`data/rea/ReaManager.kt`<br>`ui/settings/SettingsDialog.kt` (REA row, Antigravity REA preset)<br>`ui/claude/ClaudeSettingsScreen.kt`, `ui/opencode/OpenCodeMcpPage.kt` (REA preset)<br>`antigem_plugins/rea/` (setup scripts and skill, downloaded at run time) | REA page steps (setup files, modular install with Stop and keep-screen-on, tool groups, connecting to an agent, health check, skill plugin, phone access, terminal setup, remove), Tool groups editor, the REA preset and its dialog (modes, groups, token estimates) in every agent's MCP settings. |
-| `17-android-development.md` | Building Android Apps on the Phone | `ui/settings/AndroidDevScreen.kt`<br>`data/androiddev/AndroidDevManager.kt`<br>`ui/settings/SettingsDialog.kt` (Android Development row)<br>`antigem_plugins/android-dev/` (setup scripts and skill, downloaded at run time) | Android Development page steps (setup files, per-framework install with Stop and keep-screen-on, single parts, test builds with Install, usage guide, skill plugin, ADB Connect link, tool check, terminal setup, free space / remove), the `adev` / `adev-new` commands. |
+| `16-reverse-engineering-rea.md` | Reverse Engineering with REA | `ui/settings/ReaScreen.kt`<br>`ui/settings/ReaGroupsScreen.kt`<br>`data/rea/ReaManager.kt`<br>`ui/settings/SettingsDialog.kt` (REA row, Antigravity REA preset)<br>`ui/claude/ClaudeSettingsScreen.kt`, `ui/opencode/OpenCodeMcpPage.kt` (REA preset)<br>`boopide_plugins/rea/` (setup scripts and skill, downloaded at run time) | REA page steps (setup files, modular install with Stop and keep-screen-on, tool groups, connecting to an agent, health check, skill plugin, phone access, terminal setup, remove), Tool groups editor, the REA preset and its dialog (modes, groups, token estimates) in every agent's MCP settings. |
+| `17-android-development.md` | Building Android Apps on the Phone | `ui/settings/AndroidDevScreen.kt`<br>`data/androiddev/AndroidDevManager.kt`<br>`ui/settings/SettingsDialog.kt` (Android Development row)<br>`boopide_plugins/android-dev/` (setup scripts and skill, downloaded at run time) | Android Development page steps (setup files, per-framework install with Stop and keep-screen-on, single parts, test builds with Install, usage guide, skill plugin, ADB Connect link, tool check, terminal setup, free space / remove), the `adev` / `adev-new` commands. |
 
 ---
 
@@ -58,11 +58,11 @@ The settings dialog dynamically filters visible rows based on build flavor, inst
 
 | Enum Name | Title & Subtitle in Code | Visibility Condition | Documented In | Section Reference |
 | :--- | :--- | :--- | :--- | :--- |
-| `MAIN` | **Settings & Preferences** (*"Configure your AntiGem experience"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Overview |
+| `MAIN` | **Settings & Preferences** (*"Configure your BoopIDE experience"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Overview |
 | `THEMES` | **Themes** (*"Light and dark mode, and the theme gallery"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Section 2a |
 | `APPEARANCE` | **Appearance** (*"Chat text size, chat list, header icons and the app switcher"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Section 2b |
 | `SERVERS` | **Servers & Connectivity** (*"Configure AGY Hub and IDE Bridge endpoints"*) | Always visible | [12-server-mode-and-remote-access.md](12-server-mode-and-remote-access.md) | Whole document & Section 2 |
-| `WEBVIEW_EXTENSIONS` | **Custom AntiGem Plugins** (*"Install and manage plugins: MCP tools and skills"*) | Always visible | [10-plugins-and-skills.md](10-plugins-and-skills.md) | Section 2 & Section 4 |
+| `WEBVIEW_EXTENSIONS` | **Custom BoopIDE Plugins** (*"Install and manage plugins: MCP tools and skills"*) | Always visible | [10-plugins-and-skills.md](10-plugins-and-skills.md) | Section 2 & Section 4 |
 | `SLASH_COMMANDS` | **Slash Commands** (*"Your own / commands and what they expand to"*) | Always visible | [10-plugins-and-skills.md](10-plugins-and-skills.md) | Section 3 & Section 5 |
 | `MCP` | **MCP Servers** (*"Model Context Protocol tools & integrations"*) | Always visible | [09-mcp-servers-and-tools.md](09-mcp-servers-and-tools.md) | Whole document & Section 6 |
 | `SKILLS_PLUGINS` | **Skills & Plugins** (*"Agent capabilities, Google plugins, and extensions"*) | Always visible | [10-plugins-and-skills.md](10-plugins-and-skills.md) | Section 1 & Section 7 |
@@ -84,10 +84,10 @@ The settings dialog dynamically filters visible rows based on build flavor, inst
 | `TERMUX_SUPPORT` | **Termux Support** (*"Termux:API and the X11 desktop"*) | **Conditional**: Visible only in the `com.termux` package build. Displays `"Standalone"` warning if not Shared UID. | [13-settings-reference.md](13-settings-reference.md) | Section 22 |
 | `TERMUX_API` | **Termux:API** (*"How termux-api commands are handled"*) | Accessible from Termux Support (external app requires Shared UID) | [13-settings-reference.md](13-settings-reference.md) | Section 23 |
 | `X11_DESKTOP` | **X11 Desktop** (*"Linux desktop apps with Termux:X11"*) | Accessible from Termux Support (requires Shared UID for full speed) | [13-settings-reference.md](13-settings-reference.md) | Section 24 |
-| `CHANGELOG` | **What's new** (*"Every AntiGem version and what changed"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Section 25 |
+| `CHANGELOG` | **What's new** (*"Every BoopIDE version and what changed"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Section 25 |
 | `ABOUT` | **About & Info** (*"App version, package details, and bridge export"*) | Always visible | [13-settings-reference.md](13-settings-reference.md) | Section 26 |
 
-*(Note on `Manage space`: The AntiGem Space Manager (`ManageSpaceActivity.kt`) is a dedicated system activity accessed via Android Settings → Apps → AntiGem → Storage → Manage space. It is not an enum in `SettingsSection`, but is a real app screen fully documented in [13-settings-reference.md](13-settings-reference.md) and [14-troubleshooting-and-diagnostics.md](14-troubleshooting-and-diagnostics.md)).*
+*(Note on `Manage space`: The BoopIDE Space Manager (`ManageSpaceActivity.kt`) is a dedicated system activity accessed via Android Settings → Apps → BoopIDE → Storage → Manage space. It is not an enum in `SettingsSection`, but is a real app screen fully documented in [13-settings-reference.md](13-settings-reference.md) and [14-troubleshooting-and-diagnostics.md](14-troubleshooting-and-diagnostics.md)).*
 
 *(Note on `UTILITIES`: The `UTILITIES` enum in code does not appear in the settings menu because `utilityRows()` returns empty; its former sub-tools—GitHub, ADB Connect, and Android Automation—now each have their own independent, top-level settings rows).*
 

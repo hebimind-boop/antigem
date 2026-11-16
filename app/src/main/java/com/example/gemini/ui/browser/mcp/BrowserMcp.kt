@@ -495,9 +495,9 @@ object BrowserMcp {
     private fun agentSource(context: Context): String = agentSource
         ?: context.assets.open("browser-mcp/page-agent.js").bufferedReader().use { it.readText() }.also { agentSource = it }
 
-    /** Calls window.__antigemAgent.[fn] in the page (injecting the helper when missing) and returns its JSON result. */
+    /** Calls window.__boopideAgent.[fn] in the page (injecting the helper when missing) and returns its JSON result. */
     private suspend fun agent(context: Context, tab: BrowserTabSession, fn: String, vararg args: Any?): JSONObject {
-        val call = "(function(){try{var a=window.__antigemAgent;if(!a||a.version!==$AGENT_VERSION)return JSON.stringify({__missing:true});" +
+        val call = "(function(){try{var a=window.__boopideAgent;if(!a||a.version!==$AGENT_VERSION)return JSON.stringify({__missing:true});" +
             "return JSON.stringify(a.$fn.apply(a,${JSONArray(args.toList())}));}catch(e){return JSON.stringify({ok:false,error:String(e&&e.message||e)});}})()"
         repeat(3) {
             val raw = pageWait(10_000) { manager.evaluateJs(tab.id, call) }

@@ -283,7 +283,7 @@ internal fun ServersSubScreen(
             if (o.has("sshPass")) { sshPass = o.optString("sshPass"); sshKey = o.optString("sshKey"); sshPassphrase = o.optString("sshPassphrase") }
             edgeName = o.optString("edgeName").ifBlank { AuthPreferences.DEFAULT_EDGE_HEADER_NAME }
             if (o.has("edgeValue")) edgeValue = o.optString("edgeValue")
-            remoteInstallDir = o.optString("installDir").ifBlank { ".antigem" }
+            remoteInstallDir = o.optString("installDir").ifBlank { ".boopide" }
             remoteBridgeBin = o.optString("bridgeBin").ifBlank { RemoteServerManager.defaultBridgeBin(remoteInstallDir) }
             remoteAgyBin = o.optString("agyBin").ifBlank { RemoteServerManager.DEFAULT_AGY_BIN }
             remoteClaudeBin = o.optString("claudeBin").ifBlank { RemoteServerManager.DEFAULT_CLAUDE_BIN }
@@ -664,7 +664,7 @@ internal fun ServersSubScreen(
                 OutlinedTextField(
                     value = hubText,
                     onValueChange = { hubText = it; saveFeedback = null; hubTestStatus = null },
-                    label = { Text("AGY Hub address") },
+                    label = { Text("Boop Hub address") },
                     placeholder = { Text(if (remote && !tunnel) "https://hub.example.com" else AuthPreferences.DEFAULT_HUB_URL) },
                     modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
@@ -787,8 +787,8 @@ internal fun ServersSubScreen(
                             enabled = edgeValue.isNotBlank(),
                             onClick = {
                                 val nginxVar = "http_" + edgeName.trim().lowercase().replace('-', '_')
-                                val snippet = "map \$$nginxVar \$antigem_key_ok { default 0; \"${edgeValue.trim()}\" 1; }\n\n" +
-                                    "# put this in every server { } block of the bridge and of the hub:\nif (\$antigem_key_ok = 0) { return 444; }"
+                                val snippet = "map \$$nginxVar \$boopide_key_ok { default 0; \"${edgeValue.trim()}\" 1; }\n\n" +
+                                    "# put this in every server { } block of the bridge and of the hub:\nif (\$boopide_key_ok = 0) { return 444; }"
                                 val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? android.content.ClipboardManager
                                 cm?.setPrimaryClip(android.content.ClipData.newPlainText("nginx rule", snippet))
                                 Toast.makeText(context, "nginx rule copied", Toast.LENGTH_SHORT).show()
@@ -990,14 +990,14 @@ internal fun ServersSubScreen(
                         Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
                             Text("Binary Executable Paths", fontSize = 14.5.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                            Text("Custom paths used when auto-starting IDE Bridge, AGY Hub, Claude Code and OpenCode", fontSize = 11.5.sp, color = subtle)
+                            Text("Custom paths used when auto-starting IDE Bridge, Boop Hub, Claude Code and OpenCode", fontSize = 11.5.sp, color = subtle)
                         }
                     }
                     Spacer(Modifier.height(14.dp))
                     OutlinedTextField(bridgeBinPath, { bridgeBinPath = it; saveFeedback = null }, label = { Text("IDE Bridge Binary Path") },
                         placeholder = { Text(authPrefs.getDefaultBridgeBinaryPath()) }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp))
                     Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(agyBinPath, { agyBinPath = it; saveFeedback = null }, label = { Text("AGY Hub Binary Path") },
+                    OutlinedTextField(agyBinPath, { agyBinPath = it; saveFeedback = null }, label = { Text("Boop Hub Binary Path") },
                         placeholder = { Text(authPrefs.getDefaultAgyBinaryPath()) }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp))
                     Spacer(Modifier.height(10.dp))
                     OutlinedTextField(claudeBinPath, { claudeBinPath = it; saveFeedback = null }, label = { Text("Claude Code Binary Path") },
@@ -1120,7 +1120,7 @@ internal fun ServersSubScreen(
                 val bridge = AuthPreferences.normalizeServerUrl(bridgeText, BuildConfig.BRIDGE_PORT)
                 val problem = when {
                     bridge == null -> "The IDE Bridge address is not valid."
-                    hub == null -> "The AGY Hub address is not valid."
+                    hub == null -> "The Boop Hub address is not valid."
                     remote && tunnel && (!AuthPreferences.isLoopbackHost(AuthPreferences.hostOf(bridge)) || !AuthPreferences.isLoopbackHost(AuthPreferences.hostOf(hub))) ->
                         "In SSH tunnel mode both addresses are 127.0.0.1 with the port the service listens on at the server, e.g. http://127.0.0.1:${BuildConfig.BRIDGE_PORT}."
                     remote && tunnel && (bridge.startsWith("https://") || hub.startsWith("https://")) ->

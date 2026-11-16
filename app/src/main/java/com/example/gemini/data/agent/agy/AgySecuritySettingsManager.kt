@@ -71,7 +71,7 @@ class AgySecuritySettingsManager(
                 _globalSecuritySettings.value = globalRes.getOrNull()
                 _globalSettingsError.value = null
             } else {
-                val err = globalRes.exceptionOrNull()?.message ?: "Failed to connect to AGY Hub"
+                val err = globalRes.exceptionOrNull()?.message ?: "Failed to connect to Boop Hub"
                 _globalSettingsError.value = err
                 _globalSecuritySettings.value = null
             }

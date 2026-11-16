@@ -61,7 +61,7 @@ import kotlin.math.roundToInt
 
 /** The last folder the Run panel worked in, and the recent ones, kept across app starts. */
 private class RunPanelPrefs(context: Context) {
-    private val prefs = context.getSharedPreferences("antigem_run_panel", Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences("boopide_run_panel", Context.MODE_PRIVATE)
     var folder: String?
         get() = prefs.getString("folder", null)
         set(value) { prefs.edit().putString("folder", value).apply() }
@@ -412,9 +412,9 @@ private fun CommandsView(
             when (filter) {
                 CommandFilter.PROJECT -> {
                     if (folder.isBlank()) {
-                        item { EmptyHint("Pick a folder above: its commands are saved in .antigem/run.json inside it.") }
+                        item { EmptyHint("Pick a folder above: its commands are saved in .boopide/run.json inside it.") }
                     } else {
-                        if (projectFileBroken) item { Banner(".antigem/run.json in this folder isn't valid JSON. Fix it (or delete it) to see its commands.", AppColors.danger) }
+                        if (projectFileBroken) item { Banner(".boopide/run.json in this folder isn't valid JSON. Fix it (or delete it) to see its commands.", AppColors.danger) }
                         if (usableProject.isEmpty() && !loading && !projectFileBroken) {
                             item {
                                 EmptyHint(
@@ -703,8 +703,8 @@ private fun CommandEditorDialog(
                     FilterPill("Global (any folder)", selected = global) { global = true }
                 }
                 Text(
-                    if (global) "Kept in the app's home (~/.antigem/global-run.json); runs in the folder picked in the panel."
-                    else "Saved in the project's .antigem/run.json, which the IDE and the agents use too.",
+                    if (global) "Kept in the app's home (~/.boopide/global-run.json); runs in the folder picked in the panel."
+                    else "Saved in the project's .boopide/run.json, which the IDE and the agents use too.",
                     fontSize = 11.5.sp, color = AppColors.editorMuted
                 )
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {

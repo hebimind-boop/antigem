@@ -33,10 +33,10 @@ import java.util.concurrent.TimeUnit
  * Settings → X11 Desktop: sets up Termux:X11 (the app that shows the desktop, its companion
  * termux package with the `termux-x11` command, and a desktop such as XFCE) and starts/stops it.
  *
- * Only for the Shared UID com.termux build: it uses AntiGem's own Termux:X11 build
- * (github.com/Santoshkurmi/termux-x11), signed with AntiGem's key. That app joins AntiGem's UID and
+ * Only for the Shared UID com.termux build: it uses BoopIDE's own Termux:X11 build
+ * (github.com/Santoshkurmi/termux-x11), signed with BoopIDE's key. That app joins BoopIDE's UID and
  * process, so Android keeps the desktop at full speed while it is on screen. Its companion package is
- * antigem-termux-x11 from the same release; the official termux-x11-nightly's loader only starts the
+ * boopide-termux-x11 from the same release; the official termux-x11-nightly's loader only starts the
  * official Termux:X11, so it is replaced when found.
  */
 object X11DesktopManager {
@@ -44,16 +44,16 @@ object X11DesktopManager {
     private const val PREFS = "x11_desktop"
 
     const val X11_PACKAGE = "com.termux.x11"
-    const val COMPANION_ANTIGEM = "antigem-termux-x11"
+    const val COMPANION_BOOPIDE = "boopide-termux-x11"
     const val COMPANION_OFFICIAL = "termux-x11-nightly"
 
     private const val FORK_REPO = "Santoshkurmi/termux-x11"
     const val FORK_RELEASES_PAGE = "https://github.com/$FORK_REPO/releases/latest"
-    private const val FORK_APK_URL = "https://github.com/$FORK_REPO/releases/latest/download/antigem-termux-x11-sharedUid.apk"
+    private const val FORK_APK_URL = "https://github.com/$FORK_REPO/releases/latest/download/boopide-termux-x11-sharedUid.apk"
     private const val FORK_RELEASE_API = "https://api.github.com/repos/$FORK_REPO/releases/latest"
 
     private const val DISPLAY = ":0"
-    private const val LOG_FILE = "antigem-x11.log"
+    private const val LOG_FILE = "boopide-x11.log"
     private const val KEEP_CONFIGS = "-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
 
     /** Desktops offered in the picker: the x11-repo package to install, and the command that starts a session. */
@@ -74,10 +74,10 @@ object X11DesktopManager {
 
     data class AppInfo(
         val versionName: String?,
-        /** Shares AntiGem's UID (and so its process): AntiGem's own build on the Shared UID build. */
+        /** Shares BoopIDE's UID (and so its process): BoopIDE's own build on the Shared UID build. */
         val sameProcess: Boolean,
-        /** Signed with AntiGem's key (AntiGem's build); otherwise the official one. */
-        val antigemBuild: Boolean
+        /** Signed with BoopIDE's key (BoopIDE's build); otherwise the official one. */
+        val boopideBuild: Boolean
     )
 
     data class State(
@@ -85,7 +85,7 @@ object X11DesktopManager {
         val bootstrapInstalled: Boolean = false,
         /** Null when Termux:X11 is not installed. */
         val app: AppInfo? = null,
-        /** The installed companion package (antigem-termux-x11 or termux-x11-nightly), or null. */
+        /** The installed companion package (boopide-termux-x11 or termux-x11-nightly), or null. */
         val companion: String? = null,
         val dbusInstalled: Boolean = false,
         val installedDesktops: Set<Desktop> = emptySet(),
@@ -100,10 +100,10 @@ object X11DesktopManager {
         val message: String? = null,
         val isError: Boolean = false
     ) {
-        /** The companion package whose loader starts AntiGem's Termux:X11. */
-        val neededCompanion: String get() = COMPANION_ANTIGEM
+        /** The companion package whose loader starts BoopIDE's Termux:X11. */
+        val neededCompanion: String get() = COMPANION_BOOPIDE
 
-        /** Only AntiGem's Termux:X11, sharing AntiGem's UID, runs inside AntiGem. */
+        /** Only BoopIDE's Termux:X11, sharing BoopIDE's UID, runs inside BoopIDE. */
         val appOk: Boolean get() = app?.sameProcess == true
         val companionOk: Boolean get() = companion == neededCompanion
         val desktopOk: Boolean get() = desktop in installedDesktops && dbusInstalled
@@ -164,7 +164,7 @@ object X11DesktopManager {
         val prefix = LocalEnvironmentManager.getPrefixDir(ctx)
         val bin = LocalEnvironmentManager.getBinDir(ctx)
         val dpkgInfo = File(prefix, "var/lib/dpkg/info")
-        val companion = listOf(COMPANION_ANTIGEM, COMPANION_OFFICIAL).firstOrNull { File(dpkgInfo, "$it.list").exists() }
+        val companion = listOf(COMPANION_BOOPIDE, COMPANION_OFFICIAL).firstOrNull { File(dpkgInfo, "$it.list").exists() }
             ?.takeIf { File(bin, "termux-x11").exists() }
         _state.update {
             it.copy(
@@ -190,13 +190,13 @@ object X11DesktopManager {
         return AppInfo(
             versionName = info.versionName,
             sameProcess = info.applicationInfo?.uid == Process.myUid(),
-            antigemBuild = pm.checkSignatures(ctx.packageName, X11_PACKAGE) == PackageManager.SIGNATURE_MATCH
+            boopideBuild = pm.checkSignatures(ctx.packageName, X11_PACKAGE) == PackageManager.SIGNATURE_MATCH
         )
     }
 
     /**
      * The X server's processes. `termux-x11` starts it with app_process --nice-name="termux-x11 com.termux.x11 …",
-     * and it runs under AntiGem's UID (it is a child of the terminal), so /proc shows it to us.
+     * and it runs under BoopIDE's UID (it is a child of the terminal), so /proc shows it to us.
      */
     private fun xServerPids(): List<Int> = File("/proc").listFiles().orEmpty().mapNotNull { dir ->
         val pid = dir.name.toIntOrNull() ?: return@mapNotNull null
@@ -207,10 +207,10 @@ object X11DesktopManager {
 
     // ---------------- step 1: the Termux:X11 app ----------------
 
-    /** Downloads AntiGem's Termux:X11 build and opens the system installer. */
+    /** Downloads BoopIDE's Termux:X11 build and opens the system installer. */
     fun installApp() = runTask(Task.APP) {
         val url = FORK_APK_URL
-        appendLog("Downloading AntiGem's Termux:X11 build…")
+        appendLog("Downloading BoopIDE's Termux:X11 build…")
         appendLog(url)
         val dir = File(appContext.externalCacheDir ?: appContext.cacheDir, "x11").apply { mkdirs() }
         val apk = File(dir, "termux-x11.apk")
@@ -220,11 +220,11 @@ object X11DesktopManager {
         if (opened) {
             appendLog("Opened the installer. Confirm the install there.")
         } else {
-            report("Allow AntiGem to install apps (the settings page that just opened), then tap Install again.", isError = true)
+            report("Allow BoopIDE to install apps (the settings page that just opened), then tap Install again.", isError = true)
         }
     }
 
-    /** Opens the system uninstall dialog for Termux:X11 (needed to switch between the official and AntiGem builds). */
+    /** Opens the system uninstall dialog for Termux:X11 (needed to switch between the official and BoopIDE builds). */
     fun uninstallApp(context: Context) {
         runCatching {
             context.startActivity(
@@ -237,16 +237,16 @@ object X11DesktopManager {
 
     fun installCompanion() = runTask(Task.COMPANION) {
         val enableRepo = "apt-get update && apt-get install -y $KEEP_CONFIGS x11-repo && apt-get update"
-        val deb = File(LocalEnvironmentManager.getTmpDir(appContext), "$COMPANION_ANTIGEM.deb")
-        appendLog("Finding the latest $COMPANION_ANTIGEM package…")
+        val deb = File(LocalEnvironmentManager.getTmpDir(appContext), "$COMPANION_BOOPIDE.deb")
+        appendLog("Finding the latest $COMPANION_BOOPIDE package…")
         val url = latestForkDebUrl()
         appendLog(url)
-        download(url, deb) { pct -> _state.update { it.copy(progress = "Downloading $COMPANION_ANTIGEM… $pct") } }
+        download(url, deb) { pct -> _state.update { it.copy(progress = "Downloading $COMPANION_BOOPIDE… $pct") } }
         appendLog("✓ Downloaded ${deb.length() / 1024} KB")
         // A path (not a name) makes apt install the file and pull its dependency (xkeyboard-config) from x11-repo;
         // it also removes termux-x11-nightly, which it conflicts with
         val command = "$enableRepo && apt-get install -y $KEEP_CONFIGS '${deb.absolutePath}'; s=\$?; rm -f '${deb.absolutePath}'; exit \$s"
-        shellTask("Installing $COMPANION_ANTIGEM…", command, 1800)
+        shellTask("Installing $COMPANION_BOOPIDE…", command, 1800)
     }
 
     // ---------------- step 3: a desktop ----------------
@@ -391,7 +391,7 @@ object X11DesktopManager {
     private fun appendLog(line: String) =
         _state.update { it.copy(log = (it.log + line).takeLast(400)) }
 
-    private fun userAgent() = "AntiGem/${BuildConfig.VERSION_NAME}"
+    private fun userAgent() = "BoopIDE/${BuildConfig.VERSION_NAME}"
 
     /** The companion .deb of the fork's latest release (its file name carries the version). */
     private suspend fun latestForkDebUrl(): String = withContext(Dispatchers.IO) {
@@ -404,10 +404,10 @@ object X11DesktopManager {
             val assets = JSONObject(response.body?.string().orEmpty()).optJSONArray("assets")
                 ?: throw IllegalStateException("The latest release has no files.")
             (0 until assets.length()).map { assets.getJSONObject(it) }
-                .firstOrNull { it.optString("name").let { n -> n.startsWith(COMPANION_ANTIGEM) && n.endsWith("-all.deb") } }
+                .firstOrNull { it.optString("name").let { n -> n.startsWith(COMPANION_BOOPIDE) && n.endsWith("-all.deb") } }
                 ?.optString("browser_download_url")
                 ?.takeIf { it.isNotBlank() }
-                ?: throw IllegalStateException("The latest release has no $COMPANION_ANTIGEM .deb file.")
+                ?: throw IllegalStateException("The latest release has no $COMPANION_BOOPIDE .deb file.")
         }
     }
 

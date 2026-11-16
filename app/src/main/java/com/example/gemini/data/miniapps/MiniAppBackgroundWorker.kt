@@ -83,7 +83,7 @@ class MiniAppBackgroundWorker(context: Context, params: WorkerParameters) : Coro
         try {
             withContext(Dispatchers.Main) {
                 val host = BackgroundTaskHost(ctx) { done.complete(false to "The page crashed") }
-                page = MiniAppPage(host, app, "_antigem/background.html", BackgroundTask(name, reason, UUID.randomUUID().toString(), data) { ok, error -> done.complete(ok to error) })
+                page = MiniAppPage(host, app, "_boopide/background.html", BackgroundTask(name, reason, UUID.randomUUID().toString(), data) { ok, error -> done.complete(ok to error) })
                     .also { it.load() }
             }
             return done.await()

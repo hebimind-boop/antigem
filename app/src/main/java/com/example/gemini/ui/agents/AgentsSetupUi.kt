@@ -58,7 +58,7 @@ private val AGENT_OPTIONS = listOf(
     AgentOption(
         AgentKind.AGY,
         "Antigravity",
-        "Google's coding agent through the agy hub: Gemini and Claude models on your Google plan."
+        "Google's coding agent through the Boop Hub: Gemini and Claude models on your Google plan."
     ),
     AgentOption(
         AgentKind.CLAUDE,

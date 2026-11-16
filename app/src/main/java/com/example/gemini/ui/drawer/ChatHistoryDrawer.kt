@@ -474,7 +474,7 @@ fun ChatHistoryDrawer(
             },
             title = {
                 Text(
-                    text = "Exit AntiGem?",
+                    text = "Exit BoopIDE?",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -631,7 +631,7 @@ fun ChatHistoryDrawer(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "AntiGem",
+                    text = "BoopIDE",
                     fontSize = 19.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.3).sp,
@@ -1914,7 +1914,7 @@ private fun ChatHistoryItemRow(
                     },
                     onClick = {
                         menuExpanded = false
-                        com.example.gemini.ui.components.AppToastHelper.showToast("Preparing .antigem share...", com.example.gemini.ui.components.ChatToastType.INFO)
+                        com.example.gemini.ui.components.AppToastHelper.showToast("Preparing .boopide share...", com.example.gemini.ui.components.ChatToastType.INFO)
                         scope.launch(Dispatchers.IO) {
                             ConversationShareHelper.shareConversation(
                                 context = context,

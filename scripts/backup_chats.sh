@@ -17,7 +17,7 @@ set -euo pipefail
 
 HOME_DIR="${HOME:-/data/data/com.termux/files/home}"
 GEMINI_DIR="${HOME_DIR}/.gemini"
-BACKUP_DIR="/sdcard/Download/Antigem/backups"
+BACKUP_DIR="/sdcard/Download/Boopide/backups"
 TIMESTAMP="$(date +"%Y-%m-%d-%H-%M-%S")"
 ZIP_BASENAME="agy_chats_backup_${TIMESTAMP}.zip"
 OUTPUT_ZIP="${1:-${BACKUP_DIR}/${ZIP_BASENAME}}"
@@ -108,7 +108,7 @@ END {
 }
 '
 
-echo "[3/3] Exporting backup archive to Antigem backups storage..."
+echo "[3/3] Exporting backup archive to Boopide backups storage..."
 mkdir -p "$(dirname "$OUTPUT_ZIP")"
 cp "$TEMP_ZIP" "$OUTPUT_ZIP"
 rm -f "$TEMP_ZIP"

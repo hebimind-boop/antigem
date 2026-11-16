@@ -5,11 +5,11 @@ import com.example.gemini.ui.browser.BrowserExtensionManager
 
 /**
  * Turns `/plu:<plugin>[:<skill>]` and custom slash commands into instructions for the model when a message is sent.
- * Each expansion is wrapped in an `<antigem-expansion command="…">` block; [collapse] puts the command back for
+ * Each expansion is wrapped in an `<boopide-expansion command="…">` block; [collapse] puts the command back for
  * display, so the chat shows what the user typed even after the history is reloaded from the backend.
  */
 object PromptExpansion {
-    private const val TAG = "antigem-expansion"
+    private const val TAG = "boopide-expansion"
     // `/plu:<plugin>:` with no skill after the colon (left by the picker) counts as `/plu:<plugin>`
     private val TOKEN = Regex("(?<=^|\\s)/(plu:[A-Za-z0-9_-]+(?::[A-Za-z0-9._-]*)?|[A-Za-z0-9][A-Za-z0-9_-]{0,47})(?=\\s|$)")
     private val BLOCK = Regex("<$TAG command=\"([^\"]*)\">[\\s\\S]*?</$TAG>")

@@ -21,7 +21,7 @@ data class MiniApp(
     val folder: File,
     val entry: String,
     val iconFile: File?,
-    /** Status bar / splash color from the manifest; null = follow the AntiGem theme. */
+    /** Status bar / splash color from the manifest; null = follow the BoopIDE theme. */
     val themeColor: Int?,
     /**
      * Declared permissions, normalized: name → spec, e.g. "network" → {"hosts": [...]}, "mcp:notes_mcp" → {},
@@ -31,7 +31,7 @@ data class MiniApp(
     val permissions: Map<String, JSONObject>,
     /** Permissions without which the app doesn't open at all (manifest "required_permissions", expanded). */
     val required: Set<String> = emptySet(),
-    /** Access ("read" | "write" | "readwrite") for folders the user picks at runtime (AntiGem.fs.pickFolder); null = not allowed. */
+    /** Access ("read" | "write" | "readwrite") for folders the user picks at runtime (BoopIDE.fs.pickFolder); null = not allowed. */
     val storagePick: String? = null,
     /** What other apps may send it: [action → mime patterns], from the manifest's "intents". */
     val intents: List<Pair<String, List<String>>> = emptyList(),
@@ -63,20 +63,20 @@ data class MiniApp(
 /**
  * Where mini apps live and how they are found.
  * Apps: ~/mini-apps/<folder>/manifest.json. Data (outside the app folder, so the agent's edits never touch it):
- * ~/.antigem/mini-apps/<id>/ — kv.db, idb.db, files/ (the app's private "data/" folder), console.log, net-cache/.
+ * ~/.boopide/mini-apps/<id>/ — kv.db, idb.db, files/ (the app's private "data/" folder), console.log, net-cache/.
  */
 object MiniApps {
     private const val TAG = "MiniApps"
     const val SDK_VERSION = 1
     /** Every app gets its own origin under this (reserved, never resolvable) domain, so web storage never mixes. */
-    const val DOMAIN = "antigem.invalid"
+    const val DOMAIN = "boopide.invalid"
     private val ID_RE = Regex("^[A-Za-z0-9][A-Za-z0-9._-]{0,99}$")
 
     val KNOWN_PERMISSIONS = listOf("network", "localhost", "storage", "notifications", "background", "clipboard", "camera", "microphone")
 
     fun home(context: Context): File = LocalEnvironmentManager.getHomeDir(context)
     fun appsDir(context: Context) = File(home(context), "mini-apps")
-    fun dataRoot(context: Context) = File(home(context), ".antigem/mini-apps")
+    fun dataRoot(context: Context) = File(home(context), ".boopide/mini-apps")
     fun dataDir(context: Context, id: String) = File(dataRoot(context), id)
     fun filesDir(context: Context, id: String) = File(dataDir(context, id), "files").also { it.mkdirs() }
 
@@ -374,7 +374,7 @@ object MiniApps {
                 }
                 continue
             }
-            // the PC signing tool follows this AntiGem version (it isn't an app the user owns)
+            // the PC signing tool follows this BoopIDE version (it isn't an app the user owns)
             if (name == "tools") { runCatching { syncAssetDir(context, path, File(dir, name)) }; continue }
             if (name in done) continue
             val target = File(dir, name)
@@ -382,7 +382,7 @@ object MiniApps {
             done += name
         }
         prefs.edit().putStringSet("installed_samples", done).apply()
-        // the full guide, in step with this version of AntiGem (the developer MCP serves the same pages)
+        // the full guide, in step with this version of BoopIDE (the developer MCP serves the same pages)
         runCatching { syncAssetDir(context, "mini-app-docs", File(dir, "docs")) }.onFailure { Log.w(TAG, "Docs: ${it.message}") }
     }
 

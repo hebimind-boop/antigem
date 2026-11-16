@@ -92,13 +92,13 @@ fun AndroidDevScreen(
         }
         if (!state.termuxBuild) {
             DevInfoCard("Needs a com.termux build", cardBg, BorderStroke(1.dp, Amber.copy(alpha = 0.5f))) {
-                Hint("The build tools run in a proot-distro Ubuntu container installed with Termux packages, which only work in AntiGem's com.termux builds. Install one of those builds from AntiGem's releases to build apps on the phone.")
+                Hint("The build tools run in a proot-distro Ubuntu container installed with Termux packages, which only work in BoopIDE's com.termux builds. Install one of those builds from BoopIDE's releases to build apps on the phone.")
             }
             return@Column
         }
         if (!state.bootstrapInstalled) {
             DevInfoCard("Install the terminal first", cardBg, cardBorder) {
-                Hint("The tools install into AntiGem's terminal. Install it in Settings → Terminal & Shell, then come back here.")
+                Hint("The tools install into BoopIDE's terminal. Install it in Settings → Terminal & Shell, then come back here.")
             }
             return@Column
         }
@@ -114,7 +114,7 @@ fun AndroidDevScreen(
             cardBg, cardBorder,
             badgeColor = if (state.filesUpdate != null) Amber else QuotaGreen
         ) {
-            Hint("The setup script (android-setup.sh) and the adev commands are not part of the app. They are downloaded from the AntiGem plugins repository when you need them.")
+            Hint("The setup script (android-setup.sh) and the adev commands are not part of the app. They are downloaded from the BoopIDE plugins repository when you need them.")
             DevSourceRow(state.source, enabled = !busy)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 when {
@@ -229,7 +229,7 @@ private fun DevSourceRow(source: String, enabled: Boolean) {
     OutlinedTextField(
         value = text, onValueChange = { text = it; error = null }, singleLine = true,
         label = { Text("owner/repo@branch") }, isError = error != null,
-        supportingText = { Text(error ?: "A fork of the AntiGem plugins repository, for testing changes to the setup.") },
+        supportingText = { Text(error ?: "A fork of the BoopIDE plugins repository, for testing changes to the setup.") },
         modifier = Modifier.fillMaxWidth()
     )
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -291,7 +291,7 @@ private fun InstallStep(state: AndroidDevManager.State, cardBg: Color, cardBorde
             }
             if (!state.filesReady) Hint("The setup files are downloaded first.")
         } else if (isInstallTask(state.task)) {
-            Hint("Keep AntiGem open: the screen stays on while this runs. Stopping half way is safe; install the part again to finish it.")
+            Hint("Keep BoopIDE open: the screen stays on while this runs. Stopping half way is safe; install the part again to finish it.")
             OutlinedButton(onClick = AndroidDevManager::stop, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error)) {
                 Icon(Icons.Outlined.StopCircle, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Stop")
             }
@@ -452,7 +452,7 @@ private fun SkillCard(state: AndroidDevManager.State, busy: Boolean, cardBg: Col
         "Android Development skill for agents", cardBg, cardBorder,
         pill = if (state.pluginInstalled) "v${state.pluginVersion ?: "?"}" to QuotaGreen else "Recommended" to MaterialTheme.colorScheme.primary
     ) {
-        Hint("A skills-only plugin from the AntiGem plugins repository. It teaches agents to check the setup, install what is missing (asking you first), create projects with adev-new, build with adev, install the APK and fix the usual errors of building on a phone.")
+        Hint("A skills-only plugin from the BoopIDE plugins repository. It teaches agents to check the setup, install what is missing (asking you first), create projects with adev-new, build with adev, install the APK and fix the usual errors of building on a phone.")
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(enabled = !busy, onClick = AndroidDevManager::installSkillPlugin) {
                 Icon(Icons.Outlined.Extension, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp))
@@ -471,11 +471,11 @@ private fun SkillCard(state: AndroidDevManager.State, busy: Boolean, cardBg: Col
 private fun TerminalCard(state: AndroidDevManager.State, cardBg: Color, cardBorder: BorderStroke) {
     var open by remember { mutableStateOf(false) }
     val repo = runCatching { com.example.gemini.ui.browser.PluginRepositories.parse(state.source) }.getOrNull()
-    val raw = "https://raw.githubusercontent.com/${repo?.slug ?: "Santoshkurmi/antigem_plugins"}/${repo?.ref?.ifBlank { "main" } ?: "main"}/android-dev/skills/android-dev/scripts"
-    val s = "\$PREFIX/share/antigem-android/android-setup.sh"
+    val raw = "https://raw.githubusercontent.com/${repo?.slug ?: "Santoshkurmi/boopide_plugins"}/${repo?.ref?.ifBlank { "main" } ?: "main"}/android-dev/skills/android-dev/scripts"
+    val s = "\$PREFIX/share/boopide-android/android-setup.sh"
     val steps = listOf(
         "1. Download the setup files" to
-            "mkdir -p \$PREFIX/share/antigem-android && cd \$PREFIX/share/antigem-android && for f in files.json android-setup.sh adev adev-new; do curl -fsSLO $raw/\$f; done",
+            "mkdir -p \$PREFIX/share/boopide-android && cd \$PREFIX/share/boopide-android && for f in files.json android-setup.sh adev adev-new; do curl -fsSLO $raw/\$f; done",
         "2. See every step" to "bash $s help",
         "3. Kotlin / Java / Compose (container base java sdk launcher)" to "bash $s kotlin",
         "4. Flutter (with release builds) and / or React Native (Node.js and the NDK)" to "bash $s flutter flutter-release node ndk",

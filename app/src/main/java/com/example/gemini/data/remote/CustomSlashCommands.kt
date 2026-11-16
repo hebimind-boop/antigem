@@ -8,7 +8,7 @@ import org.json.JSONObject
 /**
  * A slash command the user defines in Settings → Slash Commands. Sending `/name args` sends [expansion]
  * instead, with `$ARGUMENTS` replaced by what follows the command; the chat still shows `/name args`.
- * [pluginId]/[skill] optionally attach a custom AntiGem plugin (and one of its skills) like `/plu:` does.
+ * [pluginId]/[skill] optionally attach a custom BoopIDE plugin (and one of its skills) like `/plu:` does.
  */
 data class CustomSlashCommand(
     val name: String,
@@ -35,7 +35,7 @@ object CustomSlashCommands {
                 If that is empty or unclear, first ask what the plugin should do and on which website, then continue.
 
                 1. Check that you have the Custom BoopIDE Plugin Developer MCP for this agent: its tools start with webview_extension_ (server custom_plugin_developer_mcp, or webview_extension_developer_mcp in older setups). If you don't have them, stop and tell the user to open MCP settings, add the "Custom BoopIDE Plugin Developer" preset, then reload tools or start a new chat and send this command again. Don't build the plugin without it: the SDK docs, installer, tests and logs come from that server.
-                2. Read the SDK before writing code: webview_extension_docs for README.md, developer-mcp.md, lifecycle.md and skills.md, plus chrome-api.md / antigem-api.md for the APIs you use. Use only documented APIs.
+                2. Read the SDK before writing code: webview_extension_docs for README.md, developer-mcp.md, lifecycle.md and skills.md, plus chrome-api.md / boopide-api.md for the APIs you use. Use only documented APIs.
                 3. Create a draft with webview_extension_create and write files with webview_extension_write_files: a manifest with a version and an icon (an SVG written as text), narrow host permissions, tools that validate their arguments, and skills/<name>.md guides that explain how to use the tools for real tasks.
                 4. Install with webview_extension_install, list its tools with webview_extension_test, then really exercise the main tools. On errors read webview_extension_logs, fix the draft, raise the version and install again until it works.
                 5. Finish by telling the user the plugin ID, its tools and skills, what you tested, and that they can add it under MCP settings → Custom BoopIDE Plugin MCP and point you at it in chat with /plu:<plugin id>.

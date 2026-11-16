@@ -32,19 +32,19 @@ import java.util.concurrent.TimeUnit
  * take apart APKs, Flutter and React Native apps and native code, in a proot-distro Ubuntu container of the
  * terminal (com.termux builds only).
  *
- * Nothing of REA ships in the APK: the setup scripts live in the antigem_plugins repository
- * (rea/skills/rea/scripts) and are downloaded into $PREFIX/share/antigem-rea when the user asks for them. Every
+ * Nothing of REA ships in the APK: the setup scripts live in the boopide_plugins repository
+ * (rea/skills/rea/scripts) and are downloaded into $PREFIX/share/boopide-rea when the user asks for them. Every
  * install step runs `rea-setup.sh <step>`, the same script the REA skill plugin tells agents to run.
  *
  * Agents start the `rea-mcp` launcher, which shows only the tools of the chosen tool groups
- * (~/.config/antigem/rea/groups.json, edited on the Tool groups page).
+ * (~/.config/boopide/rea/groups.json, edited on the Tool groups page).
  */
 object ReaManager {
     private const val TAG = "ReaManager"
     private const val PREFS = "rea_settings"
 
     /** Where the setup files and the skill plugin come from (owner/repo@branch). */
-    const val DEFAULT_SOURCE = "Santoshkurmi/antigem_plugins@main"
+    const val DEFAULT_SOURCE = "Santoshkurmi/boopide_plugins@main"
     private const val SCRIPTS_PATH = "rea/skills/rea/scripts"
     const val PLUGIN_ID = "rea"
     const val CONTAINER = "ubuntu"
@@ -218,8 +218,8 @@ object ReaManager {
 
     private val prefix get() = LocalEnvironmentManager.getPrefixDir(appContext)
     private val home get() = LocalEnvironmentManager.getHomeDir(appContext)
-    private val shareDir get() = File(prefix, "share/antigem-rea")
-    private val confDir get() = File(home, ".config/antigem/rea")
+    private val shareDir get() = File(prefix, "share/boopide-rea")
+    private val confDir get() = File(home, ".config/boopide/rea")
     private val groupsFile get() = File(confDir, "groups.json")
     private val toolsFile get() = File(confDir, "tools.json")
     private val pidFile get() = File(shareDir, ".task.pid")
@@ -604,7 +604,7 @@ object ReaManager {
         _state.update { it.copy(progress = "Adding ${wanted.label} to the plugin repositories…") }
         val repo = PluginRepositories.repos.firstOrNull { it.slug.equals(wanted.slug, ignoreCase = true) }
             ?: withContext(Dispatchers.Main) {
-                // The default branch is what Custom AntiGem Plugins shows; "main" is spelled out only when asked
+                // The default branch is what Custom BoopIDE Plugins shows; "main" is spelled out only when asked
                 val plain = if (wanted.ref == "main") wanted.copy(ref = "") else wanted
                 PluginRepositories.add(plain)
                 plain
@@ -679,7 +679,7 @@ object ReaManager {
     private fun acquireWakeLock() {
         runCatching {
             val pm = appContext.getSystemService(Context.POWER_SERVICE) as PowerManager
-            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "AntiGem:rea-setup").apply {
+            wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "BoopIDE:rea-setup").apply {
                 setReferenceCounted(false)
                 acquire(3 * 60 * 60 * 1000L)
             }
@@ -713,7 +713,7 @@ object ReaManager {
     }
 
     private suspend fun httpGet(url: String): String = withContext(Dispatchers.IO) {
-        val request = Request.Builder().url(url).header("User-Agent", "AntiGem/${BuildConfig.VERSION_NAME}").build()
+        val request = Request.Builder().url(url).header("User-Agent", "BoopIDE/${BuildConfig.VERSION_NAME}").build()
         http.newCall(request).execute().use { response ->
             if (response.code == 404) throw IllegalStateException("Not found: $url (is the repository pushed and the source right?)")
             if (!response.isSuccessful) throw IllegalStateException("Download failed (HTTP ${response.code}): $url")

@@ -48,7 +48,7 @@ data class RunEntry(
  */
 object RunManager {
     private const val TAG = "RunManager"
-    private val EXIT_MARKER = Regex("""\[antigem-run exit (\d+)\]""")
+    private val EXIT_MARKER = Regex("""\[boopide-run exit (\d+)\]""")
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
     private val _runs = MutableStateFlow<List<RunEntry>>(emptyList())
@@ -72,7 +72,7 @@ object RunManager {
             val ctx = appContext ?: return
             runCatching {
                 val pm = ctx.getSystemService(Context.POWER_SERVICE) as android.os.PowerManager
-                wakeLock = pm.newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "AntiGem:run").apply {
+                wakeLock = pm.newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "BoopIDE:run").apply {
                     setReferenceCounted(false)
                     acquire(3 * 60 * 60 * 1000L)
                 }
@@ -242,10 +242,10 @@ object RunManager {
                     prefs.termuxSshUser.first(), prefs.termuxSshPass.first()
                 )
             }
-            val tmux = "antigem-run-" + id.take(8)
+            val tmux = "boopide-run-" + id.take(8)
             val cd = if (dir != null) "cd ${quote(dir)} || exit 1; " else ""
             // Typed into the session's shell: the exit marker carries the code, then the shell (and the tmux session) ends
-            val typed = "$cd$header; $command\n__rc=\$?; printf '\\n[antigem-run exit %d]\\n' \$__rc; exit \$__rc"
+            val typed = "$cd$header; $command\n__rc=\$?; printf '\\n[boopide-run exit %d]\\n' \$__rc; exit \$__rc"
             Log.d(TAG, "remote run $name in $dir (tmux $tmux)")
             val session = LocalPtySession(
                 id = "run_$id",

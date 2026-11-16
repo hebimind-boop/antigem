@@ -36,10 +36,10 @@ import java.net.URL
 import kotlin.coroutines.resume
 
 /**
- * Connect to PC: the agents run on a PC (the AntiGem bridge VS Code started there) and this app is a second screen for
+ * Connect to PC: the agents run on a PC (the BoopIDE bridge VS Code started there) and this app is a second screen for
  * the same chats. Inside, it is the app's Server mode through an SSH tunnel; this file only adds what makes it one tap:
  *
- *  - pairing: find the PC on the Wi-Fi (mDNS "_antigem-pc._tcp", only announced while VS Code shows "Connect phone"),
+ *  - pairing: find the PC on the Wi-Fi (mDNS "_boopide-pc._tcp", only announced while VS Code shows "Connect phone"),
  *    type the 6-digit code it shows, and the two sides exchange (protected by the code, see [PcPairingCrypto]) this
  *    phone's SSH public key for the PC's address, SSH user, host keys, bridge ports and bridge token;
  *  - the list of paired PCs, the one in use and switching (one app reopen, like any server change);
@@ -52,7 +52,7 @@ import kotlin.coroutines.resume
 object PcConnect {
 
     private const val TAG = "PcConnect"
-    const val SERVICE_TYPE = "_antigem-pc._tcp"
+    const val SERVICE_TYPE = "_boopide-pc._tcp"
 
     // kept in AuthPreferences' own file: its init reads the PC in use before anything connects
     private const val PREFS = "anti_gem_sync_prefs"
@@ -228,7 +228,7 @@ object PcConnect {
      * "Allow terminal from phone" is on there, and such a key answers any command with "This service allows sftp
      * connections only".
      */
-    fun probeShell(s: Session): Boolean = runCatching { execOut(s, "echo antigem-shell-ok").contains("antigem-shell-ok") }.getOrDefault(false)
+    fun probeShell(s: Session): Boolean = runCatching { execOut(s, "echo boopide-shell-ok").contains("boopide-shell-ok") }.getOrDefault(false)
 
     // ------------------------------------------------------------------------------------------------ this phone
 
@@ -256,7 +256,7 @@ object PcConnect {
         val kp = KeyPair.genKeyPair(JSch(), KeyPair.ECDSA, 256)
         try {
             val privOut = ByteArrayOutputStream().also { kp.writePrivateKey(it) }
-            val pubOut = ByteArrayOutputStream().also { kp.writePublicKey(it, "antigem-phone:${phoneId()}") }
+            val pubOut = ByteArrayOutputStream().also { kp.writePublicKey(it, "boopide-phone:${phoneId()}") }
             val newPriv = privOut.toString("UTF-8").trim()
             val newPub = pubOut.toString("UTF-8").trim()
             p.edit().putString(KEY_CLIENT_PRIVATE, newPriv).putString(KEY_CLIENT_PUBLIC, newPub).commit()
@@ -339,13 +339,13 @@ object PcConnect {
 
         progress.step("Checking the code…")
         val side = PcPairingCrypto.PhoneSide(digits, phoneId)
-        val start = postJson("$base/antigem/pair/start", JSONObject()
+        val start = postJson("$base/boopide/pair/start", JSONObject()
             .put("v", 1).put("phoneId", phoneId).put("phoneName", phoneName).put("x", side.xHex))
-        val session = start.optString("session").ifBlank { throw PairingException("The PC answered something unexpected. Update AntiGem in VS Code.") }
+        val session = start.optString("session").ifBlank { throw PairingException("The PC answered something unexpected. Update BoopIDE in VS Code.") }
         val keys = try {
             side.finish(start.getString("y"))
         } catch (e: Exception) {
-            throw PairingException("The PC answered something unexpected. Update AntiGem in VS Code.")
+            throw PairingException("The PC answered something unexpected. Update BoopIDE in VS Code.")
         }
         val pcConfirm = runCatching { PcPairingCrypto.fromHex(start.getString("confirm")) }.getOrNull()
         if (pcConfirm == null || !PcPairingCrypto.same(pcConfirm, keys.pcConfirm)) {
@@ -357,7 +357,7 @@ object PcConnect {
             .put("phoneId", phoneId).put("phoneName", phoneName).put("publicKey", publicKey)
             .toString().toByteArray(Charsets.UTF_8))
         // the PC may wait for its user here (Windows asks an admin to allow the key)
-        val done = postJson("$base/antigem/pair/finish", JSONObject()
+        val done = postJson("$base/boopide/pair/finish", JSONObject()
             .put("v", 1).put("session", session).put("confirm", PcPairingCrypto.toHex(keys.phoneConfirm)).put("box", box),
             readTimeoutMs = 150_000)
         val info = try {
@@ -372,7 +372,7 @@ object PcConnect {
         val chosen = chooseHostKey(hostKeys) ?: throw PairingException("The PC's SSH server sent no key this app can use.")
         val reported = info.optJSONArray("addresses")?.let { a -> (0 until a.length()).map { a.getString(it) } }.orEmpty()
         val now = System.currentTimeMillis()
-        val pcId = info.optString("pcId").ifBlank { throw PairingException("The PC's answer is incomplete. Update AntiGem in VS Code.") }
+        val pcId = info.optString("pcId").ifBlank { throw PairingException("The PC's answer is incomplete. Update BoopIDE in VS Code.") }
         val pc = PairedPc(
             id = pcId,
             name = info.optString("pcName").ifBlank { "PC" },
@@ -447,19 +447,19 @@ object PcConnect {
             if (code !in 200..299) {
                 val msg = json?.optString("error")?.takeIf { it.isNotBlank() }
                 throw PairingException(msg ?: when (code) {
-                    404 -> "This PC is not pairing right now. Open \"Connect phone\" in AntiGem on the PC."
+                    404 -> "This PC is not pairing right now. Open \"Connect phone\" in BoopIDE on the PC."
                     410 -> "The code expired. Use the new code shown on the PC."
                     423 -> "Too many wrong codes. Use the new code shown on the PC."
                     else -> "The PC refused the pairing (HTTP $code)."
                 })
             }
-            return json ?: throw PairingException("The PC answered something unexpected. Update AntiGem in VS Code.")
+            return json ?: throw PairingException("The PC answered something unexpected. Update BoopIDE in VS Code.")
         } catch (e: PairingException) {
             throw e
         } catch (e: java.net.SocketTimeoutException) {
             throw PairingException("The PC did not answer. Are both on the same Wi-Fi?")
         } catch (e: java.io.IOException) {
-            throw PairingException("Cannot reach the PC (${e.message ?: "network error"}). Is \"Connect phone\" open in AntiGem on the PC?")
+            throw PairingException("Cannot reach the PC (${e.message ?: "network error"}). Is \"Connect phone\" open in BoopIDE on the PC?")
         } finally {
             c.disconnect()
         }
@@ -482,7 +482,7 @@ object PcConnect {
      * shell command. Null when it cannot be read (the token from pairing is used then).
      */
     fun readToken(s: Session): String? {
-        val rel = ".antigem_bridge/csrf_token.txt"
+        val rel = ".boopide_bridge/csrf_token.txt"
         val viaSftp = runCatching {
             val sftp = s.openChannel("sftp") as ChannelSftp
             sftp.connect(10_000)
@@ -495,7 +495,7 @@ object PcConnect {
             }
         }.getOrNull()
         if (viaSftp != null && viaSftp.length == AuthPreferences.TOKEN_LENGTH) return viaSftp
-        for (cmd in listOf("cat ~/$rel", "type %USERPROFILE%\\.antigem_bridge\\csrf_token.txt")) {
+        for (cmd in listOf("cat ~/$rel", "type %USERPROFILE%\\.boopide_bridge\\csrf_token.txt")) {
             val out = runCatching { execOut(s, cmd) }.getOrNull()?.trim()
             if (out != null && out.length == AuthPreferences.TOKEN_LENGTH) return out
         }

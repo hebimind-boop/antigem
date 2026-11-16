@@ -76,7 +76,7 @@ fun TerminalLauncherOnboardingDialog(
     step: Int = 1,
     total: Int = 1,
     initialEnabled: Boolean = false,
-    initialStyle: String = TerminalLauncherManager.STYLE_ANTITERM,
+    initialStyle: String = TerminalLauncherManager.STYLE_BOOPTERM,
     onConfirm: (enabled: Boolean, style: String) -> Unit,
     onDismiss: () -> Unit
 ) {
@@ -123,7 +123,7 @@ fun TerminalLauncherOnboardingDialog(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Icon 1: AntiGem (Main App)
+                            // Icon 1: BoopIDE (Main App)
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.width(90.dp)
@@ -136,13 +136,13 @@ fun TerminalLauncherOnboardingDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     com.example.gemini.ui.components.AppIconImage(
-                                        contentDescription = "AntiGem",
+                                        contentDescription = "BoopIDE",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "AntiGem",
+                                    text = "BoopIDE",
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -192,14 +192,14 @@ fun TerminalLauncherOnboardingDialog(
                                         )
                                     } else {
                                         com.example.gemini.ui.components.AppIconImage(
-                                            contentDescription = "AntiTerm",
+                                            contentDescription = "BoopTerm",
                                             modifier = Modifier.matchParentSize()
                                         )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "AntiTerm",
+                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "BoopTerm",
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (!isEnabled) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
@@ -277,18 +277,18 @@ fun TerminalLauncherOnboardingDialog(
                             modifier = Modifier.padding(start = 2.dp, bottom = 8.dp)
                         )
 
-                        // Option 1: AntiTerm (Branded)
-                        val isAntiTermSelected = selectedStyle == TerminalLauncherManager.STYLE_ANTITERM
+                        // Option 1: BoopTerm (Branded)
+                        val isBoopTermSelected = selectedStyle == TerminalLauncherManager.STYLE_BOOPTERM
                         Surface(
                             shape = RoundedCornerShape(12.dp),
-                            color = if (isAntiTermSelected) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                            color = if (isBoopTermSelected) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
                             border = BorderStroke(
                                 1.5.dp,
-                                if (isAntiTermSelected) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                                if (isBoopTermSelected) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { selectedStyle = TerminalLauncherManager.STYLE_ANTITERM }
+                                .clickable { selectedStyle = TerminalLauncherManager.STYLE_BOOPTERM }
                         ) {
                             Row(
                                 modifier = Modifier
@@ -303,7 +303,7 @@ fun TerminalLauncherOnboardingDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     com.example.gemini.ui.components.AppIconImage(
-                                        contentDescription = "AntiTerm",
+                                        contentDescription = "BoopTerm",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
@@ -312,21 +312,21 @@ fun TerminalLauncherOnboardingDialog(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "AntiTerm",
+                                        text = "BoopTerm",
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Modern unified icon matching AntiGem",
+                                        text = "Modern unified icon matching BoopIDE",
                                         fontSize = 11.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
 
                                 RadioButton(
-                                    selected = isAntiTermSelected,
-                                    onClick = { selectedStyle = TerminalLauncherManager.STYLE_ANTITERM },
+                                    selected = isBoopTermSelected,
+                                    onClick = { selectedStyle = TerminalLauncherManager.STYLE_BOOPTERM },
                                     colors = RadioButtonDefaults.colors(selectedColor = ClaudeTerracotta)
                                 )
                             }

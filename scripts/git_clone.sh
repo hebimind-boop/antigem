@@ -11,7 +11,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 
 # ==============================================================================
-# antiGem Git Repository Cloner
+# BoopIDE Git Repository Cloner
 # Usage: git_clone <public https url> [folder name]
 # Clones into $HOME/<folder name>; the name defaults to the repository's name.
 # ==============================================================================
@@ -29,7 +29,7 @@ REPO_URL="$(trim "${1:-}")"
 FOLDER_NAME="$(trim "${2:-}")"
 
 echo "================================================"
-echo "        antiGem Git Repository Cloner           "
+echo "        BoopIDE Git Repository Cloner           "
 echo "================================================"
 
 if [ -z "$REPO_URL" ]; then
@@ -90,4 +90,4 @@ if [ $STATUS -ne 0 ]; then
 fi
 
 echo "✅ Cloned into $TARGET_DIR"
-echo "ANTIGEM_CLONED_PATH=$TARGET_DIR"
+echo "BOOPIDE_CLONED_PATH=$TARGET_DIR"

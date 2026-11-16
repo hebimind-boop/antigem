@@ -1,4 +1,4 @@
-// Package plugins manages custom AntiGem plugins (browser extensions with MCP tools and/or skills) on disk:
+// Package plugins manages custom BoopIDE plugins (browser extensions with MCP tools and/or skills) on disk:
 // listing, installing from ZIPs or GitHub repositories, updating, removing and exporting them. The app's
 // Node extension host loads them; the app tells it to load or unload after each change made here.
 package plugins
@@ -19,9 +19,9 @@ import (
 )
 
 const (
-	sourceFile  = ".antigem-source.json"
-	backupDir   = ".antigem-backup"
-	stagingDir  = ".antigem-staging"
+	sourceFile  = ".boopide-source.json"
+	backupDir   = ".boopide-backup"
+	stagingDir  = ".boopide-staging"
 	disabledCfg = "extensions.json"
 )
 
@@ -49,7 +49,7 @@ type Plugin struct {
 	Skills      []Skill  `json:"skills"`
 }
 
-// Source is written as .antigem-source.json into repository installs so updates can be found later.
+// Source is written as .boopide-source.json into repository installs so updates can be found later.
 type Source struct {
 	Repo string `json:"repo"`
 	Ref  string `json:"ref"`
@@ -77,18 +77,18 @@ func NewManager(home string) *Manager {
 	files := filepath.Dir(home)
 	if runtime.GOOS != "android" {
 		// On a server the home's parent is /home (not writable, shared by every user): keep the plugin
-		// folders and the extension host's storage in the user's own ~/.antigem instead.
-		files = filepath.Join(home, ".antigem")
+		// folders and the extension host's storage in the user's own ~/.boopide instead.
+		files = filepath.Join(home, ".boopide")
 	}
 	return &Manager{
 		home:     home,
-		stateDir: filepath.Join(files, "browser-extensions", ".antigem-state"),
+		stateDir: filepath.Join(files, "browser-extensions", ".boopide-state"),
 		roots: []root{
 			{filepath.Join(home, "extensions"), "installed"},
-			{filepath.Join(home, "projects", "antiGem", "extensions"), "user_folder"},
+			{filepath.Join(home, "projects", "BoopIDE", "extensions"), "user_folder"},
 			{filepath.Join(files, "extensions"), "installed"},
 			{filepath.Join(files, "browser-extensions"), "bundled"},
-			{"/sdcard/antiGem/extensions", "user_folder"},
+			{"/sdcard/BoopIDE/extensions", "user_folder"},
 		},
 		client: &http.Client{Timeout: 2 * time.Minute},
 	}

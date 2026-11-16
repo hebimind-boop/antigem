@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# AntiGem Multi-Package APK Build & Output Packager
-# Builds standard (com.antigem) and termux (com.termux) flavors.
+# BoopIDE Multi-Package APK Build & Output Packager
+# Builds standard (com.boopide) and termux (com.termux) flavors.
 # -----------------------------------------------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -31,8 +31,8 @@ echo "📦 Version Name: v${VERSION_NAME} (Code: ${VERSION_CODE})"
 mkdir -p "${OUTPUT_DIR}"
 
 if [[ "${MODE}" == "release" ]]; then
-    echo "🔨 Compiling Standard Release (:app:assembleStandardRelease)..."
-    "${ROOT_DIR}/gradlew" -p "${ROOT_DIR}" :app:assembleStandardRelease
+    echo "🔨 Compiling Standard Release (clean :app:assembleStandardRelease)..."
+    "${ROOT_DIR}/gradlew" -p "${ROOT_DIR}" clean :app:assembleStandardRelease
 
     # echo "🔨 Compiling Termux Release (:app:assembleTermuxRelease)..."
     # "${ROOT_DIR}/gradlew" -p "${ROOT_DIR}" :app:assembleTermuxRelease

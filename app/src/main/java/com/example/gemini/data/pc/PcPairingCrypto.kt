@@ -17,16 +17,16 @@ import javax.crypto.spec.SecretKeySpec
  *
  * Spec (the PC side, in the VS Code extension, must match it byte for byte): docs/connect-to-pc-protocol.md.
  *  - Group: RFC 3526 2048-bit MODP group 14, p, g = 2, working in the subgroup of order q = (p - 1) / 2.
- *  - M, N: SHA-256 expansion of "antigem-pair-v1 M" / "antigem-pair-v1 N" (bytes i = 0..8 appended) mod p, squared.
- *  - w = SHA-256("antigem-pair-v1 w" + code) mod q.
+ *  - M, N: SHA-256 expansion of "boopide-pair-v1 M" / "boopide-pair-v1 N" (bytes i = 0..8 appended) mod p, squared.
+ *  - w = SHA-256("boopide-pair-v1 w" + code) mod q.
  *  - Phone: X = g^x · M^w.  PC: Y = g^y · N^w.  Shared Z = (Y / N^w)^x = (X / M^w)^y.
- *  - TT = "antigem-pair-v1", phoneId, X, Y, Z, w, each as a 4-byte big-endian length + bytes (group values 256 bytes).
+ *  - TT = "boopide-pair-v1", phoneId, X, Y, Z, w, each as a 4-byte big-endian length + bytes (group values 256 bytes).
  *  - K = SHA-256(TT); keys = HMAC-SHA256(K, label); confirmations = HMAC-SHA256(confirm key, TT).
- *  - Boxes: AES-256-GCM, base64(12-byte nonce + ciphertext + 16-byte tag), additional data "antigem-pair-v1".
+ *  - Boxes: AES-256-GCM, base64(12-byte nonce + ciphertext + 16-byte tag), additional data "boopide-pair-v1".
  */
 object PcPairingCrypto {
 
-    const val LABEL = "antigem-pair-v1"
+    const val LABEL = "boopide-pair-v1"
 
     private val P = BigInteger(
         ("FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DD" +

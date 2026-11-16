@@ -312,7 +312,7 @@ tasks.named("preBuild") {
 // Bundle built-in extensions. The app-owned runtime lives in src/main/assets/browser-runtime.
 val bundleBrowserExtensions by tasks.registering(Sync::class) {
     from(rootProject.file("extensions")) {
-        exclude("**/test/**", "**/node_modules/**", "**/.storage/**", "**/.antigem-state/**")
+        exclude("**/test/**", "**/node_modules/**", "**/.storage/**", "**/.boopide-state/**", "**/.antigem-state/**")
     }
     into(layout.buildDirectory.dir("generated/browserExtensionAssets/browser-extensions"))
 }

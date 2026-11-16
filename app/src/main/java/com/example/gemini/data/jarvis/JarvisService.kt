@@ -133,7 +133,7 @@ class JarvisService : Service() {
     private fun acquireWakeLock() {
         if (wakeLock?.isHeld == true) return
         val pm = getSystemService(Context.POWER_SERVICE) as PowerManager
-        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "antigem:jarvis").apply {
+        wakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "boopide:jarvis").apply {
             setReferenceCounted(false)
             acquire(6 * 60 * 60 * 1000L)
         }

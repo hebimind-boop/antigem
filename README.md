@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="docs/readme/icon.svg" alt="AntiGem app icon" width="112">
+<img src="docs/readme/icon.svg" alt="BoopIDE app icon" width="112">
 
-# AntiGem
+# BoopIDE
 
 *A gem that defies gravity. A full coding environment, light enough to carry in your pocket.*
 
@@ -11,13 +11,13 @@
 [![Kotlin](https://img.shields.io/badge/Kotlin-Jetpack%20Compose-7F52FF?style=flat-square&logo=kotlin&logoColor=white)](https://developer.android.com/jetpack/compose)
 [![Go](https://img.shields.io/badge/Bridge-Go-00ADD8?style=flat-square&logo=go&logoColor=white)](https://go.dev)
 [![License](https://img.shields.io/badge/License-GPLv3-blue?style=flat-square)](LICENSE)
-[![Releases](https://img.shields.io/github/v/release/santoshkurmi/antigem?style=flat-square&label=Download)](https://github.com/santoshkurmi/antigem/releases)
+[![Releases](https://img.shields.io/github/v/release/santoshkurmi/boopide?style=flat-square&label=Download)](https://github.com/santoshkurmi/boopide/releases)
 
-[Download](https://github.com/santoshkurmi/antigem/releases) · [Website](https://santoshkurmi.github.io/antigem/) · [VS Code extension](https://github.com/Santoshkurmi/antigem_vscode_extension) · [Plugin SDK](extension_docs/README.md) · [User Guide](user_docs/README.md) · [WhatsApp community](https://chat.whatsapp.com/IGQX8q9zSVV0RarG70sclV?s=cl&p=a&mlu=4&ilr=4)
+[Download](https://github.com/santoshkurmi/boopide/releases) · [Website](https://santoshkurmi.github.io/boopide/) · [VS Code extension](https://github.com/Santoshkurmi/boopide_vscode_extension) · [Plugin SDK](extension_docs/README.md) · [User Guide](user_docs/README.md) · [WhatsApp community](https://chat.whatsapp.com/IGQX8q9zSVV0RarG70sclV?s=cl&p=a&mlu=4&ilr=4)
 
 <br>
 
-<img src="docs/readme/hero.webp" alt="AntiGem on a phone: code editor, live browser preview, Claude Code chat, Linux terminal and model picker" width="100%">
+<img src="docs/readme/hero.webp" alt="BoopIDE on a phone: code editor, live browser preview, Claude Code chat, Linux terminal and model picker" width="100%">
 
 </div>
 
@@ -71,7 +71,7 @@ A full tour on a real phone: launch, chats, settings and themes, then Claude Cod
 
 ## What it is
 
-AntiGem runs four coding agents on your phone:
+BoopIDE runs four coding agents on your phone:
 
 - **Antigravity (`agy`)**: Google's official `agy` CLI, installed with Google's own installer, runs inside the app's Linux environment.
 - **Claude Code**: Anthropic's official `claude` CLI runs inside the app's Linux environment, and the app talks to it over its stream-json protocol, with one CLI process per chat.
@@ -163,8 +163,8 @@ Each one is a one-tap preset in **Settings → MCP Servers**, for every agent.
 | **Terminal** | Create terminal sessions, send commands, read output, kill processes, and change the terminal's theme and font. |
 | **Android** | Read the screen's UI tree, tap, swipe, scroll, type, press keys, take screenshots, launch and list apps, open intents, and (with ADB) install, uninstall or force-stop apps and run `adb shell`. |
 | **Notes & To-dos** | List, read, create, edit and delete your notes and to-do items. |
-| **Custom Plugin** | Use the tools of any installed AntiGem plugin. |
-| **Plugin Developer** | Create, install, test and debug AntiGem plugins from the chat. |
+| **Custom Plugin** | Use the tools of any installed BoopIDE plugin. |
+| **Plugin Developer** | Create, install, test and debug BoopIDE plugins from the chat. |
 | **Jarvis** | Control the app for the Jarvis voice mode: speak and ask, run and watch tasks, chats, models, settings, approvals, the IDE and more ([docs/jarvis.md](docs/jarvis.md)). |
 | **Theme** | List, switch, create, edit, import and export the app's color themes. |
 | **Stitch** | Google Stitch UI design, with your own API key. |
@@ -179,7 +179,7 @@ Each one is a one-tap preset in **Settings → MCP Servers**, for every agent.
 - **Settings → Android Development** sets up everything to build **Kotlin / Jetpack Compose, Flutter and React Native** apps on the phone itself, and the agent can drive the builds.
 - Builds target arm64 phones. For other CPU types, build on a PC.
 
-### Custom AntiGem plugins
+### Custom BoopIDE plugins
 - Plugins are small packages with a `manifest.json` and a JavaScript worker that add MCP tools, and can include Markdown **skills** that teach the agent how to use them.
 - They run in the app's own extension host, which implements a large part of the Chrome extension API (`tabs`, `scripting`, `storage`, `debugger` and more), so many Chrome extension workers can be ported.
 - Install from a ZIP, or from a plugin repository on GitHub. The app checks repositories for updates in the background.
@@ -204,15 +204,15 @@ Each one is a one-tap preset in **Settings → MCP Servers**, for every agent.
 - In-app browser for previewing local dev servers and testing web apps.
 - Desktop and mobile modes, a steady browser identity that keeps Google sign-in working, and built-in Eruda DevTools.
 
-### Connect to PC (with AntiGem for VS Code)
-Use the agents running on your PC from your phone. [AntiGem for VS Code](https://github.com/Santoshkurmi/antigem_vscode_extension) runs them on the PC, and the app becomes a second screen for the same chats.
+### Connect to PC (with BoopIDE for VS Code)
+Use the agents running on your PC from your phone. [BoopIDE for VS Code](https://github.com/Santoshkurmi/boopide_vscode_extension) runs them on the PC, and the app becomes a second screen for the same chats.
 - **Same chats on both:** start a chat in VS Code and continue it on the phone, or the other way round. Replies stream live on both, and every agent (Antigravity, Claude Code, Codex, OpenCode) works, with its subagents, images and files.
 - **Pair once, no typing of addresses:** in VS Code open **Settings → Connect phone → Start pairing**. On the phone, turn on **Settings → Connect to PC**, tap **Add a PC**, pick the PC from **Nearby PCs** and type the 6-digit code it shows. If the PC is not listed (guest Wi-Fi), type the address shown on the PC.
 - **Switch in one tap:** the PC button in the side bar lists your paired PCs; pick one, or go back to **Use this phone**. Several PCs can be paired.
 - **Copy files between phone and PC:** in this mode the Files screen has a **This phone** tab next to the PC's files. Copy or cut on one side, paste on the other, folders too.
 - **Terminal on the PC (optional):** with **Allow terminal from phone** on in VS Code, the app's terminal and Run configurations open on the PC. Off (the default), they stay on the phone.
-- **Secure by design:** the phone connects over SSH with its own key; no PC password is stored. The code is checked with SPAKE2, so nobody on the Wi-Fi can learn it. The key can only reach AntiGem on the PC (plus a shell if you allow the terminal). Remove a phone in VS Code to lock it out at once.
-- **What the PC needs:** AntiGem for VS Code, and its SSH server turned on (Linux: `openssh-server`; macOS: *Remote Login*; Windows: the *OpenSSH Server* feature). VS Code shows the steps for your system.
+- **Secure by design:** the phone connects over SSH with its own key; no PC password is stored. The code is checked with SPAKE2, so nobody on the Wi-Fi can learn it. The key can only reach BoopIDE on the PC (plus a shell if you allow the terminal). Remove a phone in VS Code to lock it out at once.
+- **What the PC needs:** BoopIDE for VS Code, and its SSH server turned on (Linux: `openssh-server`; macOS: *Remote Login*; Windows: the *OpenSSH Server* feature). VS Code shows the steps for your system.
 
 ### Notes
 - Notes and to-do lists inside the app and in the floating bubble.
@@ -228,13 +228,13 @@ Use the agents running on your PC from your phone. [AntiGem for VS Code](https:/
 
 ## Download
 
-Get the latest APK from [Releases](https://github.com/santoshkurmi/antigem/releases). There are two build variants, and one extra **mode** that works with either of them:
+Get the latest APK from [Releases](https://github.com/santoshkurmi/boopide/releases). There are two build variants, and one extra **mode** that works with either of them:
 
 | Variant | Package name | Needs the Termux app? | Notes |
 | :--- | :--- | :---: | :--- |
 | **`termux`** (recommended) | `com.termux` | No | Self-contained: the app sets up its own Linux environment. This is the one published in releases. |
-| **`standard`** | `com.antigem` | Yes | You run `agy_ide_bridge` inside a separately installed Termux app, and AntiGem connects to it over localhost. Not published; build it yourself from source. |
-| **Server mode** (a mode, not a third build) | the same as the build you installed (`com.termux` or `com.antigem`) | No | The bridge, the agents (`agy`, Claude Code, OpenCode, Codex), your projects and the terminal run on **your own server (a VPS)**, and the phone is only the screen. Switch it on in **Settings → Servers**. Works with both variants. See [Server mode](#server-mode-run-it-on-a-vps) below. |
+| **`standard`** | `com.boopide` | Yes | You run `agy_ide_bridge` inside a separately installed Termux app, and BoopIDE connects to it over localhost. Not published; build it yourself from source. |
+| **Server mode** (a mode, not a third build) | the same as the build you installed (`com.termux` or `com.boopide`) | No | The bridge, the agents (`agy`, Claude Code, OpenCode, Codex), your projects and the terminal run on **your own server (a VPS)**, and the phone is only the screen. Switch it on in **Settings → Servers**. Works with both variants. See [Server mode](#server-mode-run-it-on-a-vps) below. |
 
 > [!NOTE]
 > The `standard` variant is not deprecated, but it gets little attention because almost nobody uses it. Some features, such as the Browser MCP, may not work in it right now, and it may be dropped in the future. Use the `termux` variant.
@@ -246,17 +246,17 @@ Get the latest APK from [Releases](https://github.com/santoshkurmi/antigem/relea
 
 Termux packages are compiled for the fixed path `/data/data/com.termux/files/usr`. An app with any other package name cannot run them directly. It would have to use **proot** to fake that path, and proot slows down every program, or rebuild every package for a new path.
 
-With the package name `com.termux`, AntiGem can install the official Termux bootstrap and use the official Termux package repositories, and everything runs at full native speed. This is the only reason for the name.
+With the package name `com.termux`, BoopIDE can install the official Termux bootstrap and use the official Termux package repositories, and everything runs at full native speed. This is the only reason for the name.
 
 ### This is not a Termux fork
 
-AntiGem is not a copy or modification of the Termux app. The app was written from scratch. It uses only Termux's open-source **terminal-emulator** and **terminal-view** libraries for drawing the terminal, and the Termux bootstrap and package repositories for the Linux environment. The UI, the agent integrations, the Go bridge, the MCP servers, the plugin system and everything else are AntiGem's own code.
+BoopIDE is not a copy or modification of the Termux app. The app was written from scratch. It uses only Termux's open-source **terminal-emulator** and **terminal-view** libraries for drawing the terminal, and the Termux bootstrap and package repositories for the Linux environment. The UI, the agent integrations, the Go bridge, the MCP servers, the plugin system and everything else are BoopIDE's own code.
 
 ### Termux compatibility
 
 Packages, `apt`/`pkg`, the shell and almost everything else work as in Termux.
 
-AntiGem has essential Termux:API commands built in with zero setup:
+BoopIDE has essential Termux:API commands built in with zero setup:
 
 | Command | Built in |
 | :--- | :---: |
@@ -273,30 +273,30 @@ AntiGem has essential Termux:API commands built in with zero setup:
 
 For advanced hardware APIs (such as `termux-location`, `termux-camera-photo`, `termux-sensor`, `termux-sms-*`, `termux-wifi-*`), install the matching signed companion app:
 
-👉 **[Download AntiGem Termux:API Companion App](https://github.com/Santoshkurmi/termux-api/releases)**
+👉 **[Download BoopIDE Termux:API Companion App](https://github.com/Santoshkurmi/termux-api/releases)**
 
 > [!IMPORTANT]
-> **AntiGem Variant Requirement for Termux:API:**
-> - To use the external Termux:API companion app, you **must install the Shared UID variant** (`antiGem-termux-shared-v...apk`). Both apps share the `com.termux` Linux UID to communicate via UNIX sockets.
+> **BoopIDE Variant Requirement for Termux:API:**
+> - To use the external Termux:API companion app, you **must install the Shared UID variant** (`BoopIDE-termux-shared-v...apk`). Both apps share the `com.termux` Linux UID to communicate via UNIX sockets.
 > - **Existing Users:** Android does not allow changing `sharedUserId` via an update (`INSTALL_FAILED_SHARED_USER_INCOMPATIBLE`). If you currently have the Standalone build installed, you must **backup your files, uninstall the app, and install the Shared UID build**.
-> - You can check your current variant in AntiGem under **Settings → About & Info** (shows *Shared UID Build* or *Standalone Build*).
+> - You can check your current variant in BoopIDE under **Settings → About & Info** (shows *Shared UID Build* or *Standalone Build*).
 
 **How to enable:**
 1. Install the companion APK from the [releases page](https://github.com/Santoshkurmi/termux-api/releases).
-2. In AntiGem, go to **Settings → Termux Support → Termux:API** and select **External Termux:API App**.
+2. In BoopIDE, go to **Settings → Termux Support → Termux:API** and select **External Termux:API App**.
 3. Tap **Reinstall Package Now** (or run `pkg reinstall termux-api` in the terminal) to restore the official dispatcher binary.
 
 #### X11 desktop
 
-AntiGem can run a Linux desktop (XFCE or LXQt) with [Termux:X11](https://github.com/termux/termux-x11). It uses AntiGem's own build of Termux:X11, signed to share the `com.termux` UID, so the desktop runs inside AntiGem's process and Android doesn't slow it down or stop it while you use it. This needs the **Shared UID build**.
+BoopIDE can run a Linux desktop (XFCE or LXQt) with [Termux:X11](https://github.com/termux/termux-x11). It uses BoopIDE's own build of Termux:X11, signed to share the `com.termux` UID, so the desktop runs inside BoopIDE's process and Android doesn't slow it down or stop it while you use it. This needs the **Shared UID build**.
 
 Go to **Settings → Termux Support → X11 Desktop** and follow the steps: install the Termux:X11 app, the `termux-x11` command and a desktop, then tap **Start**.
 
-To set it up by hand instead, get `antigem-termux-x11-sharedUid.apk` and `antigem-termux-x11-*-all.deb` from the [AntiGem Termux:X11 releases](https://github.com/Santoshkurmi/termux-x11/releases/latest), install the APK, and run:
+To set it up by hand instead, get `boopide-termux-x11-sharedUid.apk` and `boopide-termux-x11-*-all.deb` from the [BoopIDE Termux:X11 releases](https://github.com/Santoshkurmi/termux-x11/releases/latest), install the APK, and run:
 
 ```bash
 pkg install x11-repo
-apt install ./antigem-termux-x11-*-all.deb
+apt install ./boopide-termux-x11-*-all.deb
 pkg install dbus xfce4
 termux-x11 :0 -xstartup "dbus-launch --exit-with-session xfce4-session"
 ```
@@ -309,7 +309,7 @@ Then open Termux:X11. Don't install `termux-x11-nightly` from x11-repo: it only 
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│                           AntiGem Android app                            │
+│                           BoopIDE Android app                            │
 │         Compose UI · terminal · editor · browser · MCPs · Jarvis         │
 └───────────────────────┬─────────────────────────────────┬────────────────┘
                         │ HTTP / WebSocket                │ HTTP / WS
@@ -332,7 +332,7 @@ Then open Termux:X11. Don't install `termux-x11-nightly` from x11-repo: it only 
 
 ## Server mode (run it on a VPS)
 
-By default everything runs on the phone. In **Server mode** the heavy part moves to a Linux server that you own (a VPS, a home server, a spare PC): the **IDE bridge**, the **Antigravity hub (`agy`)**, **Claude Code**, your **projects, files, git and the shell** all live there, and AntiGem on the phone only shows the UI. It is the same app and the same interface, but the chats, the files and the agents' accounts live on the server (they are separate from any chats you have in local mode), so the agents keep working when the phone sleeps, and the phone stays light.
+By default everything runs on the phone. In **Server mode** the heavy part moves to a Linux server that you own (a VPS, a home server, a spare PC): the **IDE bridge**, the **Antigravity hub (`agy`)**, **Claude Code**, your **projects, files, git and the shell** all live there, and BoopIDE on the phone only shows the UI. It is the same app and the same interface, but the chats, the files and the agents' accounts live on the server (they are separate from any chats you have in local mode), so the agents keep working when the phone sleeps, and the phone stays light.
 
 It is **not a separate APK**. Both the `termux` and the `standard` variant can use it: open **Settings → Servers** and pick **SSH tunnel** or **Server** under *Where the server runs*. The Linux environment on the phone is not needed in this mode. (Default ports differ per variant: `termux` uses 1234 / 1235 for the bridge / hub, `standard` uses 1236 / 1237.)
 
@@ -352,7 +352,7 @@ It is **not a separate APK**. Both the `termux` and the `standard` variant can u
 
 ```
 SSH tunnel mode (recommended)
-phone (AntiGem app)                                   your server (Linux, x86_64 or arm64)
+phone (BoopIDE app)                                   your server (Linux, x86_64 or arm64)
  └─ SSH  ───────────────────────────────────────────►  sshd
       · phone 127.0.0.1:1234 ──(tunnel)──► agy_ide_bridge (server 127.0.0.1:1234)
       · phone 127.0.0.1:1235 ──(tunnel)──► agy hub        (server 127.0.0.1:1235)
@@ -361,7 +361,7 @@ phone (AntiGem app)                                   your server (Linux, x86_64
       · reverse tunnels: the server's agents can use the phone's browser, Android and notes tools (and adb, if you connect it)
 
 Server mode (domain)
-phone (AntiGem app)                              your server
+phone (BoopIDE app)                              your server
  ├─ https://bridge.example.com  ──────────────►  nginx / Caddy / Apache ──► agy_ide_bridge (127.0.0.1)
  ├─ https://hub.example.com     ──────────────►  nginx / Caddy / Apache ──► agy hub        (127.0.0.1)
  └─ SSH                          ──────────────►  sshd (start / stop, terminal, reverse tunnels, as above)
@@ -372,7 +372,7 @@ phone (AntiGem app)                              your server
 ### How to set it up (short version)
 
 1. **Prepare the server:** a normal (non-root) user, `sshd`, `tmux`, `git`. Use a **dedicated VPS and a dedicated user**.
-2. **Get the bridge on the server:** the app does **not** contain it and never uploads anything. Build it once with Go (`CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build` in `agy_ide_bridge/`, or `arm64`), copy it to `~/.antigem/agy_ide_bridge` and `chmod +x` it. Build it from the **same version as your app**: the app compares versions on every launch and tells you when the bridge is out of date.
+2. **Get the bridge on the server:** the app does **not** contain it and never uploads anything. Build it once with Go (`CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build` in `agy_ide_bridge/`, or `arm64`), copy it to `~/.boopide/agy_ide_bridge` and `chmod +x` it. Build it from the **same version as your app**: the app compares versions on every launch and tells you when the bridge is out of date.
 3. **Install the agents on the server:** `curl -fsSL https://antigravity.google/cli/install.sh | bash` for Antigravity, `curl -fsSL https://claude.ai/install.sh | bash` for Claude Code (both end up in `~/.local/bin`). You can also install `agy` from the app (**Settings → Agents**) once the bridge is running.
 4. **Choose how the phone reaches it.** *SSH tunnel* (recommended): nothing to do, skip to step 5. *Server* mode: put a reverse proxy with TLS in front (nginx, Caddy or Apache) on two sub-domains, one for the bridge and one for the hub, add the **proxy access header** (a second secret that the proxy checks), and open only SSH, 80 and 443 in the firewall.
 5. **In the app (Settings → Servers):** pick **SSH tunnel** (the addresses are filled in as `http://127.0.0.1:<port>`; keep the default ports unless you changed them) or **Server** (enter your two addresses and, optionally, the proxy access header). Then enter the SSH host, user and key, check the server paths (they are pre-filled with the defaults), **Save**, **Reopen**. The app connects over SSH, opens the tunnels, starts the bridge, and shows its state and log.
@@ -396,8 +396,8 @@ The Backups & Restore screen is for the phone's own data and is hidden in Server
 **Requirements:** JDK 17+, Android SDK (API 35, Build Tools 35+) and Go 1.23+ for the bridge.
 
 ```bash
-git clone https://github.com/santoshkurmi/antigem.git
-cd antigem
+git clone https://github.com/santoshkurmi/boopide.git
+cd boopide
 
 # Build the termux variant
 ./gradlew assembleTermuxDebug
@@ -413,7 +413,7 @@ APKs are written to `app/build/outputs/apk/<variant>/<buildType>/` and `build/ou
 ## Project structure
 
 ```text
-antigem/
+boopide/
 ├── app/src/main/
 │   ├── java/com/example/gemini/
 │   │   ├── data/          # Agent backends (agy, claude, opencode, codex), terminal, ADB, automation, notes, updater
@@ -432,14 +432,14 @@ antigem/
 
 ## Related projects
 
-AntiGem comes in parts that link to each other:
+BoopIDE comes in parts that link to each other:
 
 | Project | What it is | Repository |
 |---|---|---|
-| **AntiGem** (Android app) | The coding agents, a Linux terminal, an editor and a browser on your phone. With **Connect to PC** it also uses the agents of a PC that runs AntiGem for VS Code. | [Santoshkurmi/antigem](https://github.com/Santoshkurmi/antigem) |
-| **AntiGem for VS Code** | The same agents and chat in a VS Code sidebar. Its **Connect phone** lets the app on your phone use them. | [Santoshkurmi/antigem_vscode_extension](https://github.com/Santoshkurmi/antigem_vscode_extension) · install: [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=santoshkurmi.antigem-vscode-extension), [Open VSX](https://open-vsx.org/extension/santoshkurmi/antigem-vscode-extension) |
-| **AntiGem Browser Bridge** (Chrome extension) | Lets agents in AntiGem for VS Code use your real Chrome. Not needed by the Android app, which has its own browser. | [Santoshkurmi/antigem-browser-extension](https://github.com/Santoshkurmi/antigem-browser-extension) · not in the Chrome Web Store yet: installed with *Load unpacked* from AntiGem for VS Code |
-| **AntiGem mini apps** | The official mini apps (Habits, Pocket Notes, Sky, Gallery, Focus, Dev Toolbox, Explorer, Showcase), installed from **Mini Apps → Get apps**. Also the guide to building and publishing your own: real app sources using every SDK feature, signed `.agapp` packages, the catalog format and the `agapp.mjs publish` tool. | [Santoshkurmi/antigem_mini_apps](https://github.com/Santoshkurmi/antigem_mini_apps) |
+| **BoopIDE** (Android app) | The coding agents, a Linux terminal, an editor and a browser on your phone. With **Connect to PC** it also uses the agents of a PC that runs BoopIDE for VS Code. | [Santoshkurmi/boopide](https://github.com/Santoshkurmi/boopide) |
+| **BoopIDE for VS Code** | The same agents and chat in a VS Code sidebar. Its **Connect phone** lets the app on your phone use them. | [Santoshkurmi/boopide_vscode_extension](https://github.com/Santoshkurmi/boopide_vscode_extension) · install: [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=santoshkurmi.boopide-vscode-extension), [Open VSX](https://open-vsx.org/extension/santoshkurmi/boopide-vscode-extension) |
+| **BoopIDE Browser Bridge** (Chrome extension) | Lets agents in BoopIDE for VS Code use your real Chrome. Not needed by the Android app, which has its own browser. | [Santoshkurmi/boopide-browser-extension](https://github.com/Santoshkurmi/boopide-browser-extension) · not in the Chrome Web Store yet: installed with *Load unpacked* from BoopIDE for VS Code |
+| **BoopIDE mini apps** | The official mini apps (Habits, Pocket Notes, Sky, Gallery, Focus, Dev Toolbox, Explorer, Showcase), installed from **Mini Apps → Get apps**. Also the guide to building and publishing your own: real app sources using every SDK feature, signed `.agapp` packages, the catalog format and the `agapp.mjs publish` tool. | [Santoshkurmi/boopide_mini_apps](https://github.com/Santoshkurmi/boopide_mini_apps) |
 This is not polished app they are only for showcase only not for use and will be removed in future.
 ## Contributing
 
@@ -447,15 +447,15 @@ Issues, ideas and pull requests are welcome. For help, join the [WhatsApp commun
 
 ## Analytics
 
-AntiGem uses [TelemetryDeck](https://telemetrydeck.com) only to count how many people use the app. It records app opens, an anonymous install ID, session counts, and general device details (phone model, Android version, app version). It does **not** collect chats, prompts, code, files, terminal output, account emails or API keys. Debug builds are marked as test data.
+BoopIDE uses [TelemetryDeck](https://telemetrydeck.com) only to count how many people use the app. It records app opens, an anonymous install ID, session counts, and general device details (phone model, Android version, app version). It does **not** collect chats, prompts, code, files, terminal output, account emails or API keys. Debug builds are marked as test data.
 
 ## Disclaimer
 
-AntiGem is an independent project. It is not affiliated with, endorsed by or sponsored by Google, Anthropic, OpenAI, OpenCode or any other AI provider. Antigravity, Claude, Claude Code, Codex and other product names are trademarks of their owners and are used here only to say which tools the app works with.
+BoopIDE is an independent project. It is not affiliated with, endorsed by or sponsored by Google, Anthropic, OpenAI, OpenCode or any other AI provider. Antigravity, Claude, Claude Code, Codex and other product names are trademarks of their owners and are used here only to say which tools the app works with.
 
-AntiGem does not include these tools. You install each one from its official source and sign in with that tool's own login, and the app gives you an interface on top of it. Your use of each tool and account is covered by that provider's own terms, the same as when you use the tool from a terminal.
+BoopIDE does not include these tools. You install each one from its official source and sign in with that tool's own login, and the app gives you an interface on top of it. Your use of each tool and account is covered by that provider's own terms, the same as when you use the tool from a terminal.
 
-AntiGem is free software, provided as is, without warranty, as described in the [license](LICENSE).
+BoopIDE is free software, provided as is, without warranty, as described in the [license](LICENSE).
 
 ## License
 

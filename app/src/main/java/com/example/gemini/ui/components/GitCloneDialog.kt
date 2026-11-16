@@ -40,7 +40,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
 
-private const val CLONED_PATH_MARKER = "ANTIGEM_CLONED_PATH="
+private const val CLONED_PATH_MARKER = "BOOPIDE_CLONED_PATH="
 
 /** The folder name git gives a clone of [url]: "https://github.com/a/my-repo.git" → "my-repo". */
 private fun repoNameOf(url: String): String =
@@ -123,7 +123,7 @@ fun GitCloneDialog(
                     clonedPath = line.removePrefix(CLONED_PATH_MARKER).trim()
                     return@runClone
                 }
-                if (line.isBlank() || line.startsWith("ANTIGEM_EXIT=")) return@runClone
+                if (line.isBlank() || line.startsWith("BOOPIDE_EXIT=")) return@runClone
                 // git redraws its progress ("Receiving objects:  45% (450/1000)"): keep one line per phase
                 val phase = line.substringBefore(':', "")
                 val prevPhase = logs.lastOrNull()?.substringBefore(':', "")

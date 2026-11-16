@@ -57,7 +57,7 @@ open class TermuxService : Service(), LifecycleOwner, ViewModelStoreOwner, Saved
 
     companion object {
         private const val TAG = "TermuxService"
-        private const val CHANNEL_ID = "antigem_termux_service_channel"
+        private const val CHANNEL_ID = "boopide_termux_service_channel"
         private const val NOTIFICATION_ID = 1337
 
         const val ACTION_WAKE_LOCK = "com.termux.service_wake_lock"

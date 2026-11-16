@@ -17,7 +17,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
-/** Where a skill folder came from (its `.antigem-source.json`), when it was added from GitHub. */
+/** Where a skill folder came from (its `.boopide-source.json`), when it was added from GitHub. */
 @Serializable
 data class SkillSourceDto(
     val repo: String = "",

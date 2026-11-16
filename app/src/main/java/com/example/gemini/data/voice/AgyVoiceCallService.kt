@@ -59,7 +59,7 @@ class AgyVoiceCallService : Service() {
         }
         if (wakeLock == null) runCatching {
             wakeLock = (getSystemService(POWER_SERVICE) as PowerManager)
-                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "antigem:agy-voice-call")
+                .newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "boopide:agy-voice-call")
                 .apply { setReferenceCounted(false); acquire(4 * 60 * 60 * 1000L) }
         }
         job?.cancel()

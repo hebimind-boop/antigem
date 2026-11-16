@@ -111,7 +111,7 @@ fun X11DesktopScreen(cardBg: Color, cardBorder: BorderStroke, onOpenAdbConnect: 
                     Mono(
                         "Termux:X11 ${app.versionName ?: ""}".trim() + "\n" + when {
                             app.sameProcess -> "BoopIDE's build, runs inside BoopIDE"
-                            app.antigemBuild -> "BoopIDE's build"
+                            app.boopideBuild -> "BoopIDE's build"
                             else -> "Official build"
                         }
                     )
@@ -119,7 +119,7 @@ fun X11DesktopScreen(cardBg: Color, cardBorder: BorderStroke, onOpenAdbConnect: 
                 }
                 else -> {
                     Text(
-                        if (app.antigemBuild) "This Termux:X11 doesn't share BoopIDE's UID, so it can't run inside BoopIDE. Uninstall it, then install it again."
+                        if (app.boopideBuild) "This Termux:X11 doesn't share BoopIDE's UID, so it can't run inside BoopIDE. Uninstall it, then install it again."
                         else "The official Termux:X11 is installed. It can't run inside BoopIDE, and Android won't install BoopIDE's build over it (they are signed differently). Uninstall it first, then install BoopIDE's build.",
                         fontSize = 12.5.sp, color = MaterialTheme.colorScheme.error
                     )
@@ -317,9 +317,9 @@ private fun ManualSetupCard(desktop: Desktop, cardBg: Color, cardBorder: BorderS
     var open by remember { mutableStateOf(false) }
     val start = "termux-x11 :0 -xstartup \"${desktop.startCommand}\""
     val commands = listOf(
-        "1. Install antigem-termux-x11-sharedUid.apk and download antigem-termux-x11-*-all.deb from ${X11DesktopManager.FORK_RELEASES_PAGE}" to null,
+        "1. Install boopide-termux-x11-sharedUid.apk and download boopide-termux-x11-*-all.deb from ${X11DesktopManager.FORK_RELEASES_PAGE}" to null,
         "2. Enable x11-repo" to "pkg install x11-repo",
-        "3. Install the termux-x11 command (in the folder with the .deb)" to "apt install ./antigem-termux-x11-*-all.deb",
+        "3. Install the termux-x11 command (in the folder with the .deb)" to "apt install ./boopide-termux-x11-*-all.deb",
         "4. Install a desktop" to "pkg install dbus ${desktop.packages}",
         "5. Start it, then open Termux:X11" to start
     )
@@ -349,8 +349,8 @@ private fun ManualSetupCard(desktop: Desktop, cardBg: Color, cardBorder: BorderS
     }
 }
 
-private const val ANTIGEM_RELEASES = "https://github.com/Santoshkurmi/antigem/releases/latest"
-private const val ANTIGEM_README_SHARED_UID = "https://github.com/Santoshkurmi/antigem#termux-compatibility"
+private const val BOOPIDE_RELEASES = "https://github.com/Santoshkurmi/boopide/releases/latest"
+private const val BOOPIDE_README_SHARED_UID = "https://github.com/Santoshkurmi/boopide#termux-compatibility"
 
 /**
  * Shown on the standalone com.termux build in place of a feature that needs a companion app sharing
@@ -379,10 +379,10 @@ internal fun SharedUidRequiredCard(feature: String, cardBg: Color, cardBorder: B
                 "Read the README's Termux compatibility section for the details."
             ).forEachIndexed { i, step -> Hint("${i + 1}. $step") }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { openUrl(context, ANTIGEM_RELEASES) }) {
+                Button(onClick = { openUrl(context, BOOPIDE_RELEASES) }) {
                     Icon(Icons.Outlined.Download, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Releases")
                 }
-                OutlinedButton(onClick = { openUrl(context, ANTIGEM_README_SHARED_UID) }) { Text("Read the README") }
+                OutlinedButton(onClick = { openUrl(context, BOOPIDE_README_SHARED_UID) }) { Text("Read the README") }
             }
         }
     }

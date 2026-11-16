@@ -72,7 +72,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import android.util.Log
-import com.example.gemini.data.admin.AntiGemDeviceAdminReceiver
+import com.example.gemini.data.admin.BoopIDEDeviceAdminReceiver
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -87,14 +87,14 @@ enum class SettingsSection(val title: String, val subtitle: String) {
     MAIN("Settings & Preferences", "Configure your BoopIDE experience"),
     THEMES("Themes", "Light and dark mode, and the theme gallery"),
     APPEARANCE("Appearance", "Chat text size, chat list, header icons and the app switcher"),
-    SERVERS("Servers & Connectivity", "Configure AGY Hub and IDE Bridge endpoints"),
+    SERVERS("Servers & Connectivity", "Configure Boop Hub and IDE Bridge endpoints"),
     CONNECT_PC("Connect to PC", "Use the agents on your PC (BoopIDE in VS Code) from this phone"),
     WEBVIEW_EXTENSIONS("Custom BoopIDE Plugins", "Install and manage plugins: MCP tools and skills"),
     SLASH_COMMANDS("Slash Commands", "Your own / commands and what they expand to"),
     MCP("MCP Servers", "Model Context Protocol tools & integrations"),
     SKILLS_PLUGINS("Skills & Plugins", "Agent capabilities, Google plugins, and extensions"),
     TERMINAL("Terminal & Shell", "SSH configuration, local tools, and styling"),
-    BACKUPS("Backups & Restore", "Backup rootfs environment and AGY chat histories"),
+    BACKUPS("Backups & Restore", "Backup rootfs environment and BoopIDE chat histories"),
     DATA_PROTECTION("Data Loss Protection", "Uninstall shield & App Info clear data protection"),
     PROJECT_CHECKPOINTS("Project checkpoints", "Go back to before any chat message: files restored with a preview"),
     COMMANDS("Commands & Permissions", "Auto-run policy, sandbox mode, and tool approvals"),
@@ -1129,7 +1129,7 @@ private fun rememberDeviceToolRows(onNavigate: (SettingsSection) -> Unit): Devic
 }
 
 /**
- * Settings → Termux Support → Termux:API: how termux-api commands are handled, by AntiGem's built-in
+ * Settings → Termux Support → Termux:API: how termux-api commands are handled, by BoopIDE's built-in
  * handlers or by the external Termux:API companion app (that one needs the Shared UID build).
  */
 @Composable
@@ -1634,7 +1634,7 @@ private fun AppearanceSubScreen(
                         color = ClaudeTerracotta.copy(alpha = 0.15f)
                     ) {
                         Text(
-                            text = "How does BoopIDE connect to AGY Hub?",
+                            text = "How does BoopIDE connect to Boop Hub?",
                             fontSize = (13 * chatFontScale).sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -2056,26 +2056,26 @@ private fun AppearanceSubScreen(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
-                        // Option 1: AntiTerm
-                        val isAntiTerm = terminalLauncherStyle == com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM
+                        // Option 1: BoopTerm
+                        val isBoopTerm = terminalLauncherStyle == com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                         Surface(
                             shape = RoundedCornerShape(10.dp),
-                            color = if (isAntiTerm) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                            color = if (isBoopTerm) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
                             border = BorderStroke(
                                 1.dp,
-                                if (isAntiTerm) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                                if (isBoopTerm) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    terminalLauncherStyle = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM
+                                    terminalLauncherStyle = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                                     com.example.gemini.data.preferences.TerminalLauncherManager.applyLauncherSetting(
                                         context = context,
                                         enabled = true,
-                                        style = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM
+                                        style = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                                     )
                                     coroutineScope.launch {
-                                        authPrefs.setTerminalLauncherStyle(com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM)
+                                        authPrefs.setTerminalLauncherStyle(com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM)
                                     }
                                 }
                         ) {
@@ -2114,16 +2114,16 @@ private fun AppearanceSubScreen(
                                 }
 
                                 RadioButton(
-                                    selected = isAntiTerm,
+                                    selected = isBoopTerm,
                                     onClick = {
-                                        terminalLauncherStyle = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM
+                                        terminalLauncherStyle = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                                         com.example.gemini.data.preferences.TerminalLauncherManager.applyLauncherSetting(
                                             context = context,
                                             enabled = true,
-                                            style = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM
+                                            style = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                                         )
                                         coroutineScope.launch {
-                                            authPrefs.setTerminalLauncherStyle(com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_ANTITERM)
+                                            authPrefs.setTerminalLauncherStyle(com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM)
                                         }
                                     },
                                     colors = RadioButtonDefaults.colors(selectedColor = ClaudeTerracotta)
@@ -4765,7 +4765,7 @@ private fun BackupsSubScreen(
                         backupChatsPassword = ""
                         requestStoragePermission {
                             activeScriptExecution = ScriptExecutionInfo(
-                                title = "AGY Chats & Credentials Backup",
+                                title = "BoopIDE Chats & Credentials Backup",
                                 scriptName = "backup_chats",
                                 args = if (pass.isNotEmpty()) listOf("", pass) else emptyList()
                             )
@@ -4844,7 +4844,7 @@ private fun BackupsSubScreen(
                         restoreFilePath = ""
                         restorePassword = ""
                         activeScriptExecution = ScriptExecutionInfo(
-                            title = "Restore AGY Chats & Credentials",
+                            title = "Restore BoopIDE Chats & Credentials",
                             scriptName = "restore_chats",
                             args = if (pass.isNotEmpty()) listOf(path, pass) else listOf(path)
                         )
@@ -5198,8 +5198,8 @@ private fun ProjectsBackupRestoreDialog(
                         }
                     } else {
                         val zip = ZipFile(file)
-                        val entry = zip.getEntry("antigem_project_manifest.json")
-                            ?: zip.getEntry(".antigem_project_manifest.json")
+                        val entry = zip.getEntry("boopide_project_manifest.json")
+                            ?: zip.getEntry(".boopide_project_manifest.json")
                         if (entry != null) {
                             val stream = zip.getInputStream(entry)
                             val content = stream.bufferedReader().use { it.readText() }
@@ -6315,21 +6315,21 @@ private fun DataProtectionSubScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var isAdminActive by remember { mutableStateOf(AntiGemDeviceAdminReceiver.isAdminActive(context)) }
+    var isAdminActive by remember { mutableStateOf(BoopIDEDeviceAdminReceiver.isAdminActive(context)) }
     var isShieldEnabled by remember { mutableStateOf(ManageSpaceActivity.isShieldEnabled(context)) }
     var showDeactivateAdminDialog by remember { mutableStateOf(false) }
 
     val adminLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) {
-        isAdminActive = AntiGemDeviceAdminReceiver.isAdminActive(context)
+        isAdminActive = BoopIDEDeviceAdminReceiver.isAdminActive(context)
     }
 
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
     DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
-                isAdminActive = AntiGemDeviceAdminReceiver.isAdminActive(context)
+                isAdminActive = BoopIDEDeviceAdminReceiver.isAdminActive(context)
                 isShieldEnabled = ManageSpaceActivity.isShieldEnabled(context)
             }
         }
@@ -6447,12 +6447,12 @@ private fun DataProtectionSubScreen(
                     Button(
                         onClick = {
                             try {
-                                val intent = AntiGemDeviceAdminReceiver.createActivationIntent(context)
+                                val intent = BoopIDEDeviceAdminReceiver.createActivationIntent(context)
                                 adminLauncher.launch(intent)
                             } catch (e: Exception) {
                                 Log.w("SettingsDialog", "Direct admin prompt failed, opening Device Admin settings", e)
                                 try {
-                                    context.startActivity(AntiGemDeviceAdminReceiver.createDeviceAdminSettingsIntent())
+                                    context.startActivity(BoopIDEDeviceAdminReceiver.createDeviceAdminSettingsIntent())
                                 } catch (e2: Exception) {
                                     Toast.makeText(context, "Could not open Device Admin: ${e2.message}", Toast.LENGTH_SHORT).show()
                                 }
@@ -6471,7 +6471,7 @@ private fun DataProtectionSubScreen(
                     OutlinedButton(
                         onClick = {
                             try {
-                                context.startActivity(AntiGemDeviceAdminReceiver.createDeviceAdminSettingsIntent())
+                                context.startActivity(BoopIDEDeviceAdminReceiver.createDeviceAdminSettingsIntent())
                             } catch (e: Exception) {
                                 Toast.makeText(context, "Could not open settings: ${e.message}", Toast.LENGTH_SHORT).show()
                             }
@@ -6611,11 +6611,11 @@ private fun DataProtectionSubScreen(
                 Button(
                     onClick = {
                         showDeactivateAdminDialog = false
-                        AntiGemDeviceAdminReceiver.deactivateAdmin(context)
+                        BoopIDEDeviceAdminReceiver.deactivateAdmin(context)
                         isAdminActive = false
                         scope.launch {
                             delay(300)
-                            isAdminActive = AntiGemDeviceAdminReceiver.isAdminActive(context)
+                            isAdminActive = BoopIDEDeviceAdminReceiver.isAdminActive(context)
                         }
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
@@ -6728,7 +6728,7 @@ private fun CommandsSubScreen(
                             color = ClaudeTerracotta
                         )
                         Text(
-                            text = "Connecting to AGY Hub & loading permissions...",
+                            text = "Connecting to Boop Hub & loading permissions...",
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -6753,14 +6753,14 @@ private fun CommandsSubScreen(
                             modifier = Modifier.size(48.dp)
                         )
                         Text(
-                            text = "Unable to Load Permissions from AGY Hub",
+                            text = "Unable to Load Permissions from Boop Hub",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                         Text(
-                            text = "Could not retrieve daemon permissions and security state:\n${globalSettingsError ?: "RPC connection failed"}\n\nMake sure AGY is running (e.g. agy --hub) and check your Server settings.",
+                            text = "Could not retrieve daemon permissions and security state:\n${globalSettingsError ?: "RPC connection failed"}\n\nMake sure Boop Hub is running (e.g. agy --hub) and check your Server settings.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -7538,7 +7538,7 @@ private fun CommandsSubScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "No workspace projects registered yet on AGY Hub.",
+                    text = "No workspace projects registered yet on Boop Hub.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(14.dp)
@@ -7749,7 +7749,7 @@ private fun CommandsSubScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Live synced with AGY Hub via Jetbox & Project APIs with zero local-storage desync.",
+                    text = "Live synced with Boop Hub via Jetbox & Project APIs with zero local-storage desync.",
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 16.sp
@@ -8000,15 +8000,15 @@ private fun DiagnosticsSubScreen(
     cardBorder: BorderStroke
 ) {
     DisposableEffect(isFloatingDiagnosticsEnabled) {
-        com.example.gemini.data.remote.core.AntiGemLiveDiagnostics.start()
+        com.example.gemini.data.remote.core.BoopIDELiveDiagnostics.start()
         onDispose {
             if (!isFloatingDiagnosticsEnabled) {
-                com.example.gemini.data.remote.core.AntiGemLiveDiagnostics.stop()
+                com.example.gemini.data.remote.core.BoopIDELiveDiagnostics.stop()
             }
         }
     }
 
-    val snapshot by com.example.gemini.data.remote.core.AntiGemLiveDiagnostics.snapshot.collectAsState()
+    val snapshot by com.example.gemini.data.remote.core.BoopIDELiveDiagnostics.snapshot.collectAsState()
     val logs by com.example.gemini.data.remote.inspector.NetworkInspectorManager.logs.collectAsState()
     val activeStreams by com.example.gemini.data.remote.inspector.NetworkInspectorManager.activeStreamsCount.collectAsState()
     val context = androidx.compose.ui.platform.LocalContext.current
@@ -8503,7 +8503,7 @@ private fun AboutSubScreen(
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "Antigravity Mobile Hub & AI Pair Programmer",
+                    text = "BoopIDE Mobile Hub & AI Pair Programmer",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center

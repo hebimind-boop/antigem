@@ -2,9 +2,9 @@
 
 **REA** (Reverse Engineer Anything, [github.com/morluto/rea](https://github.com/morluto/rea)) is an open-source MCP server that lets your AI agents take apart apps and binaries: decompile an Android app's Java/Kotlin classes, read its manifest, permissions and resources, identify Flutter builds, decompile React Native (Hermes) code, and inspect native `.so` libraries. Everything is **static**: REA reads files and never runs the app.
 
-AntiGem runs REA in an **Ubuntu container** (proot-distro) inside the terminal. REA is not tied to one agent: Antigravity, Claude Code and OpenCode all reach it the same way, as an MCP server you add in that agent's MCP settings.
+BoopIDE runs REA in an **Ubuntu container** (proot-distro) inside the terminal. REA is not tied to one agent: Antigravity, Claude Code and OpenCode all reach it the same way, as an MCP server you add in that agent's MCP settings.
 
-> REA needs a **com.termux build** of AntiGem (it uses Termux packages). On other builds the REA page explains this and does nothing else.
+> REA needs a **com.termux build** of BoopIDE (it uses Termux packages). On other builds the REA page explains this and does nothing else.
 
 Only analyze apps and files you own or are allowed to analyze.
 
@@ -14,7 +14,7 @@ Only analyze apps and files you own or are allowed to analyze.
 
 1. **Settings → REA · Reverse Engineering**: get the setup files, then install the parts under *Needed for APK analysis*.
 2. **Connect REA to your agent**: in that agent's MCP settings, tap the **REA** preset and keep *On demand* ([section 5](#-5-connecting-rea-to-an-agent)). Not sure what to pick in its dialog? See [What should I choose?](#-what-should-i-choose)
-3. **Install the REA skill plugin**: tap **Install skill** on the REA page, or install **REA** from **Settings → Custom AntiGem Plugins → Repositories → `Santoshkurmi/antigem_plugins`** ([section 7](#-7-the-rea-skill-plugin-recommended)).
+3. **Install the REA skill plugin**: tap **Install skill** on the REA page, or install **REA** from **Settings → Custom BoopIDE Plugins → Repositories → `Santoshkurmi/boopide_plugins`** ([section 7](#-7-the-rea-skill-plugin-recommended)).
 4. **Ask with `/plu:rea:rea`** at the start of your message, for example:
    `/plu:rea:rea find the APK of com.example.app and summarize its permissions`
 
@@ -28,7 +28,7 @@ The page has numbered steps:
 
 | Step | What it does |
 | :--- | :--- |
-| **1. Setup files** | Downloads REA's setup scripts. They are **not part of the app**; they come from the AntiGem plugins repository when you need them, so the app stays small. |
+| **1. Setup files** | Downloads REA's setup scripts. They are **not part of the app**; they come from the BoopIDE plugins repository when you need them, so the app stays small. |
 | **2. Install** | Installs the parts you pick. |
 | **3. Tool groups** | Chooses which REA tools agents see. |
 | **4. Connect REA to your agent** | Says where to add REA in each agent's MCP settings, what the two ways of offering its tools cost, and the plain command for other agents. |
@@ -40,7 +40,7 @@ Further down: the optional **REA skill**, **Phone access** (adb), **Set up in th
 
 ## 📥 2. Getting the setup files
 
-Tap **Get setup files**. The source is shown under the text (`Santoshkurmi/antigem_plugins@main` by default); **Change** lets you point at a fork for testing. When a newer version of the setup files exists, the step shows **Update** and an **Update to vX** button. Updating also refreshes the `rea-mcp` launcher if it is installed.
+Tap **Get setup files**. The source is shown under the text (`Santoshkurmi/boopide_plugins@main` by default); **Change** lets you point at a fork for testing. When a newer version of the setup files exists, the step shows **Update** and an **Update to vX** button. Updating also refreshes the `rea-mcp` launcher if it is installed.
 
 ---
 
@@ -67,7 +67,7 @@ Install only what you need. Each part has a checkbox, its size and, when you tap
 - **Install selected (N)** installs every ticked part one after another. Parts a ticked part needs are added automatically (the text under the list says which). **Select all** / **Clear** change the ticks.
 - Each part also has its own **Install** / **Reinstall** button. Reinstall repairs a broken part; on REA it updates REA.
 - Everything for APK analysis is about **1 GB** and takes 5–15 minutes depending on your network.
-- **The screen stays on** while something installs, and AntiGem keeps the phone awake. Keep the app open.
+- **The screen stays on** while something installs, and BoopIDE keeps the phone awake. Keep the app open.
 - **Stop** ends the running part. That is safe: install the part again and it finishes where it stopped.
 
 ---
@@ -163,7 +163,7 @@ You can change any group, or make your own, in **Settings → REA → Edit tool 
 | Windows & .NET | 11 | 3.9k | 0 |
 | Decompiler session | 60 | 13.3k | 9 |
 
-*Decompiler session* only works with Ghidra, IDA, Hopper or Kuna, which AntiGem does not install, so leave it off.
+*Decompiler session* only works with Ghidra, IDA, Hopper or Kuna, which BoopIDE does not install, so leave it off.
 
 **Recommended setups**
 
@@ -215,7 +215,7 @@ Installed apps don't need adb: their APK files are readable directly.
 
 ## 🎓 7. The REA skill plugin (recommended)
 
-REA gives the agent its **tools**; the **REA skill** tells the agent **how to use them well**. It is a custom AntiGem plugin (skills only, no code). It teaches the agent to:
+REA gives the agent its **tools**; the **REA skill** tells the agent **how to use them well**. It is a custom BoopIDE plugin (skills only, no code). It teaches the agent to:
 
 - check that REA's MCP server works before using it, and tell you exactly what to fix when it doesn't;
 - find installed apps and their split APKs, detect Flutter / React Native / Unity / native apps, and use the right tools for each;
@@ -228,7 +228,7 @@ REA gives the agent its **tools**; the **REA skill** tells the agent **how to us
 Either way works:
 
 - **Settings → REA → REA skill for agents → Install skill** (also **Update skill** later), or
-- **Settings → Custom AntiGem Plugins → Repositories**: `Santoshkurmi/antigem_plugins` is already in the list (AntiGem adds it once; add it again if you removed it). Open it and install **REA · Reverse Engineering**. Updates show up there too.
+- **Settings → Custom BoopIDE Plugins → Repositories**: `Santoshkurmi/boopide_plugins` is already in the list (BoopIDE adds it once; add it again if you removed it). Open it and install **REA · Reverse Engineering**. Updates show up there too.
 
 ### Using it in chat: `/plu:`
 
@@ -239,7 +239,7 @@ Start your message with the plugin's command. Type `/plu:` and a picker lists yo
 | `/plu:rea:rea …` | The plugin **and** its skill `rea`: the path of that skill file and the instruction to read it fully before acting. The most direct choice. |
 | `/plu:rea …` | The plugin **without** naming a skill: where the plugin's skills are, and the instruction to read the one that matches the task. |
 
-When you send the message, **AntiGem expands the command automatically** into these instructions for the model; you don't paste anything. The chat still shows just `/plu:rea:rea` and your text. It works the same in Antigravity, Claude Code and OpenCode.
+When you send the message, **BoopIDE expands the command automatically** into these instructions for the model; you don't paste anything. The chat still shows just `/plu:rea:rea` and your text. It works the same in Antigravity, Claude Code and OpenCode.
 
 Examples:
 
@@ -264,8 +264,8 @@ REA's phone tools (installed packages, pulling an app's APKs, logcat, screenshot
 **Set up in the terminal → Show** lists the same steps as commands, each with a copy button:
 
 ```sh
-bash $PREFIX/share/antigem-rea/rea-setup.sh help       # every step
-bash $PREFIX/share/antigem-rea/rea-setup.sh android    # everything for APK analysis
+bash $PREFIX/share/boopide-rea/rea-setup.sh help       # every step
+bash $PREFIX/share/boopide-rea/rea-setup.sh android    # everything for APK analysis
 rea-mcp --doctor                                       # health check
 rea-shell                                              # a shell in the container with REA's tools
 ```

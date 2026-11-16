@@ -32,12 +32,12 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 /**
- * Everything a mini app schedules, kept natively (AntiGem's private files, not reachable by any app) so it
+ * Everything a mini app schedules, kept natively (BoopIDE's private files, not reachable by any app) so it
  * survives restarts and reboots:
  *  - reminders: notifications at exact times, with repeat rules (no app code runs)
  *  - background tasks: the app's background script runs with the app closed, periodically (WorkManager),
  *    after a delay, or at exact times (AlarmManager → WorkManager)
- * Alarms are set again after a reboot, an AntiGem update, a time or time-zone change, and whenever AntiGem starts.
+ * Alarms are set again after a reboot, an BoopIDE update, a time or time-zone change, and whenever BoopIDE starts.
  */
 object MiniAppScheduler {
     private const val TAG = "MiniAppScheduler"
@@ -216,7 +216,7 @@ object MiniAppScheduler {
     private fun alarmIntent(context: Context, action: String, app: String, id: String) = PendingIntent.getBroadcast(
         context, 0,
         Intent(context, MiniAppAlarmReceiver::class.java).setAction(action)
-            .setData(Uri.parse("antigem-alarm://${if (action == ACTION_TASK) "t" else "r"}/${Uri.encode(app)}/${Uri.encode(id)}"))
+            .setData(Uri.parse("boopide-alarm://${if (action == ACTION_TASK) "t" else "r"}/${Uri.encode(app)}/${Uri.encode(id)}"))
             .putExtra("app", app).putExtra("id", id),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
@@ -383,7 +383,7 @@ object MiniAppScheduler {
         if (name != null) db(context).delete("tasks", "app = ? AND name = ?", arrayOf(appId, name)) else db(context).delete("tasks", "app = ?", arrayOf(appId))
     }
 
-    /** Runs a task now (used by exact alarms, "Run now" in App info and AntiGem.background.run). */
+    /** Runs a task now (used by exact alarms, "Run now" in App info and BoopIDE.background.run). */
     fun runNow(context: Context, appId: String, name: String, reason: String, data: String? = null) {
         // one after another (a second tap must not cancel the first run)
         WorkManager.getInstance(context).enqueueUniqueWork(uniqueName(appId, name) + ":now", ExistingWorkPolicy.APPEND_OR_REPLACE,
@@ -462,7 +462,7 @@ object MiniAppScheduler {
     }
 
     /**
-     * After boot / update / time change / AntiGem start: alarms again for everything. Missed reminders (phone off)
+     * After boot / update / time change / BoopIDE start: alarms again for everything. Missed reminders (phone off)
      * still show if at most 6 h late; times of day are worked out again (the time zone may have changed).
      */
     @Synchronized
@@ -513,7 +513,7 @@ class MiniAppAlarmReceiver : BroadcastReceiver() {
     }
 }
 
-/** Reboot, AntiGem update, clock or time-zone change: Android dropped (or shifted) the alarms, set them again. */
+/** Reboot, BoopIDE update, clock or time-zone change: Android dropped (or shifted) the alarms, set them again. */
 class MiniAppBootReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val pending = goAsync()

@@ -87,8 +87,8 @@ export function createChromeAPI({ id, manifest, rpc, resourceBase, contextType =
   chrome.i18n.getMessage = (key, substitutions) => { const entry = manifest.__messages?.[key]; let value = entry?.message || ''; const values = Array.isArray(substitutions) ? substitutions : [substitutions]; value = value.replace(/\$(\d+)/g, (_, i) => values[Number(i) - 1] ?? ''); return value; };
   chrome.i18n.detectLanguage = api('i18n.detectLanguage'); chrome.i18n.getAcceptLanguages = api('i18n.getAcceptLanguages');
   chrome.extension = { getURL: chrome.runtime.getURL, get inIncognitoContext() { return false; } };
-  chrome.antigem = {};
-  for (const name of ['automation', 'readFile', 'writeFile', 'listFiles', 'copyFile', 'stat', 'download', 'mediaFrame', 'mediaInfo']) chrome.antigem[name] = args => call(`antigem.${name}`, args);
+  chrome.boopide = {};
+  for (const name of ['automation', 'readFile', 'writeFile', 'listFiles', 'copyFile', 'stat', 'download', 'mediaFrame', 'mediaInfo']) chrome.boopide[name] = args => call(`boopide.${name}`, args);
   async function dispatch(name, args = []) {
     if (name === 'runtime.message') {
       const [message, sender, requestId] = args; let replied = false, keepOpen = false, pending = 0;

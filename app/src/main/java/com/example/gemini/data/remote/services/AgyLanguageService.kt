@@ -45,7 +45,7 @@ val AgyLanguageService: LanguageServerServiceClient by lazy {
  */
 sealed class AgyRpcError(override val message: String, override val cause: Throwable? = null) : Exception(message, cause) {
     data class DaemonOffline(
-        override val message: String = "AGY Hub is offline or unreachable.",
+        override val message: String = "Boop Hub is offline or unreachable.",
         override val cause: Throwable? = null
     ) : AgyRpcError(message, cause)
 
@@ -90,13 +90,13 @@ suspend fun <Req : Any, Resp : Any> GrpcCall<Req, Resp>.executeSafely(
     }
     val err = when {
         isCsrfError || e.grpcStatus == GrpcStatus.UNAUTHENTICATED -> AgyRpcError.Unauthenticated(e.grpcMessage ?: "Session unauthenticated or CSRF validation failed.")
-        e.grpcStatus == GrpcStatus.UNAVAILABLE -> AgyRpcError.DaemonOffline("AGY Hub is offline or unreachable.", e)
+        e.grpcStatus == GrpcStatus.UNAVAILABLE -> AgyRpcError.DaemonOffline("Boop Hub is offline or unreachable.", e)
         else -> AgyRpcError.ServerError(e.grpcStatus, e.grpcMessage ?: e.message ?: "gRPC error")
     }
     Result.failure(err)
 } catch (e: IOException) {
     android.util.Log.e("AGY_RPC", "❌ [AgyLanguageService.executeSafely] IOException: ${e.message}", e)
-    Result.failure(AgyRpcError.DaemonOffline("Failed to connect to AGY Hub: ${e.message}", e))
+    Result.failure(AgyRpcError.DaemonOffline("Failed to connect to Boop Hub: ${e.message}", e))
 } catch (e: Throwable) {
     android.util.Log.e("AGY_RPC", "❌ [AgyLanguageService.executeSafely] Throwable: ${e.message}", e)
     Result.failure(AgyRpcError.Unknown(e.message ?: "Unexpected error", e))
@@ -134,7 +134,7 @@ fun <Req : Any, Resp : Any> GrpcStreamingCall<Req, Resp>.asFlowSafely(
         }
         val err = when (e.grpcStatus) {
             GrpcStatus.UNAUTHENTICATED -> AgyRpcError.Unauthenticated(e.grpcMessage ?: "Unauthenticated")
-            GrpcStatus.UNAVAILABLE -> AgyRpcError.DaemonOffline("AGY Hub is offline or unreachable.", e)
+            GrpcStatus.UNAVAILABLE -> AgyRpcError.DaemonOffline("Boop Hub is offline or unreachable.", e)
             else -> AgyRpcError.ServerError(e.grpcStatus, e.grpcMessage ?: e.message ?: "Stream error")
         }
         channel.close(err)

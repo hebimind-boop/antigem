@@ -451,7 +451,7 @@ fun IdeScreen(
                     },
                     title = {
                         Text(
-                            text = activeProject?.name ?: "antiGem IDE",
+                            text = activeProject?.name ?: "BoopIDE IDE",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                             maxLines = 1,
@@ -1852,7 +1852,7 @@ private fun AddRunProfileDialog(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Text(
-                    text = "Saved into .antigem/run.json in your workspace root.",
+                    text = "Saved into .boopide/run.json in your workspace root.",
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )

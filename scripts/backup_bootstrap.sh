@@ -20,7 +20,7 @@ PREFIX_DIR="${PREFIX:-/data/data/com.termux/files/usr}"
 HOME_DIR="${HOME:-/data/data/com.termux/files/home}"
 FILES_DIR="$(dirname "$PREFIX_DIR")"
 
-BACKUP_DIR="/sdcard/Download/Antigem/backups"
+BACKUP_DIR="/sdcard/Download/Boopide/backups"
 TIMESTAMP="$(date +"%Y-%m-%d-%H-%M-%S")"
 ZIP_BASENAME="bootrapz_${TIMESTAMP}.zip"
 OUTPUT_ZIP="${1:-${BACKUP_DIR}/${ZIP_BASENAME}}"
@@ -107,7 +107,7 @@ END {
 }
 '
 
-echo "[2/3] Exporting archive to Antigem backups storage..."
+echo "[2/3] Exporting archive to Boopide backups storage..."
 mkdir -p "$(dirname "$OUTPUT_ZIP")"
 cp "$TEMP_ZIP" "$OUTPUT_ZIP"
 rm -f "$TEMP_ZIP"

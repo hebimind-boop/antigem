@@ -21,7 +21,7 @@ import com.example.gemini.ui.browser.RepoPlugin
 import kotlinx.coroutines.launch
 
 /**
- * Settings → Custom AntiGem Plugins → Repositories: GitHub repositories of plugin folders, their plugins with
+ * Settings → Custom BoopIDE Plugins → Repositories: GitHub repositories of plugin folders, their plugins with
  * install/update status, and the guide for hosting one. [runOperation]'s result is shown as a notice.
  */
 @Composable
@@ -58,7 +58,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
                     Text("How to lay out a GitHub repo and its ${PluginRepositories.INDEX}", style = MaterialTheme.typography.bodySmall)
                 }
                 IconButton(onClick = { guide = runCatching { readBundledGuide(context) }.getOrElse { "Guide not found: ${it.message}" } }) { Icon(Icons.Outlined.Visibility, "View guide") }
-                IconButton(onClick = { scope.launch { saveToDownloads(context, "antigem-plugin-repository.md", readBundledGuide(context)) } }) { Icon(Icons.Outlined.Download, "Download guide") }
+                IconButton(onClick = { scope.launch { saveToDownloads(context, "boopide-plugin-repository.md", readBundledGuide(context)) } }) { Icon(Icons.Outlined.Download, "Download guide") }
             }
         }
         Card(Modifier.fillMaxWidth()) {
@@ -67,7 +67,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
                     Text("Plugin SDK for PC", style = MaterialTheme.typography.titleSmall)
                     Text("All plugin docs and examples as a ZIP. Copy it to your PC to build plugins there; start with pc-development.md.", style = MaterialTheme.typography.bodySmall)
                 }
-                IconButton(onClick = { scope.launch { saveToDownloads(context, "antigem-plugin-sdk.zip", bundledSdkZip(context), "application/zip") } }) { Icon(Icons.Outlined.FolderZip, "Download plugin SDK ZIP") }
+                IconButton(onClick = { scope.launch { saveToDownloads(context, "boopide-plugin-sdk.zip", bundledSdkZip(context), "application/zip") } }) { Icon(Icons.Outlined.FolderZip, "Download plugin SDK ZIP") }
             }
         }
         OutlinedTextField(value = input, onValueChange = { input = it; addError = null }, label = { Text("GitHub repository") },
@@ -101,7 +101,7 @@ fun PluginRepositoriesTab(busy: Boolean, runOperation: (suspend () -> String?) -
         }
     }
 
-    guide?.let { MarkdownViewerDialog("Plugin repository guide", it, "antigem-plugin-repository.md") { guide = null } }
+    guide?.let { MarkdownViewerDialog("Plugin repository guide", it, "boopide-plugin-repository.md") { guide = null } }
     pending?.let { (repo, plugin) ->
         val taken = folderTaken(folder)
         AlertDialog(

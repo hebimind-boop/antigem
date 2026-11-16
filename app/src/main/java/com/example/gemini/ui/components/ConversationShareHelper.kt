@@ -86,12 +86,12 @@ object ConversationShareHelper {
 
                 val sanitizedTitle = title.replace(Regex("[^a-zA-Z0-9._-]"), "_").take(40).ifBlank { "conversation" }
                 val timeStamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-                val fn = "${sanitizedTitle}_${timeStamp}.antigem"
-                val content = generateAntigemJsonl(title, conversationId, rawSteps, messages)
+                val fn = "${sanitizedTitle}_${timeStamp}.boopide"
+                val content = generateBoopideJsonl(title, conversationId, rawSteps, messages)
                 Pair(content.toByteArray(Charsets.UTF_8), fn)
             }
 
-            // 1. Auto-save to Downloads/AntiGem/Exports
+            // 1. Auto-save to Downloads/BoopIDE/Exports
             val savedFileName = saveToDownloadsExports(context, fileName, bytes)
 
             // 2. Save a copy to cache for sharing via FileProvider
@@ -113,12 +113,12 @@ object ConversationShareHelper {
                 if (snackbarHostState != null) {
                     kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
                         snackbarHostState.showSnackbar(
-                            message = "$savedFileName saved to Downloads/AntiGem/Exports",
+                            message = "$savedFileName saved to Downloads/BoopIDE/Exports",
                             duration = SnackbarDuration.Short
                         )
                     }
                 } else {
-                    AppToastHelper.showToast("$savedFileName saved to Downloads/AntiGem/Exports", ChatToastType.SUCCESS)
+                    AppToastHelper.showToast("$savedFileName saved to Downloads/BoopIDE/Exports", ChatToastType.SUCCESS)
                 }
             }
         } catch (e: Exception) {
@@ -134,12 +134,12 @@ object ConversationShareHelper {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/octet-stream"
                 putExtra(Intent.EXTRA_STREAM, uri)
-                putExtra(Intent.EXTRA_SUBJECT, "$title (AntiGem Trajectory)")
-                putExtra(Intent.EXTRA_TEXT, "AntiGem Chat Trajectory: $title")
+                putExtra(Intent.EXTRA_SUBJECT, "$title (BoopIDE Trajectory)")
+                putExtra(Intent.EXTRA_TEXT, "BoopIDE Chat Trajectory: $title")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            val chooser = Intent.createChooser(shareIntent, "Share AntiGem Chat").apply {
+            val chooser = Intent.createChooser(shareIntent, "Share BoopIDE Chat").apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(chooser)
@@ -155,7 +155,7 @@ object ConversationShareHelper {
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(MediaStore.MediaColumns.MIME_TYPE, "application/octet-stream")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/AntiGem/Exports")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/BoopIDE/Exports")
                     put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
                 val resolver = context.contentResolver
@@ -171,18 +171,18 @@ object ConversationShareHelper {
                     resolver.update(itemUri, contentValues, null, null)
                 }
             } else {
-                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "AntiGem/Exports")
+                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BoopIDE/Exports")
                 if (!downloadsDir.exists()) downloadsDir.mkdirs()
                 val targetFile = File(downloadsDir, fileName)
                 targetFile.writeBytes(bytes)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed saving to Downloads/AntiGem/Exports: ${e.message}", e)
+            Log.e(TAG, "Failed saving to Downloads/BoopIDE/Exports: ${e.message}", e)
         }
         return fileName
     }
 
-    private fun generateAntigemJsonl(
+    private fun generateBoopideJsonl(
         title: String,
         conversationId: String,
         rawSteps: List<Step>?,
@@ -194,7 +194,7 @@ object ConversationShareHelper {
         // Header Line
         val header = JSONObject().apply {
             put("version", 1)
-            put("format", "antigem_trajectory")
+            put("format", "boopide_trajectory")
             put("title", title)
             put("conversation_id", conversationId)
             put("exported_at", dateStr)
@@ -230,7 +230,7 @@ object ConversationShareHelper {
     }
 
     /**
-     * Parses an incoming .antigem or .jsonl stream into SharedConversationData.
+     * Parses an incoming .boopide or .jsonl stream into SharedConversationData.
      */
     fun parseSharedConversation(inputStream: InputStream): SharedConversationData {
         val reader = BufferedReader(InputStreamReader(inputStream, Charsets.UTF_8))
@@ -246,7 +246,7 @@ object ConversationShareHelper {
                 if (trimmed.isEmpty()) continue
                 try {
                     val json = JSONObject(trimmed)
-                    if (json.optString("format") == "antigem_trajectory" || json.has("version")) {
+                    if (json.optString("format") == "boopide_trajectory" || json.has("version")) {
                         title = json.optString("title", title)
                         conversationId = json.optString("conversation_id", conversationId)
                         exportedAt = json.optString("exported_at", "")

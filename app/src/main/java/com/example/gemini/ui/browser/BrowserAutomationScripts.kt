@@ -5,7 +5,7 @@ object BrowserAutomationScripts {
     fun inputLock(enabled: Boolean) = """
         (function () {
             function freezeZoom(on) {
-              var state = window.__antigemInputLock;
+              var state = window.__boopideInputLock;
               if (!on) {
                 if (!state) return { ok: true };
                 state.observer.disconnect();
@@ -21,7 +21,7 @@ object BrowserAutomationScripts {
                   else if (state.originalViewport == null) meta.removeAttribute('content');
                   else meta.setAttribute('content', state.originalViewport);
                 }
-                window.__antigemInputLock = null;
+                window.__boopideInputLock = null;
                 return { ok: true };
               }
               if (state) {
@@ -30,7 +30,7 @@ object BrowserAutomationScripts {
               }
               var meta = document.querySelector('meta[name="viewport"]');
               state = { originalViewport: meta && meta.getAttribute('content'), createdViewport: !meta, fields: new Map() };
-              window.__antigemInputLock = state;
+              window.__boopideInputLock = state;
               function protect(el) {
                 if (!el || !el.matches || !el.matches('input, textarea, [contenteditable="true"], [contenteditable="plaintext-only"]')) return;
                 if (!state.fields.has(el)) state.fields.set(el, el.getAttribute('inputmode'));
@@ -74,7 +74,7 @@ object BrowserAutomationScripts {
     fun agentInputLock(enabled: Boolean, pinZoom: Boolean = false) = """
         (function (on, pinZoom) {
           var FIELDS = 'input, textarea, select, [contenteditable]:not([contenteditable="false"])';
-          var S = window.__antigemAgentLock;
+          var S = window.__boopideAgentLock;
           function restoreMeta() {
             var meta = document.querySelector('meta[name="viewport"]');
             if (meta) {
@@ -92,12 +92,12 @@ object BrowserAutomationScripts {
               if (original == null) el.removeAttribute('inputmode'); else el.setAttribute('inputmode', original);
             });
             if (S.pinning) restoreMeta();
-            window.__antigemAgentLock = null;
+            window.__boopideAgentLock = null;
             return true;
           }
           if (!S) {
             S = { fields: new Map(), pinning: false, width: Math.max(1, Math.round(window.innerWidth)) };
-            window.__antigemAgentLock = S;
+            window.__boopideAgentLock = S;
             var protect = function (el) {
               if (!el || el.nodeType !== 1 || !el.matches || !el.matches(FIELDS)) return;
               if (!S.fields.has(el)) S.fields.set(el, el.getAttribute('inputmode'));

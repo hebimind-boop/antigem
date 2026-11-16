@@ -39,7 +39,7 @@
     <uses-feature android:name="android.hardware.camera.flash" android:required="false" />
 
     <application
-        android:name=".AntiGemApplication"
+        android:name=".BoopIDEApplication"
         android:allowBackup="true"
         android:largeHeap="true"
         android:hasFragileUserData="true"
@@ -72,7 +72,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
 
-            <!-- Open / View .antigem and trajectory chat files -->
+            <!-- Open / View .boopide and trajectory chat files -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -80,8 +80,8 @@
                 <data android:scheme="file" />
                 <data android:scheme="content" />
                 <data android:mimeType="*/*" />
-                <data android:pathPattern=".*\\.antigem" />
-                <data android:pathPattern=".*\\.jsonl\\.antigem" />
+                <data android:pathPattern=".*\\.boopide" />
+                <data android:pathPattern=".*\\.jsonl\\.boopide" />
                 <data android:pathPattern=".*\\.jsonl" />
             </intent-filter>
 
@@ -117,7 +117,7 @@
                 <data android:mimeType="text/*" />
             </intent-filter>
 
-            <!-- Receive shared .antigem, markdown, and text/code files from system share sheet -->
+            <!-- Receive shared .boopide, markdown, and text/code files from system share sheet -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -150,9 +150,9 @@
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize"
             android:windowSoftInputMode="stateHidden|adjustResize" />
 
-        <!-- AntiTerm Style Launcher Alias (off by default: turn it on in Settings > Appearance) -->
+        <!-- BoopTerm Style Launcher Alias (off by default: turn it on in Settings > Appearance) -->
         <activity-alias
-            android:name=".TermuxAntiTermAlias"
+            android:name=".TermuxBoopTermAlias"
             android:targetActivity=".TermuxActivity"
             android:icon="@mipmap/ic_launcher"
             android:roundIcon="@mipmap/ic_launcher_round"
@@ -185,7 +185,7 @@
         <activity
             android:name=".ui.bubble.FloatingChatActivity"
             android:exported="false"
-            android:theme="@style/Theme.AntiGem.FloatingTranslucent"
+            android:theme="@style/Theme.BoopIDE.FloatingTranslucent"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:excludeFromRecents="true"
             android:noHistory="true"
@@ -310,7 +310,7 @@
         </service>
 
         <provider
-            android:name="com.example.gemini.data.files.AntiGemFileProvider"
+            android:name="com.example.gemini.data.files.BoopIDEFileProvider"
             android:authorities="${applicationId}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
@@ -324,16 +324,16 @@
         <activity
             android:name="com.example.gemini.ui.miniapps.MiniAppsActivity"
             android:exported="true"
-            android:theme="@style/Theme.AntiGem.MiniApp"
+            android:theme="@style/Theme.BoopIDE.MiniApp"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize" />
-        <!-- "Get apps": the mini apps of AntiGem's GitHub catalog -->
+        <!-- "Get apps": the mini apps of BoopIDE's GitHub catalog -->
         <activity
             android:name="com.example.gemini.ui.miniapps.MiniAppStoreActivity"
             android:exported="false"
-            android:theme="@style/Theme.AntiGem.MiniApp"
+            android:theme="@style/Theme.BoopIDE.MiniApp"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize" />
         <!-- The mini app installer (like Android's for .apk): opening an .agapp from any app (WhatsApp, Telegram, Gmail,
-             Files, a browser's downloads, AntiGem's file explorer) shows the install / update screen over that app -->
+             Files, a browser's downloads, BoopIDE's file explorer) shows the install / update screen over that app -->
         <activity
             android:name="com.example.gemini.ui.miniapps.MiniAppInstallActivity"
             android:exported="true"
@@ -342,7 +342,7 @@
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden">
-            <!-- the package type (AntiGem shares packages with it, servers can send it) -->
+            <!-- the package type (BoopIDE shares packages with it, servers can send it) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -393,13 +393,13 @@
             android:name="com.example.gemini.ui.miniapps.MiniAppActivity"
             android:exported="true"
             android:documentLaunchMode="intoExisting"
-            android:theme="@style/Theme.AntiGem.MiniApp"
+            android:theme="@style/Theme.BoopIDE.MiniApp"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|density|fontScale" />
         <activity
             android:name="com.example.gemini.ui.miniapps.MiniAppPageActivity"
             android:exported="false"
-            android:theme="@style/Theme.AntiGem.MiniApp"
+            android:theme="@style/Theme.BoopIDE.MiniApp"
             android:windowSoftInputMode="stateHidden|adjustResize"
             android:configChanges="uiMode|orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden|density|fontScale" />
         <!-- Mini app home-screen shortcuts and notification taps: bring the app forward as it was (or start it) -->
@@ -410,7 +410,7 @@
             android:noHistory="true"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar">
-            <!-- links into mini apps: antigem-miniapp://app/<id>/<path>?… -->
+            <!-- links into mini apps: boopide-miniapp://app/<id>/<path>?… -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -458,7 +458,7 @@
         <activity
             android:name="com.example.gemini.ui.settings.ManageSpaceActivity"
             android:exported="true"
-            android:label="AntiGem Space Manager"
+            android:label="BoopIDE Space Manager"
             android:theme="@style/Theme.Gemini">
             <intent-filter>
                 <action android:name="android.intent.action.MANAGE_SPACE" />
@@ -468,7 +468,7 @@
 
         <!-- Device Admin Receiver for Accidental Uninstall Protection -->
         <receiver
-            android:name="com.example.gemini.data.admin.AntiGemDeviceAdminReceiver"
+            android:name="com.example.gemini.data.admin.BoopIDEDeviceAdminReceiver"
             android:permission="android.permission.BIND_DEVICE_ADMIN"
             android:exported="true">
             <meta-data

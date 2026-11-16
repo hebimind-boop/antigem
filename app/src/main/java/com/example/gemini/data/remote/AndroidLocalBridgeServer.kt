@@ -51,7 +51,7 @@ class AndroidLocalBridgeServer private constructor() {
         private const val MAX_HEADER_BYTES = 64 * 1024
         /** Uploads arrive as base64 in JSON: allow large bodies, but not unbounded ones. */
         private const val MAX_BODY_BYTES = 512L * 1024 * 1024
-        /** Per app (build flavor) so com.antigem and com.termux do not collide. */
+        /** Per app (build flavor) so com.boopide and com.termux do not collide. */
         val DEFAULT_PORT = com.example.gemini.BuildConfig.BROWSER_MCP_PORT
         val instance: AndroidLocalBridgeServer by lazy { AndroidLocalBridgeServer() }
     }
@@ -784,7 +784,7 @@ class AndroidLocalBridgeServer private constructor() {
                     if (found.webView == null) bManager.ensureWebViewAttached(appContext!!, found, false)
                     found
                 }
-                bManager.evaluateJs(tab.id, "window.__antigemTabId=${JSONObject.quote(tab.id)}").getOrThrow()
+                bManager.evaluateJs(tab.id, "window.__boopideTabId=${JSONObject.quote(tab.id)}").getOrThrow()
                 sendResponse(out, 200, "application/json", JSONObject().put("socket", "webview_devtools_remote_${android.os.Process.myPid()}").toString())
             }
             "zoom" -> {
@@ -927,7 +927,7 @@ class AndroidLocalBridgeServer private constructor() {
                 }.toString())
             }
             "upload" -> {
-                // chrome.antigem.uploadFiles from extensions; paths were checked by the extension host
+                // chrome.boopide.uploadFiles from extensions; paths were checked by the extension host
                 val paths = bodyJson.optJSONArray("file_paths")?.let { a -> (0 until a.length()).map { a.getString(it) } }.orEmpty()
                 val res = bManager.uploadFiles(
                     bodyJson.optString("tab_id").ifBlank { null }, paths, bodyJson.optString("selector").ifBlank { null },

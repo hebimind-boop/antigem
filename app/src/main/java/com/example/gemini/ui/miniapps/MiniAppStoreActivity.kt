@@ -75,13 +75,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /**
- * "Get apps": the mini apps published in AntiGem's mini app repository (a GitHub repo with signed packages and a
+ * "Get apps": the mini apps published in BoopIDE's mini app repository (a GitHub repo with signed packages and a
  * catalog). Install, update or open each; installing goes through the normal install screen (signature, version,
  * permissions), after the download was checked against the catalog.
  */
 class MiniAppStoreActivity : ComponentActivity() {
     companion object {
-        /** Debug builds: another catalog URL (e.g. http://127.0.0.1:8099/antigem-mini-apps.json through adb reverse). */
+        /** Debug builds: another catalog URL (e.g. http://127.0.0.1:8099/boopide-mini-apps.json through adb reverse). */
         const val EXTRA_CATALOG = "catalog"
     }
 
