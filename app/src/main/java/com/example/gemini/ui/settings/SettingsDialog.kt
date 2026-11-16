@@ -8490,14 +8490,14 @@ private fun AboutSubScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 com.example.gemini.ui.components.AppIconImage(
-                    contentDescription = "AntiGem",
+                    contentDescription = "BoopIDE",
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "AntiGem",
+                    text = "BoopIDE",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -8947,7 +8947,7 @@ private fun AboutSubScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/santoshkurmi/antigem"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hebimind-boop/antigem"))
                             context.startActivity(intent)
                         }
                 ) {
@@ -8974,7 +8974,7 @@ private fun AboutSubScreen(
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "github.com/santoshkurmi/antigem",
+                                    text = "github.com/hebimind-boop/antigem",
                                     fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -8995,7 +8995,7 @@ private fun AboutSubScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/santoshkurmi/antigem/releases"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hebimind-boop/antigem/releases"))
                             context.startActivity(intent)
                         }
                 ) {

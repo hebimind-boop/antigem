@@ -18,14 +18,14 @@ class MiniAppLaunchActivity : Activity() {
     companion object {
         fun intent(context: Context, appId: String): Intent = Intent(context, MiniAppLaunchActivity::class.java)
             .setAction(Intent.ACTION_VIEW)
-            .setData(Uri.parse("antigem-miniapp://app/" + Uri.encode(appId)))
+            .setData(Uri.parse("boopide-miniapp://app/" + Uri.encode(appId)))
             .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // antigem-miniapp://app/<id>[/<path>][?query]: a deep link (also how shortcuts open apps)
-        val link = intent.data?.takeIf { it.scheme == "antigem-miniapp" }
+        // boopide-miniapp://app/<id>[/<path>][?query]: a deep link (also how shortcuts open apps)
+        val link = intent.data?.takeIf { it.scheme == "boopide-miniapp" }
         val appId = intent.getStringExtra(MiniAppNotify.EXTRA_APP) ?: link?.pathSegments?.firstOrNull()
         val app = appId?.let { MiniApps.find(this, it) }
         if (app != null) {

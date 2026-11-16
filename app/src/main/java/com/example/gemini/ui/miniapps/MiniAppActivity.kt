@@ -105,7 +105,7 @@ open class MiniAppActivity : ComponentActivity(), MiniAppHost {
 
         fun rootIntent(context: Context, appId: String): Intent = Intent(context, MiniAppActivity::class.java)
             .setAction(Intent.ACTION_VIEW)
-            .setData(Uri.parse("antigem-miniapp://app/" + Uri.encode(appId)))
+            .setData(Uri.parse("boopide-miniapp://app/" + Uri.encode(appId)))
 
         /**
          * Opens the app like a launcher icon should: an app already running comes forward exactly as it was (the page
@@ -113,7 +113,7 @@ open class MiniAppActivity : ComponentActivity(), MiniAppHost {
          * (Starting the root intent instead would clear the task: documentLaunchMode="intoExisting" restarts it.)
          */
         fun launch(context: Context, appId: String) {
-            val uri = Uri.parse("antigem-miniapp://app/" + Uri.encode(appId))
+            val uri = Uri.parse("boopide-miniapp://app/" + Uri.encode(appId))
             val task = runCatching {
                 context.getSystemService(ActivityManager::class.java).appTasks.firstOrNull { t ->
                     val base = t.taskInfo.baseIntent

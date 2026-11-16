@@ -348,7 +348,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:scheme="content" />
                 <data android:scheme="file" />
-                <data android:mimeType="application/vnd.antigem.agapp" />
+                <data android:mimeType="application/vnd.boopide.app" />
             </intent-filter>
             <!-- any type, when the name ends in .agapp. pathPattern stops at the first match of each dot, hence one
                  pattern per number of dots before ".agapp"; pathAdvancedPattern (Android 12+) is a real regex -->
@@ -415,7 +415,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="antigem-miniapp" android:host="app" />
+                <data android:scheme="boopide-miniapp" android:host="app" />
             </intent-filter>
         </activity>
         <!-- "Mini app" in Android's share sheet: send text, links and files to a mini app that accepts them -->

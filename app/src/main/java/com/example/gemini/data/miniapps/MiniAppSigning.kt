@@ -43,7 +43,7 @@ object MiniAppSigning {
     const val CERT = "META-INF/AGAPP.CERT.json"
     const val SIG = "META-INF/AGAPP.SIG"
     /** The type .agapp files are shared and opened with (AntiGem's file provider reports it for *.agapp). */
-    const val MIME = "application/vnd.antigem.agapp"
+    const val MIME = "application/vnd.boopide.app"
 
     /** A zip with a signed file list: what to treat as a package before verifying it. */
     fun looksLikePackage(file: File): Boolean = runCatching { ZipFile(file).use { it.getEntry(DIGEST) != null } }.getOrDefault(false)

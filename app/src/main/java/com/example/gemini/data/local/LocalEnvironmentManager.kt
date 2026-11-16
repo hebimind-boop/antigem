@@ -608,11 +608,14 @@ object LocalEnvironmentManager {
             return
         }
         try {
+            val pkg = context.packageName
+            val binBash = File(getBinDir(context), "bash").absolutePath
+            val defaultTmp = getTmpDir(context).absolutePath
             val libexecDir = File(getPrefixDir(context), "libexec")
             if (!libexecDir.exists()) libexecDir.mkdirs()
             val dispatcherFile = File(libexecDir, "termux-api")
             val scriptContent = """
-                #!/data/data/com.termux/files/usr/bin/bash
+                #!$binBash
                 METHOD="${'$'}1"
                 shift
 
@@ -624,13 +627,13 @@ object LocalEnvironmentManager {
                     fi
                 fi
 
-                TMP_DIR="${'$'}{TMPDIR:-/data/data/com.termux/files/usr/tmp}"
+                TMP_DIR="${'$'}{TMPDIR:-$defaultTmp}"
                 mkdir -p "${'$'}TMP_DIR"
                 TMP_OUT="${'$'}TMP_DIR/api_out.${'$'}${'$'}"
 
                 am broadcast --user 0 \
                     -a "com.termux.api" \
-                    -n "com.termux/com.example.gemini.data.receiver.TermuxApiReceiver" \
+                    -n "$pkg/com.example.gemini.data.receiver.TermuxApiReceiver" \
                     --es "api_method" "${'$'}METHOD" \
                     --es "socket_output" "${'$'}TMP_OUT" \
                     "${'$'}{EXTRA_ARGS[@]}" \
