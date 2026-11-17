@@ -166,6 +166,17 @@
             </intent-filter>
         </activity-alias>
 
+        <!-- Legacy AntiTerm Style Launcher Alias (disabled, for smooth upgrade compatibility) -->
+        <activity-alias
+            android:name=".TermuxAntiTermAlias"
+            android:targetActivity=".TermuxActivity"
+            android:icon="@mipmap/ic_launcher"
+            android:roundIcon="@mipmap/ic_launcher_round"
+            android:label="@string/anti_term_name"
+            android:theme="@style/Theme.Gemini"
+            android:enabled="false"
+            android:exported="false" />
+
         <!-- Classic Termux Style Launcher Alias -->
         <activity-alias
             android:name=".TermuxClassicAlias"

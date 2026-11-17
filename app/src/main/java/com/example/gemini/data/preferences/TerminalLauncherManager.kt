@@ -83,6 +83,12 @@ object TerminalLauncherManager {
                 }
             } catch (_: Exception) {}
 
+            // Also safely disable legacy alias if present
+            try {
+                val legacyAlias = ComponentName(context.packageName, "com.example.gemini.TermuxAntiTermAlias")
+                setComponentSafe(pm, legacyAlias, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)
+            } catch (_: Exception) {}
+
             if (!enabled) {
                 // Disable both aliases
                 setComponentSafe(pm, boopTerm, PackageManager.COMPONENT_ENABLED_STATE_DISABLED)

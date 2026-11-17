@@ -55,18 +55,13 @@ class BoopIDEApplication : Application(), coil.ImageLoaderFactory {
         com.example.gemini.data.agent.agy.AgyCloud.init(this)
         // Forks build with their own key, so only official release APKs report real usage.
         if (!BuildConfig.DEBUG && !isOfficialRelease()) {
-            Toast.makeText(
-                this,
-                "Unofficial build: analytics disabled. Developer: set your own TelemetryDeck app ID and RELEASE_CERT_SHA256 in BoopIDEApplication.kt.",
-                Toast.LENGTH_LONG
-            ).show()
             return
         }
         TelemetryDeck.start(
             this,
             TelemetryDeck.Builder()
                 .appID("D98008E6-EEE4-4BBC-97A2-E3790251AECF")
-                .namespace("com.santoshkurmi")
+                .namespace("com.hebimind.boopide")
                 .defaultUser(SimpleTelemetryId.getUniqueUserId(this))
                 .testMode(BuildConfig.DEBUG)
                 .showDebugLogs(BuildConfig.DEBUG)
@@ -90,7 +85,7 @@ class BoopIDEApplication : Application(), coil.ImageLoaderFactory {
     }.getOrDefault(false)
 
     private companion object {
-        // SHA-256 of the release.jks certificate (alias "boopide"). Public, safe to commit.
-        const val RELEASE_CERT_SHA256 = "CCF2C681063BA941641519E4EAC7F024E92880CCD06EED5070DAA9717380F315"
+        // SHA-256 of the release.jks certificate. Public, safe to commit.
+        const val RELEASE_CERT_SHA256 = "9D5DADFE783DDC4828B89CAB584D008719A15FFC14BD2912CB0EC0E85F187E00"
     }
 }
