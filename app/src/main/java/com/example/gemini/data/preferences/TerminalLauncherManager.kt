@@ -7,15 +7,12 @@ import android.util.Log
 
 object TerminalLauncherManager {
     const val STYLE_BOOPTERM = "BOOPTERM"
-    const val STYLE_BOOPTERM = STYLE_BOOPTERM
     const val STYLE_TERMUX = "TERMUX"
 
     private const val TAG = "TerminalLauncherMgr"
 
     fun getBoopTermComponent(context: Context): ComponentName =
         ComponentName(context.packageName, "com.example.gemini.TermuxBoopTermAlias")
-
-    fun getBoopTermComponent(context: Context): ComponentName = getBoopTermComponent(context)
 
     fun getTermuxClassicComponent(context: Context): ComponentName =
         ComponentName(context.packageName, "com.example.gemini.TermuxClassicAlias")

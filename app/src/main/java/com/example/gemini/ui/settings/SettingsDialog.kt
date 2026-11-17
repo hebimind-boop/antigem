@@ -4677,7 +4677,7 @@ private fun BackupsSubScreen(
 
         BackupActionCard(
             icon = Icons.Outlined.Workspaces,
-            title = "IDE & AGY projects",
+            title = "IDE & Boop projects",
             subtitle = "Back up or restore selected projects",
             description = "Pick projects from the IDE and chat workspaces. Choose a clean git-aware archive (skips node_modules and build output) or a full copy. Restores map back to the right folders, with a safety backup.",
             cardBg = cardBg,
@@ -5318,7 +5318,7 @@ private fun ProjectsBackupRestoreDialog(
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = "Backup IDE & AGY workspaces or restore from zip",
+                                text = "Backup IDE & Boop workspaces or restore from zip",
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -8129,7 +8129,7 @@ private fun DiagnosticsSubScreen(
                                 }
                             }
                             Text(
-                                text = "Inspect IDE Bridge HTTP & AGY Daemon gRPC calls in real-time",
+                                text = "Inspect IDE Bridge HTTP & Boop Hub gRPC calls in real-time",
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -8340,7 +8340,7 @@ private fun DiagnosticsSubScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "AgyHub Stream / RPCs:",
+                        text = "BoopHub Stream / RPCs:",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -8358,7 +8358,7 @@ private fun DiagnosticsSubScreen(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
-                        text = "AgyHub Connection Pool:",
+                        text = "BoopHub Connection Pool:",
                         fontSize = 12.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                     )
@@ -8802,7 +8802,7 @@ private fun AboutSubScreen(
                             modifier = Modifier.size(20.dp)
                         )
                         Text(
-                            text = "AGY IDE Bridge Binary",
+                            text = "Boop IDE Bridge Binary",
                             fontSize = 14.sp,
                             fontWeight = FontWeight.SemiBold,
                             color = MaterialTheme.colorScheme.onSurface
@@ -8823,7 +8823,7 @@ private fun AboutSubScreen(
                 }
 
                 Text(
-                    text = "Export the compiled agy_ide_bridge daemon binary to your device's public Download folder to execute in custom chroots, Termux environments, or external terminals.",
+                    text = "Export the compiled Boop IDE Bridge daemon binary to your device's public Download folder to execute in custom chroots, Termux environments, or external terminals.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     lineHeight = 16.sp
@@ -8867,7 +8867,7 @@ private fun AboutSubScreen(
                                     isExportingBridge = false
                                     refreshBridgeStatus()
                                     if (exported != null && exported.exists()) {
-                                        Toast.makeText(context, "Saved agy_ide_bridge to Downloads!", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(context, "Saved Boop IDE Bridge to Downloads!", Toast.LENGTH_SHORT).show()
                                     } else {
                                         Toast.makeText(context, "Failed to export bridge binary", Toast.LENGTH_LONG).show()
                                     }

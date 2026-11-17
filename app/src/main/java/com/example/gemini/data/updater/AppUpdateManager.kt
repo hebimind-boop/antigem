@@ -53,10 +53,17 @@ class AppUpdateManager(private val context: Context) {
         forceCheck: Boolean = false
     ): Result<AppUpdateInfo?> = withContext(Dispatchers.IO) {
         try {
+            val bustUrl = if (versionJsonUrl.contains("?")) {
+                "$versionJsonUrl&_t=${System.currentTimeMillis()}"
+            } else {
+                "$versionJsonUrl?_t=${System.currentTimeMillis()}"
+            }
             val request = Request.Builder()
-                .url(versionJsonUrl)
+                .url(bustUrl)
                 .header("User-Agent", "BoopIDE-Updater/${BuildConfig.VERSION_NAME}")
-                .header("Cache-Control", "no-cache")
+                .header("Cache-Control", "no-cache, no-store, must-revalidate")
+                .header("Pragma", "no-cache")
+                .header("Expires", "0")
                 .build()
 
             val response = httpClient.newCall(request).execute()
