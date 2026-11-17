@@ -21,13 +21,17 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -201,14 +205,14 @@ fun AgentsSettingsPage(
         }
         Spacer(Modifier.height(10.dp))
         var showInstallerDialog by remember { mutableStateOf(false) }
-        androidx.compose.material3.OutlinedButton(
+        OutlinedButton(
             onClick = { showInstallerDialog = true },
             shape = RoundedCornerShape(14.dp),
             contentPadding = PaddingValues(vertical = 12.dp),
             modifier = Modifier.fillMaxWidth()
         ) {
-            androidx.compose.material3.Icon(
-                androidx.compose.material.icons.Icons.Default.Build,
+            Icon(
+                Icons.Default.Build,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp)
             )
