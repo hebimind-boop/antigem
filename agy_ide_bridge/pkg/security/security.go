@@ -60,14 +60,29 @@ func getTokenFilePath() string {
 	return filepath.Join(home, ".boopide_bridge", "csrf_token.txt")
 }
 
+func getLegacyTokenFilePath() string {
+	home, err := os.UserHomeDir()
+	if err != nil || home == "" {
+		home = "/data/data/com.termux/files/home"
+	}
+	return filepath.Join(home, ".antigem_bridge", "csrf_token.txt")
+}
+
 // ResolveToken determines the active token from CLI argument, file, or new generation.
 func ResolveToken(cliToken string) string {
 	cliToken = strings.TrimSpace(cliToken)
 	tokenFile := getTokenFilePath()
+	legacyFile := getLegacyTokenFilePath()
+
+	persistToken := func(t string) {
+		_ = os.MkdirAll(filepath.Dir(tokenFile), 0755)
+		_ = os.WriteFile(tokenFile, []byte(t), 0600)
+		_ = os.MkdirAll(filepath.Dir(legacyFile), 0755)
+		_ = os.WriteFile(legacyFile, []byte(t), 0600)
+	}
 
 	if len(cliToken) == TokenLen {
-		_ = os.MkdirAll(filepath.Dir(tokenFile), 0755)
-		_ = os.WriteFile(tokenFile, []byte(cliToken), 0600)
+		persistToken(cliToken)
 		return cliToken
 	}
 
@@ -75,14 +90,21 @@ func ResolveToken(cliToken string) string {
 	if data, err := os.ReadFile(tokenFile); err == nil {
 		saved := strings.TrimSpace(string(data))
 		if len(saved) == TokenLen {
+			persistToken(saved)
+			return saved
+		}
+	}
+	if data, err := os.ReadFile(legacyFile); err == nil {
+		saved := strings.TrimSpace(string(data))
+		if len(saved) == TokenLen {
+			persistToken(saved)
 			return saved
 		}
 	}
 
 	// Generate and persist new token
 	newToken := GenerateToken()
-	_ = os.MkdirAll(filepath.Dir(tokenFile), 0755)
-	_ = os.WriteFile(tokenFile, []byte(newToken), 0600)
+	persistToken(newToken)
 	return newToken
 }
 

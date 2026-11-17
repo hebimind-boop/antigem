@@ -159,6 +159,9 @@ class LocalPtySession(
                 }
                 val sysdataBindings = LocalEnvironmentManager.setupFakeSysdata(context)
 
+                File(ubuntuDir, "antigem/bin").mkdirs()
+                File(ubuntuDir, "boopide/bin").mkdirs()
+
                 val prootArgs = mutableListOf(
                     "proot",
                     "--kill-on-exit",
@@ -175,6 +178,7 @@ class LocalPtySession(
                     "--bind=/dev/urandom:/dev/random",
                     "--bind=${shmDir.absolutePath}:/dev/shm",
                     "--bind=${prootTmpDir.absolutePath}:/tmp",
+                    "--bind=${LocalEnvironmentManager.getBinDir(context).absolutePath}:/antigem/bin",
                     "--bind=${LocalEnvironmentManager.getBinDir(context).absolutePath}:/boopide/bin"
                 )
                 for ((fakeFile, guestPath) in sysdataBindings) {

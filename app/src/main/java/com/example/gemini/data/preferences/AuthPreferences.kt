@@ -100,7 +100,7 @@ class AuthPreferences(private val context: Context) {
         val IS_TERMINAL_LAUNCHER_ENABLED = androidx.datastore.preferences.core.booleanPreferencesKey("is_terminal_launcher_enabled")
 
         const val DEFAULT_BRIDGE_BINARY_PATH = "~/../usr/bin/agy_ide_bridge"
-        const val DEFAULT_UBUNTU_BRIDGE_BINARY_PATH = "/boopide/bin/agy_ide_bridge"
+        const val DEFAULT_UBUNTU_BRIDGE_BINARY_PATH = "/antigem/bin/agy_ide_bridge"
         const val DEFAULT_AGY_BINARY_PATH = "~/.local/bin/agy"
         const val DEFAULT_UBUNTU_AGY_BINARY_PATH = "/root/.local/bin/agy"
         /** The app's Claude Code launcher (glibc loader); Claude's updater never touches it. */
@@ -1081,12 +1081,23 @@ class AuthPreferences(private val context: Context) {
         it[AGY_BRIDGE_BINARY_PATH] ?: getAgyBridgeBinaryPathSync()
     }
 
-    fun getAgyBridgeBinaryPathSync(): String =
-        syncPrefs.getString("agy_bridge_binary_path", getDefaultBridgeBinaryPath()) ?: getDefaultBridgeBinaryPath()
+    fun getAgyBridgeBinaryPathSync(): String {
+        val path = syncPrefs.getString("agy_bridge_binary_path", getDefaultBridgeBinaryPath()) ?: getDefaultBridgeBinaryPath()
+        if (path == "/boopide/bin/agy_ide_bridge") {
+            saveAgyBridgeBinaryPathSync(DEFAULT_UBUNTU_BRIDGE_BINARY_PATH)
+            return DEFAULT_UBUNTU_BRIDGE_BINARY_PATH
+        }
+        return path
+    }
+
+    fun saveAgyBridgeBinaryPathSync(path: String) {
+        val trimmed = path.trim().ifBlank { getDefaultBridgeBinaryPath() }
+        syncPrefs.edit().putString("agy_bridge_binary_path", trimmed).apply()
+    }
 
     suspend fun saveAgyBridgeBinaryPath(path: String) {
         val trimmed = path.trim().ifBlank { getDefaultBridgeBinaryPath() }
-        syncPrefs.edit().putString("agy_bridge_binary_path", trimmed).apply()
+        saveAgyBridgeBinaryPathSync(trimmed)
         context.dataStore.edit { it[AGY_BRIDGE_BINARY_PATH] = trimmed }
     }
 

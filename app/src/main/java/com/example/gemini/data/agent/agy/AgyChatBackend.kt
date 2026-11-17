@@ -398,7 +398,7 @@ class AgyChatBackend(
                 return@launch
             }
 
-            _authFeedbackMessage.tryEmit("Initiating sign-in with Antigravity...")
+            _authFeedbackMessage.tryEmit("Initiating sign-in with BoopIDE...")
 
             // 1. Poll for successful auth completion concurrently every 800ms
             startLoginPoll(hubUrl)
@@ -601,7 +601,7 @@ class AgyChatBackend(
                             "error" -> {
                                 _isServerOnline.value = false
                                 _isConversationsLoading.value = false
-                                _conversationError.value = "Antigravity Hub failed to start: ${status.error ?: "Check server logs"}"
+                                _conversationError.value = "BoopIDE Hub failed to start: ${status.error ?: "Check server logs"}"
                             }
                             "stopped" -> {
                                 _isServerOnline.value = false
@@ -906,9 +906,9 @@ class AgyChatBackend(
                     }
                     val rawErr = e.message ?: "Connection failed"
                     val helpfulMsg = if (rawErr.contains("Connect", ignoreCase = true) || rawErr.contains("Failed to connect", ignoreCase = true)) {
-                        "Cannot connect to Antigravity Hub (${AuthPreferences.currentHubUrl}). Make sure 'agy --hub' is running."
+                        "Cannot connect to BoopIDE Hub (${AuthPreferences.currentHubUrl}). Make sure BoopIDE Hub is running and tap Retry."
                     } else {
-                        "Antigravity Hub unreachable: $rawErr"
+                        "BoopIDE Hub unreachable: $rawErr"
                     }
                     val isStarting = agyBridgeService.hubStatus.value.status == "starting"
                     if (_conversations.value.isEmpty() && !isStarting) {
@@ -1083,7 +1083,7 @@ class AgyChatBackend(
             _conversationError.value = null
 
             val conv = _conversations.value.find { it.id == id }
-                ?: Conversation(id = id, title = "Antigravity Chat", sessionId = id)
+                ?: Conversation(id = id, title = "BoopIDE Chat", sessionId = id)
             Log.d("CHAT_OPEN_DEBUG", "👉 [ChatViewModel.selectConversation] Launching stream for conv: title='${conv.title}', id=${conv.id}")
             _currentConversation.value = conv
             // this app's pending queued sends for the chat (the daemon's queue arrives with the first frame)
@@ -1305,7 +1305,7 @@ class AgyChatBackend(
                             val isKnownExisting = _conversations.value.any { it.id == conversationId && it.title != "New Chat" }
                             if (activeStreamConversationId == conversationId) {
                                 if (isKnownExisting && _messages.value.isEmpty()) {
-                                    _conversationError.value = "No messages received from Antigravity. Tap Retry."
+                                    _conversationError.value = "No messages received from BoopIDE Hub. Tap Retry."
                                     _isServerOnline.value = isHubOnline
                                 } else {
                                     _conversationError.value = null
@@ -1335,7 +1335,7 @@ class AgyChatBackend(
                     Log.w("ChatViewModel", "Persistent stream error ($conversationId): ${e.message}")
                     val rawErr = e.localizedMessage ?: e.message ?: e.toString()
                     val helpfulMsg = if (rawErr.contains("Connect", ignoreCase = true) || rawErr.contains("Failed to connect", ignoreCase = true)) {
-                        "Cannot connect to Antigravity. Make sure Antigravity is running and tap Retry."
+                        "Cannot connect to BoopIDE Hub. Make sure BoopIDE Hub is running and tap Retry."
                     } else {
                         "Error loading conversation: $rawErr"
                     }
@@ -1410,7 +1410,7 @@ class AgyChatBackend(
             val msg = list[i]
             if (msg.role == MessageRole.ASSISTANT && msg.isStreaming) {
                 val newContent = if (msg.content.isBlank() && msg.toolCalls.isEmpty()) {
-                    "⚠️ Connection to Antigravity daemon was interrupted."
+                    "⚠️ Connection to BoopIDE Hub daemon was interrupted."
                 } else {
                     msg.content
                 }
@@ -1580,7 +1580,7 @@ class AgyChatBackend(
 
         var updatedConv = conv
         val isFirstUserMsg = _messages.value.none { it.role == MessageRole.USER }
-        val isGenericTitle = updatedConv.title == "New Chat" || updatedConv.title == "Antigravity Chat" || updatedConv.title.isBlank()
+        val isGenericTitle = updatedConv.title == "New Chat" || updatedConv.title == "BoopIDE Chat" || updatedConv.title == "Antigravity Chat" || updatedConv.title.isBlank()
         if (isGenericTitle || isFirstUserMsg) {
             val firstLine = com.example.gemini.data.remote.PromptExpansion.collapse(finalPrompt).trim().lines().firstOrNull { it.isNotBlank() } ?: "Chat"
             val cleanTitle = firstLine.take(40) + if (firstLine.length > 40) "..." else ""
@@ -1992,7 +1992,7 @@ class AgyChatBackend(
         } else ""
 
         val isKnownOnDaemon = knownDaemonCascadeIds.contains(conv.id) ||
-                (totalStepsCount > 0 && conv.title != "New Chat" && conv.title != "Antigravity Chat" && conv.title.isNotBlank())
+                (totalStepsCount > 0 && conv.title != "New Chat" && conv.title != "BoopIDE Chat" && conv.title != "Antigravity Chat" && conv.title.isNotBlank())
 
         backendScope.launch(Dispatchers.IO) {
             try {
@@ -2397,7 +2397,7 @@ class AgyChatBackend(
                     withContext(Dispatchers.Main) {
                         if (failureError != null) {
                             val msg = if (failureError.contains("Connect", ignoreCase = true) || failureError.contains("failed to connect", ignoreCase = true)) {
-                                "Failed to refresh: Antigravity Hub (${AuthPreferences.currentHubUrl}) unreachable"
+                                "Failed to refresh: BoopIDE Hub (${AuthPreferences.currentHubUrl}) unreachable"
                             } else {
                                 "Failed to refresh: $failureError"
                             }

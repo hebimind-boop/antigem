@@ -447,7 +447,7 @@ fun ChatScreen(
         when {
             voiceCall.active -> com.example.gemini.data.voice.AgyVoiceCall.setMinimized(false)
             !systemConnectionState.canSend -> com.example.gemini.ui.components.AppToastHelper.showToast(
-                "Start the server to call Antigravity.", com.example.gemini.ui.components.ChatToastType.ERROR
+                "Start the server to call BoopIDE.", com.example.gemini.ui.components.ChatToastType.ERROR
             )
             // agy refuses voice calls for cloud chats (its /voice/ws answers 404 for them)
             currentConv?.cloudProjectId != null -> com.example.gemini.ui.components.AppToastHelper.showToast(
@@ -554,7 +554,7 @@ fun ChatScreen(
             onSignIn = { viewModel.loginToAgyHub(force = true) },
             onCheckAuth = { viewModel.checkAgyAuthStatus(userInitiated = true) },
             onRetry = {
-                com.example.gemini.ui.components.AppToastHelper.showToast("Reconnecting to Antigravity…", com.example.gemini.ui.components.ChatToastType.INFO)
+                com.example.gemini.ui.components.AppToastHelper.showToast("Reconnecting to BoopIDE Hub…", com.example.gemini.ui.components.ChatToastType.INFO)
                 viewModel.retryConnections()
             },
             onRestartServer = restartLocalServer
@@ -1480,7 +1480,7 @@ fun ChatScreen(
                 text = {
                     Column {
                         Text(
-                            text = "Antigravity requires Google authentication to access Gemini models.",
+                            text = "BoopIDE requires Google authentication to access Gemini models.",
                             fontSize = 13.5.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -1648,7 +1648,7 @@ fun ChatScreen(
                             val activeTitle = currentConv?.title?.takeIf {
                                 it.isNotBlank() && it != "New Chat" && it != "Conversation"
                             }
-                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "Antigravity Chat"
+                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "BoopIDE Chat"
                         }
 
                         val isChatStarted = messages.isNotEmpty()
@@ -2686,7 +2686,7 @@ fun ChatScreen(
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (isReconnecting) "Connecting to Antigravity..." else "Antigravity Disconnected",
+                                    text = if (isReconnecting) "Connecting to BoopIDE Hub..." else "BoopIDE Hub Disconnected",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = if (isReconnecting) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onErrorContainer,

@@ -394,6 +394,8 @@ object LocalEnvironmentManager {
         File(ubuntuDir, "proc").mkdirs()
         File(ubuntuDir, "sys").mkdirs()
         File(ubuntuDir, "root").mkdirs()
+        File(ubuntuDir, "antigem/bin").mkdirs()
+        File(ubuntuDir, "boopide/bin").mkdirs()
         val rootBashrc = File(File(ubuntuDir, "root"), ".bashrc")
         if (!rootBashrc.exists() || !rootBashrc.readText().contains("/usr/local/sbin")) {
             rootBashrc.appendText("\nexport PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:\$PATH\n")
@@ -2354,6 +2356,8 @@ All files created here persist inside the application.
                 mkdirs()
                 try { Os.chmod(absolutePath, 511) } catch (_: Exception) {}
             }
+            File(ubuntuDir, "antigem/bin").mkdirs()
+            File(ubuntuDir, "boopide/bin").mkdirs()
             val sysdataBindings = setupFakeSysdata(context)
             val cmdList = mutableListOf(
                 prootBin,
@@ -2370,7 +2374,9 @@ All files created here persist inside the application.
                 "--bind=/sys",
                 "--bind=/dev/urandom:/dev/random",
                 "--bind=${shmDir.absolutePath}:/dev/shm",
-                "--bind=${prootTmpDir.absolutePath}:/tmp"
+                "--bind=${prootTmpDir.absolutePath}:/tmp",
+                "--bind=${getBinDir(context).absolutePath}:/antigem/bin",
+                "--bind=${getBinDir(context).absolutePath}:/boopide/bin"
             )
             for ((fakeFile, guestPath) in sysdataBindings) {
                 cmdList.add("--bind=${fakeFile.absolutePath}:$guestPath")

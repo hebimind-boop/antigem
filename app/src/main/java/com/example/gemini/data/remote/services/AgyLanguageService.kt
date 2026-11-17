@@ -24,21 +24,33 @@ import java.io.IOException
  * Single shared typed entrypoint for Antigravity LanguageServerService gRPC APIs.
  * Connects to the active Hub URL using the shared OkHttpClient connection pool.
  */
-val AgyLanguageService: LanguageServerServiceClient by lazy {
-    val hubUrl = AuthPreferences.currentHubUrl.ifBlank { AuthPreferences.DEFAULT_HUB_URL }
-    val normalizedUrl = if (!hubUrl.startsWith("http://") && !hubUrl.startsWith("https://")) {
-        "http://$hubUrl"
-    } else {
-        hubUrl
-    }.trimEnd('/')
+private var cachedHubUrl: String? = null
+private var cachedClient: LanguageServerServiceClient? = null
 
-    GrpcLanguageServerServiceClient(
-        GrpcClient.Builder()
-            .client(AgyOkHttpClient.client)
-            .baseUrl(normalizedUrl)
-            .build()
-    )
-}
+val AgyLanguageService: LanguageServerServiceClient
+    get() {
+        val hubUrl = AuthPreferences.currentHubUrl.ifBlank { AuthPreferences.DEFAULT_HUB_URL }
+        val normalizedUrl = if (!hubUrl.startsWith("http://") && !hubUrl.startsWith("https://")) {
+            "http://$hubUrl"
+        } else {
+            hubUrl
+        }.trimEnd('/')
+
+        val existing = cachedClient
+        if (existing != null && cachedHubUrl == normalizedUrl) {
+            return existing
+        }
+
+        val client = GrpcLanguageServerServiceClient(
+            GrpcClient.Builder()
+                .client(AgyOkHttpClient.client)
+                .baseUrl(normalizedUrl)
+                .build()
+        )
+        cachedHubUrl = normalizedUrl
+        cachedClient = client
+        return client
+    }
 
 /**
  * Domain error model for AGY Language Server gRPC calls.

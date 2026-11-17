@@ -1,11 +1,11 @@
 {
-  "version_code": 133,
-  "version_name": "1.2.4",
+  "version_code": 134,
+  "version_name": "1.2.5",
   "min_supported_version_code": 1,
   "changelog": [
-    "Fix splash wordmark XML inflation crash on app launch",
-    "Set official release keystore SHA-256 and remove unofficial build warning",
-    "Add backward-compatible launcher alias handling for seamless upgrade"
+    "Fix container proot bind-mount paths for /antigem/bin and /boopide/bin compatibility",
+    "Fix daemon bridge connection and dynamic hub URL resolution",
+    "Update chat screen branding to BoopIDE Chat and BoopIDE Hub"
   ],
   "is_critical": true
 }

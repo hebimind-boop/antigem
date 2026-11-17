@@ -581,7 +581,7 @@ object YouTubeMediaSessionManager {
         val metadataBuilder = MediaMetadata.Builder()
             .putString(MediaMetadata.METADATA_KEY_TITLE, activeTitle)
             .putString(MediaMetadata.METADATA_KEY_ARTIST, "YouTube")
-            .putString(MediaMetadata.METADATA_KEY_ALBUM, "Antigravity Chat")
+            .putString(MediaMetadata.METADATA_KEY_ALBUM, "BoopIDE Chat")
             .putLong(MediaMetadata.METADATA_KEY_DURATION, activeDurationMs)
 
         thumbnailBitmap?.let {

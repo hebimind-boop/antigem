@@ -181,7 +181,7 @@ object ConversationExportHelper {
         val sb = StringBuilder()
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
-        sb.append("# ").append(title.ifBlank { "Antigravity Chat" }).append("\n\n")
+        sb.append("# ").append(title.ifBlank { "BoopIDE Chat" }).append("\n\n")
         sb.append("> **Exported on:** ").append(dateStr).append("\n")
         sb.append("> **Conversation ID:** `").append(conversationId).append("`\n\n")
         sb.append("---\n\n")
@@ -243,7 +243,7 @@ object ConversationExportHelper {
 
     private fun generateHtml(title: String, conversationId: String, messages: List<ChatMessage>): String {
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        val htmlTitle = escapeHtml(title.ifBlank { "Antigravity Chat" })
+        val htmlTitle = escapeHtml(title.ifBlank { "BoopIDE Chat" })
 
         val sb = StringBuilder()
         sb.append("<!DOCTYPE html>\n")
