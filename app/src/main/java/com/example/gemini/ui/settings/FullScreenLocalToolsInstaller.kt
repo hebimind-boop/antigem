@@ -263,7 +263,7 @@ fun FullScreenLocalToolsInstaller(
                     is LocalInstallerState.Configuring,
                     is LocalInstallerState.Verifying -> SecondaryButton("Continue in background", onClick = onSkip)
 
-                    is LocalInstallerState.Success -> PrimaryButton("Get started", Icons.Default.Check, onComplete)
+                    is LocalInstallerState.Success -> PrimaryButton("Continue to Agent Setup", Icons.Default.ArrowForward, onComplete)
 
                     is LocalInstallerState.Error -> {
                         PrimaryButton("Try again", Icons.Default.Refresh) { installSelected(fallbackToAuto = true) }

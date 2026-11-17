@@ -397,8 +397,8 @@ object LocalEnvironmentManager {
         File(ubuntuDir, "antigem/bin").mkdirs()
         File(ubuntuDir, "boopide/bin").mkdirs()
         val rootBashrc = File(File(ubuntuDir, "root"), ".bashrc")
-        if (!rootBashrc.exists() || !rootBashrc.readText().contains("/usr/local/sbin")) {
-            rootBashrc.appendText("\nexport PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:\$PATH\n")
+        if (!rootBashrc.exists() || !rootBashrc.readText().contains("/root/.local/bin")) {
+            rootBashrc.appendText("\nexport PATH=/root/.local/bin:/root/.opencode/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:\$PATH\n")
         }
         // Ubuntu's /etc/zsh/zshrc compinit does ~15k fpath stats under proot (~30s first start)
         val rootZshenv = File(File(ubuntuDir, "root"), ".zshenv")
@@ -2422,7 +2422,7 @@ All files created here persist inside the application.
             processBuilder.environment()["USER"] = "root"
             processBuilder.environment()["TERM"] = "xterm-256color"
             processBuilder.environment()["LANG"] = "C.UTF-8"
-            processBuilder.environment()["PATH"] = "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            processBuilder.environment()["PATH"] = "/root/.local/bin:/root/.opencode/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             processBuilder.environment()["TMPDIR"] = "/tmp"
             processBuilder.environment()["DEBIAN_FRONTEND"] = "noninteractive"
             // processBuilder.environment()["PROOT_NO_SECCOMP"] = "1"

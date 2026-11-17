@@ -199,6 +199,25 @@ fun AgentsSettingsPage(
                 Text(if (selected == enabled) "No changes" else "Apply and restart app", fontWeight = FontWeight.SemiBold)
             }
         }
+        Spacer(Modifier.height(10.dp))
+        var showInstallerDialog by remember { mutableStateOf(false) }
+        androidx.compose.material3.OutlinedButton(
+            onClick = { showInstallerDialog = true },
+            shape = RoundedCornerShape(14.dp),
+            contentPadding = PaddingValues(vertical = 12.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            androidx.compose.material3.Icon(
+                androidx.compose.material.icons.Icons.Default.Build,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(Modifier.width(8.dp))
+            Text("Install / Manage Agent CLIs", fontWeight = FontWeight.SemiBold)
+        }
+        if (showInstallerDialog) {
+            AgentSetupAndInstallerDialog(onDismissOrCompleted = { showInstallerDialog = false })
+        }
         if (onOpenGlobalContext != null) {
             Spacer(Modifier.height(24.dp))
             com.example.gemini.ui.settings.GlobalContextEntryRow(onClick = onOpenGlobalContext)

@@ -1,11 +1,11 @@
 {
-  "version_code": 134,
-  "version_name": "1.2.5",
+  "version_code": 135,
+  "version_name": "1.2.6",
   "min_supported_version_code": 1,
   "changelog": [
-    "Fix container proot bind-mount paths for /antigem/bin and /boopide/bin compatibility",
-    "Fix daemon bridge connection and dynamic hub URL resolution",
-    "Update chat screen branding to BoopIDE Chat and BoopIDE Hub"
+    "Add seamless first-time AI agent selection & CLI batch auto-installer dialog",
+    "Support one-click install for Antigravity (agy), Claude Code, OpenCode, and Codex with live terminal logs",
+    "Add quick Install / Setup Agents button to chat error screen"
   ],
   "is_critical": true
 }

@@ -362,6 +362,8 @@ fun ChatScreen(
     var showLocalTerminalDialog by rememberSaveable { mutableStateOf(false) }
     var showLocalToolsInstallDialog by remember { mutableStateOf(false) }
     var showLocalServerOutputDialog by remember { mutableStateOf(false) }
+    var showAgentInstallerDialog by rememberSaveable { mutableStateOf(false) }
+    var hasSkippedAgentSetupPrompt by rememberSaveable { mutableStateOf(false) }
     val serverStatus by com.example.gemini.data.local.LocalServerManager.status.collectAsState()
     val isLocalRunning = serverStatus is com.example.gemini.data.local.LocalServerStatus.Running
     val isLocalStarting = serverStatus is com.example.gemini.data.local.LocalServerStatus.Starting
@@ -2067,24 +2069,42 @@ fun ChatScreen(
                                 )
                             }
                             Spacer(modifier = Modifier.height(16.dp))
-                            Button(
-                                onClick = {
-                                    val convId = currentConv?.id
-                                    if (!convId.isNullOrBlank()) {
-                                        viewModel.selectConversation(convId)
-                                    } else {
-                                        viewModel.retryConnections()
-                                    }
-                                },
-                                shape = RoundedCornerShape(10.dp)
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Refresh,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp)
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text("Retry", fontSize = 13.5.sp)
+                                Button(
+                                    onClick = {
+                                        val convId = currentConv?.id
+                                        if (!convId.isNullOrBlank()) {
+                                            viewModel.selectConversation(convId)
+                                        } else {
+                                            viewModel.retryConnections()
+                                        }
+                                    },
+                                    shape = RoundedCornerShape(10.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Refresh,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Retry", fontSize = 13.5.sp)
+                                }
+
+                                OutlinedButton(
+                                    onClick = { showAgentInstallerDialog = true },
+                                    shape = RoundedCornerShape(10.dp)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Build,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(16.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Text("Install / Setup Agents", fontSize = 13.5.sp)
+                                }
                             }
                         }
                     } else if (isExistingChat) {
@@ -3221,15 +3241,21 @@ fun ChatScreen(
     // asked once the local environment (rootfs) is installed, before the local server starts
     // First-launch setup, one full-screen step at a time: the agents, then the terminal icon (that one waits for the
     // agent choice so the two never show at once). The steps are numbered while both are still to do.
-    val agentStepPending = !hasChosenAgents &&
-        (isLocalToolsInstalled || com.example.gemini.data.local.LocalEnvironmentManager.isInstalled(context) || AuthPreferences.currentRemoteMode)
+    val agentStepPending = !hasSkippedAgentSetupPrompt &&
+        com.example.gemini.data.agent.AgentCliManager.isInitialSetupNeeded(context)
     val launcherStepPending = !hasSeenTerminalLauncherOnboarding && !isInFloatingWindow
     var setupSteps by remember { mutableStateOf(0) }
     LaunchedEffect(agentStepPending, launcherStepPending) {
         if (agentStepPending && launcherStepPending) setupSteps = 2
     }
-    if (agentStepPending) {
-        com.example.gemini.ui.agents.AgentChoiceDialog(step = 1, total = if (launcherStepPending) 2 else 1) { viewModel.applyAgents(it) }
+    if (agentStepPending || showAgentInstallerDialog) {
+        com.example.gemini.ui.agents.AgentSetupAndInstallerDialog(
+            onDismissOrCompleted = {
+                showAgentInstallerDialog = false
+                hasSkippedAgentSetupPrompt = true
+                viewModel.retryConnections()
+            }
+        )
     }
     if (isApplyingAgents) {
         com.example.gemini.ui.agents.AgentsApplyingDialog()
