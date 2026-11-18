@@ -449,7 +449,7 @@ fun ChatScreen(
         when {
             voiceCall.active -> com.example.gemini.data.voice.AgyVoiceCall.setMinimized(false)
             !systemConnectionState.canSend -> com.example.gemini.ui.components.AppToastHelper.showToast(
-                "Start the server to call BoopIDE.", com.example.gemini.ui.components.ChatToastType.ERROR
+                "Start the server to call LimitX.", com.example.gemini.ui.components.ChatToastType.ERROR
             )
             // agy refuses voice calls for cloud chats (its /voice/ws answers 404 for them)
             currentConv?.cloudProjectId != null -> com.example.gemini.ui.components.AppToastHelper.showToast(
@@ -556,7 +556,7 @@ fun ChatScreen(
             onSignIn = { viewModel.loginToAgyHub(force = true) },
             onCheckAuth = { viewModel.checkAgyAuthStatus(userInitiated = true) },
             onRetry = {
-                com.example.gemini.ui.components.AppToastHelper.showToast("Reconnecting to BoopIDE Hub…", com.example.gemini.ui.components.ChatToastType.INFO)
+                com.example.gemini.ui.components.AppToastHelper.showToast("Reconnecting to LimitX Hub…", com.example.gemini.ui.components.ChatToastType.INFO)
                 viewModel.retryConnections()
             },
             onRestartServer = restartLocalServer
@@ -1482,7 +1482,7 @@ fun ChatScreen(
                 text = {
                     Column {
                         Text(
-                            text = "BoopIDE requires Google authentication to access Gemini models.",
+                            text = "LimitX requires Google authentication to access Gemini models.",
                             fontSize = 13.5.sp,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -1650,7 +1650,7 @@ fun ChatScreen(
                             val activeTitle = currentConv?.title?.takeIf {
                                 it.isNotBlank() && it != "New Chat" && it != "Conversation"
                             }
-                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "BoopIDE Chat"
+                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "LimitX Chat"
                         }
 
                         val isChatStarted = messages.isNotEmpty()
@@ -2486,7 +2486,7 @@ fun ChatScreen(
                         }
                     }
 
-                    // `/plu:` browses custom BoopIDE plugins and their skills; custom commands join the normal list
+                    // `/plu:` browses custom LimitX plugins and their skills; custom commands join the normal list
                     val customCommands = com.example.gemini.data.remote.CustomSlashCommands.commands.toList()
                     val installedPlugins = com.example.gemini.ui.browser.BrowserExtensionManager.instance.extensions.toList()
                     val slashSuggestions = remember(slashQuery, effectiveSlashCommands, isSlashActive, customCommands, installedPlugins) {
@@ -2706,7 +2706,7 @@ fun ChatScreen(
                                 }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Text(
-                                    text = if (isReconnecting) "Connecting to BoopIDE Hub..." else "BoopIDE Hub Disconnected",
+                                    text = if (isReconnecting) "Connecting to LimitX Hub..." else "LimitX Hub Disconnected",
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.Medium,
                                     color = if (isReconnecting) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onErrorContainer,

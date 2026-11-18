@@ -57,7 +57,7 @@ fun EngineWarmingUpView(
         Spacer(modifier = Modifier.height(20.dp))
 
         Text(
-            text = "Waking up Antigravity...",
+            text = "Waking up LimitX Engine...",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -105,7 +105,7 @@ fun DrawerEngineWarmingUpView(
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "Waking up Antigravity...",
+            text = "Waking up LimitX Engine...",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -380,7 +380,7 @@ fun NewChatSignInPromptCard(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Sign in to Antigravity",
+            text = "Sign in to LimitX",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,
@@ -519,7 +519,7 @@ fun NewChatCheckingAuthPromptCard(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Verifying your sign-in with Antigravity. You can start typing your message below anytime!",
+            text = "Verifying your sign-in with LimitX. You can start typing your message below anytime!",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
             textAlign = TextAlign.Center,
@@ -561,7 +561,7 @@ fun ServerStoppedPromptCard(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Antigravity is stopped",
+            text = "LimitX is stopped",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.SemiBold,
             color = MaterialTheme.colorScheme.onSurface,

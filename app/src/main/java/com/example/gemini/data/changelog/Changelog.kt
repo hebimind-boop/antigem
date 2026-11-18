@@ -40,7 +40,22 @@ class ChangelogVersion(
 
 object Changelog {
     /** Newest first. Built on first use (a few dozen entries, so it's cheap). */
-    val versions: List<ChangelogVersion> by lazy { build(GeneratedChangelog.entries) }
+    val versions: List<ChangelogVersion> by lazy {
+        val cleanEntries = listOf(
+            ChangelogEntry(
+                versionCode = 136,
+                versionName = "1.2.7",
+                date = "2026-11-18",
+                changes = listOf(
+                    "New: LimitX Official Release — AI Coding Studio, Cyber Terminal & Multi-Agent Hub",
+                    "New: Custom LimitX cyber aesthetic, OLED Monochrome Dark & Clean Monochrome Light themes",
+                    "New: First-time AI agent CLI selection and auto-installer for Antigravity, Claude Code, OpenCode & Codex",
+                    "Improved: High-performance terminal emulator with native Android Automation MCP tools"
+                )
+            )
+        )
+        build(cleanEntries)
+    }
 
     /** The date of the first release ("Sep 30, 2026"), for the end of the timeline. */
     val firstDateLabel: String? get() = versions.lastOrNull { it.dateLabel != null }?.dateLabel

@@ -91,7 +91,7 @@ object ConversationShareHelper {
                 Pair(content.toByteArray(Charsets.UTF_8), fn)
             }
 
-            // 1. Auto-save to Downloads/BoopIDE/Exports
+            // 1. Auto-save to Downloads/LimitX/Exports
             val savedFileName = saveToDownloadsExports(context, fileName, bytes)
 
             // 2. Save a copy to cache for sharing via FileProvider
@@ -113,12 +113,12 @@ object ConversationShareHelper {
                 if (snackbarHostState != null) {
                     kotlinx.coroutines.CoroutineScope(Dispatchers.Main).launch {
                         snackbarHostState.showSnackbar(
-                            message = "$savedFileName saved to Downloads/BoopIDE/Exports",
+                            message = "$savedFileName saved to Downloads/LimitX/Exports",
                             duration = SnackbarDuration.Short
                         )
                     }
                 } else {
-                    AppToastHelper.showToast("$savedFileName saved to Downloads/BoopIDE/Exports", ChatToastType.SUCCESS)
+                    AppToastHelper.showToast("$savedFileName saved to Downloads/LimitX/Exports", ChatToastType.SUCCESS)
                 }
             }
         } catch (e: Exception) {
@@ -134,12 +134,12 @@ object ConversationShareHelper {
             val shareIntent = Intent(Intent.ACTION_SEND).apply {
                 type = "application/octet-stream"
                 putExtra(Intent.EXTRA_STREAM, uri)
-                putExtra(Intent.EXTRA_SUBJECT, "$title (BoopIDE Trajectory)")
-                putExtra(Intent.EXTRA_TEXT, "BoopIDE Chat Trajectory: $title")
+                putExtra(Intent.EXTRA_SUBJECT, "$title (LimitX Trajectory)")
+                putExtra(Intent.EXTRA_TEXT, "LimitX Chat Trajectory: $title")
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
-            val chooser = Intent.createChooser(shareIntent, "Share BoopIDE Chat").apply {
+            val chooser = Intent.createChooser(shareIntent, "Share LimitX Chat").apply {
                 addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             }
             context.startActivity(chooser)
@@ -155,7 +155,7 @@ object ConversationShareHelper {
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(MediaStore.MediaColumns.MIME_TYPE, "application/octet-stream")
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/BoopIDE/Exports")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/LimitX/Exports")
                     put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
                 val resolver = context.contentResolver
@@ -171,13 +171,13 @@ object ConversationShareHelper {
                     resolver.update(itemUri, contentValues, null, null)
                 }
             } else {
-                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BoopIDE/Exports")
+                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LimitX/Exports")
                 if (!downloadsDir.exists()) downloadsDir.mkdirs()
                 val targetFile = File(downloadsDir, fileName)
                 targetFile.writeBytes(bytes)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed saving to Downloads/BoopIDE/Exports: ${e.message}", e)
+            Log.e(TAG, "Failed saving to Downloads/LimitX/Exports: ${e.message}", e)
         }
         return fileName
     }

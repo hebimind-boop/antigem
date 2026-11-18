@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- BoopIDE "Prism" icon background: graphite, lit softly from the top -->
+<!-- LimitX adaptive icon background: deep cyber slate -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
@@ -11,10 +11,10 @@
             <gradient
                 android:type="radial"
                 android:centerX="54"
-                android:centerY="30"
+                android:centerY="40"
                 android:gradientRadius="80"
-                android:startColor="#FF252832"
-                android:endColor="#FF07080B" />
+                android:startColor="#FF111D29"
+                android:endColor="#FF0B131B" />
         </aapt:attr>
     </path>
 </vector>

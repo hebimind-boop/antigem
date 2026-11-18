@@ -314,11 +314,11 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         buildList {
             val agyWorking = agyChats.filter { it.isRunning }
             val agyBackground = agyChats.filter { !it.isRunning && (it.notFullyIdle || it.hasActivity) }
-            if (agyWorking.isNotEmpty()) add("BoopIDE is working in ${names(agyWorking.map { it.title })}")
-            if (agyBackground.isNotEmpty()) add("BoopIDE has background work in ${names(agyBackground.map { it.title })}")
+            if (agyWorking.isNotEmpty()) add("LimitX is working in ${names(agyWorking.map { it.title })}")
+            if (agyBackground.isNotEmpty()) add("LimitX has background work in ${names(agyBackground.map { it.title })}")
             val listed = (agyWorking + agyBackground).map { it.id }.toSet()
             val otherInstances = instances.count { it.conversationId !in listed }
-            if (otherInstances > 0) add(if (otherInstances == 1) "A BoopIDE instance is running" else "$otherInstances BoopIDE instances are running")
+            if (otherInstances > 0) add(if (otherInstances == 1) "A LimitX instance is running" else "$otherInstances LimitX instances are running")
             val claudeOpen = current?.takeIf { claudeTurn && it.agent == AgentKind.CLAUDE }
             if (claudeOpen != null) add("Claude is replying in ${names(listOf(claudeOpen.title))}")
             val claudeOthers = claudeChats.filter { it.isRunning && it.id != claudeOpen?.id }
@@ -338,7 +338,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                 }
             )
         }
-    }.combine(voiceCallActive) { reasons, call -> if (call) listOf("A voice call with BoopIDE is on") + reasons else reasons }
+    }.combine(voiceCallActive) { reasons, call -> if (call) listOf("A voice call with LimitX is on") + reasons else reasons }
         .stateIn(viewModelScope, SharingStarted.Eagerly, emptyList())
     val isCurrentChatActivelyRunning = byAgent(agyBackend.isCurrentChatActivelyRunning, claudeBackend.isCurrentChatActivelyRunning, openCodeBackend.isCurrentChatActivelyRunning, codexBackend.isCurrentChatActivelyRunning)
     val isCurrentChatBackgroundActive = byAgent(agyBackend.isCurrentChatBackgroundActive, alwaysFalse, alwaysFalse, alwaysFalse)
@@ -1649,7 +1649,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                         withContext(Dispatchers.Main) {
                             com.example.gemini.ui.components.AppToastHelper.showToast(
                                 if (hubReady) "Chat restored: ${restored.title}"
-                                else "Chat restored: ${restored.title}. It opens once BoopIDE Hub has started.",
+                                else "Chat restored: ${restored.title}. It opens once LimitX Hub has started.",
                                 com.example.gemini.ui.components.ChatToastType.SUCCESS
                             )
                         }
@@ -1686,7 +1686,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
         val ready = withTimeoutOrNull(180_000) { systemConnectionState.first { it.isReady } } != null
         if (!ready) {
             withContext(Dispatchers.Main) {
-                com.example.gemini.ui.components.AppToastHelper.showToast("BoopIDE Hub has not started yet: the restored chat is in the chat list.", com.example.gemini.ui.components.ChatToastType.INFO)
+                com.example.gemini.ui.components.AppToastHelper.showToast("LimitX Hub has not started yet: the restored chat is in the chat list.", com.example.gemini.ui.components.ChatToastType.INFO)
             }
             return
         }

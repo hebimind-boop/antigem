@@ -298,12 +298,12 @@ class BrowserExtensionManager private constructor() {
         try {
             val homeDir = LocalEnvironmentManager.getHomeDir(context)
             list.add(File(homeDir, "extensions"))
-            list.add(File(LocalEnvironmentManager.getProjectsDir(context), "BoopIDE/extensions"))
+            list.add(File(LocalEnvironmentManager.getProjectsDir(context), "LimitX/extensions"))
         } catch (_: Exception) {}
 
         list.add(File(context.filesDir, "extensions"))
         list.add(File(context.filesDir, "browser-extensions"))
-        val extStorage = File("/sdcard/BoopIDE/extensions")
+        val extStorage = File("/sdcard/LimitX/extensions")
         if (extStorage.exists()) list.add(extStorage)
         return list.distinctBy { it.absolutePath }
     }

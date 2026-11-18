@@ -327,7 +327,7 @@ private fun UnsupportedDeviceScreen(onContinue: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.height(28.dp))
                 InstallerCard {
-                    Text("You can still use BoopIDE", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = AppColors.onBackground)
+                    Text("You can still use LimitX", fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = AppColors.onBackground)
                     Spacer(modifier = Modifier.height(10.dp))
                     listOf(
                         Icons.Outlined.Dns to "Server mode: run the agents on a computer or server and connect to it",
@@ -351,7 +351,7 @@ private fun UnsupportedDeviceScreen(onContinue: () -> Unit) {
                 Spacer(modifier = Modifier.height(24.dp))
             }
             Column(modifier = Modifier.padding(start = 24.dp, end = 24.dp, top = 8.dp, bottom = 20.dp)) {
-                PrimaryButton("Continue to BoopIDE", icon = null, onClick = onContinue)
+                PrimaryButton("Continue to LimitX", icon = null, onClick = onContinue)
             }
         }
     }
@@ -359,20 +359,35 @@ private fun UnsupportedDeviceScreen(onContinue: () -> Unit) {
 
 @Composable
 private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
-    val (icon, tint) = when (state) {
-        is LocalInstallerState.Success -> Icons.Default.Check to QuotaGreen
-        is LocalInstallerState.Error -> Icons.Default.ErrorOutline to AppColors.danger
-        else -> Icons.Outlined.Terminal to ClaudeTerracotta
-    }
-    val animatedTint by animateColorAsState(tint, label = "heroTint")
-    Box(
-        modifier = Modifier
-            .size(76.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .background(Brush.linearGradient(listOf(animatedTint, animatedTint.copy(alpha = 0.65f)))),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(38.dp))
+    if (state is LocalInstallerState.Idle) {
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .clip(RoundedCornerShape(22.dp))
+                .background(AppColors.card),
+            contentAlignment = Alignment.Center
+        ) {
+            com.example.gemini.ui.components.AppIconImage(
+                contentDescription = "LimitX",
+                modifier = Modifier.size(76.dp)
+            )
+        }
+    } else {
+        val (icon, tint) = when (state) {
+            is LocalInstallerState.Success -> Icons.Default.Check to QuotaGreen
+            is LocalInstallerState.Error -> Icons.Default.ErrorOutline to AppColors.danger
+            else -> Icons.Outlined.Terminal to ClaudeTerracotta
+        }
+        val animatedTint by animateColorAsState(tint, label = "heroTint")
+        Box(
+            modifier = Modifier
+                .size(76.dp)
+                .clip(RoundedCornerShape(24.dp))
+                .background(Brush.linearGradient(listOf(animatedTint, animatedTint.copy(alpha = 0.65f)))),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(imageVector = icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(38.dp))
+        }
     }
     Spacer(modifier = Modifier.height(22.dp))
     Text(
@@ -397,7 +412,7 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
         text = when (state) {
             is LocalInstallerState.Success -> if (isTermux) "The shell, core tools and AGY tools are installed." else "Ubuntu, bash, glibc and AGY tools are installed."
             is LocalInstallerState.Error -> "You can try again, or install from a ZIP file instead."
-            is LocalInstallerState.Idle -> "BoopIDE runs its terminal, IDE and agents on a local Linux system. Choose how to install it."
+            is LocalInstallerState.Idle -> "LimitX runs its terminal, IDE and agents on a local Linux system. Choose how to install it."
             is LocalInstallerState.Discovering -> "Checking for the latest verified archive."
             is LocalInstallerState.AwaitingConfirmation -> "Review the details and confirm."
             else -> "This takes a few minutes. You can keep using the app meanwhile."

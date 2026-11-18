@@ -893,7 +893,7 @@ fun ChatInputBar(
                                     )
                                     Spacer(modifier = Modifier.width(8.dp))
                                     Text(
-                                        text = "Transcribing audio via Boop Hub...",
+                                        text = "Transcribing audio via LimitX Hub...",
                                         fontSize = 12.sp,
                                         color = ClaudeTerracotta,
                                         fontWeight = FontWeight.Medium
@@ -1261,7 +1261,7 @@ fun ChatInputBar(
                             Spacer(modifier = Modifier.width(6.dp))
                         }
 
-                        // Dedicated Speech-to-Text Live Dictation Button (Boop Hub)
+                        // Dedicated Speech-to-Text Live Dictation Button (LimitX Hub)
                         if (voiceEnabled && !isStreaming && !isRecordingAudio) {
                             Surface(
                                 onClick = {

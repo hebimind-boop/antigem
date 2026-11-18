@@ -404,7 +404,7 @@ internal fun ServersSubScreen(
         AlertDialog(
             onDismissRequest = { showRestartDialog = false },
             icon = { Icon(Icons.Outlined.RestartAlt, null, tint = ClaudeTerracotta, modifier = Modifier.size(28.dp)) },
-            title = { Text("Reopen BoopIDE?", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
+            title = { Text("Reopen LimitX?", fontWeight = FontWeight.Bold, fontSize = 17.sp) },
             text = {
                 Text(
                     if (remote) "Settings saved. Reopening the app connects over SSH, starts the bridge that is already on the server and opens the connections with the new settings."
@@ -664,7 +664,7 @@ internal fun ServersSubScreen(
                 OutlinedTextField(
                     value = hubText,
                     onValueChange = { hubText = it; saveFeedback = null; hubTestStatus = null },
-                    label = { Text("Boop Hub address") },
+                    label = { Text("LimitX Hub address") },
                     placeholder = { Text(if (remote && !tunnel) "https://hub.example.com" else AuthPreferences.DEFAULT_HUB_URL) },
                     modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri)
@@ -990,14 +990,14 @@ internal fun ServersSubScreen(
                         Spacer(Modifier.width(10.dp))
                         Column(Modifier.weight(1f)) {
                             Text("Binary Executable Paths", fontSize = 14.5.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
-                            Text("Custom paths used when auto-starting IDE Bridge, Boop Hub, Claude Code and OpenCode", fontSize = 11.5.sp, color = subtle)
+                            Text("Custom paths used when auto-starting IDE Bridge, LimitX Hub, Claude Code and OpenCode", fontSize = 11.5.sp, color = subtle)
                         }
                     }
                     Spacer(Modifier.height(14.dp))
                     OutlinedTextField(bridgeBinPath, { bridgeBinPath = it; saveFeedback = null }, label = { Text("IDE Bridge Binary Path") },
                         placeholder = { Text(authPrefs.getDefaultBridgeBinaryPath()) }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp))
                     Spacer(Modifier.height(10.dp))
-                    OutlinedTextField(agyBinPath, { agyBinPath = it; saveFeedback = null }, label = { Text("Boop Hub Binary Path") },
+                    OutlinedTextField(agyBinPath, { agyBinPath = it; saveFeedback = null }, label = { Text("LimitX Hub Binary Path") },
                         placeholder = { Text(authPrefs.getDefaultAgyBinaryPath()) }, modifier = Modifier.fillMaxWidth(), singleLine = true, shape = RoundedCornerShape(10.dp))
                     Spacer(Modifier.height(10.dp))
                     OutlinedTextField(claudeBinPath, { claudeBinPath = it; saveFeedback = null }, label = { Text("Claude Code Binary Path") },
@@ -1015,7 +1015,7 @@ internal fun ServersSubScreen(
                     )
                     if (com.example.gemini.data.local.LocalEnvironmentManager.isTermuxPackage(context)) {
                         Text(
-                            "• Claude Code: the default is BoopIDE's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
+                            "• Claude Code: the default is LimitX's launcher, which runs the newest official Claude version through the bundled glibc. Claude updates never replace it.",
                             fontSize = 11.sp, color = subtle
                         )
                         Text(
@@ -1120,7 +1120,7 @@ internal fun ServersSubScreen(
                 val bridge = AuthPreferences.normalizeServerUrl(bridgeText, BuildConfig.BRIDGE_PORT)
                 val problem = when {
                     bridge == null -> "The IDE Bridge address is not valid."
-                    hub == null -> "The Boop Hub address is not valid."
+                    hub == null -> "The LimitX Hub address is not valid."
                     remote && tunnel && (!AuthPreferences.isLoopbackHost(AuthPreferences.hostOf(bridge)) || !AuthPreferences.isLoopbackHost(AuthPreferences.hostOf(hub))) ->
                         "In SSH tunnel mode both addresses are 127.0.0.1 with the port the service listens on at the server, e.g. http://127.0.0.1:${BuildConfig.BRIDGE_PORT}."
                     remote && tunnel && (bridge.startsWith("https://") || hub.startsWith("https://")) ->

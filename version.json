@@ -1,11 +1,12 @@
 {
-  "version_code": 135,
-  "version_name": "1.2.6",
+  "version_code": 136,
+  "version_name": "1.2.7",
   "min_supported_version_code": 1,
   "changelog": [
-    "Add seamless first-time AI agent selection & CLI batch auto-installer dialog",
-    "Support one-click install for Antigravity (agy), Claude Code, OpenCode, and Codex with live terminal logs",
-    "Add quick Install / Setup Agents button to chat error screen"
+    "LimitX Official Release: AI Coding Studio, Cyber Terminal & Multi-Agent Hub",
+    "Custom LimitX Cyber aesthetic, OLED Monochrome Dark & Clean Monochrome Light themes",
+    "First-time AI agent CLI selection and auto-installer for Antigravity, Claude Code, OpenCode & Codex",
+    "High-performance terminal emulator with native Android Automation MCP tools"
   ],
   "is_critical": true
 }

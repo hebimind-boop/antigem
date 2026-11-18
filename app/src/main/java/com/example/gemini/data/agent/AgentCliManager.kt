@@ -29,7 +29,7 @@ object AgentCliManager {
             agent = AgentKind.AGY,
             title = "Antigravity (agy)",
             commandName = "agy",
-            description = "Google's coding agent through the Boop Hub: Gemini and Claude models on your Google plan.",
+            description = "Google's coding agent through the LimitX Hub: Gemini and Claude models on your Google plan.",
             isDefaultSelected = true
         ),
         AgentItem(

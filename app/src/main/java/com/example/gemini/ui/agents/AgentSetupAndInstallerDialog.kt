@@ -155,7 +155,7 @@ fun AgentSetupAndInstallerDialog(
             } else {
                 terminalLogs.add("🎉 All selected agent CLIs are installed and ready!")
             }
-            terminalLogs.add("▶ Starting BoopIDE Hub & IDE Bridge...")
+            terminalLogs.add("▶ Starting LimitX Hub & IDE Bridge...")
             terminalLogs.add("========================================")
 
             LocalServerManager.startServer(context, forceRestart = true)
@@ -217,7 +217,7 @@ fun AgentSetupAndInstallerDialog(
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Select your desired agents. BoopIDE will install their CLIs.",
+                            text = "Select your desired agents. LimitX will install their CLIs.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -511,7 +511,7 @@ fun AgentSetupAndInstallerDialog(
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "All selected agents are installed. The Boop Hub daemon and bridge have been started.",
+                                text = "All selected agents are installed. The LimitX Hub daemon and bridge have been started.",
                                 fontSize = 13.5.sp,
                                 textAlign = TextAlign.Center,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,

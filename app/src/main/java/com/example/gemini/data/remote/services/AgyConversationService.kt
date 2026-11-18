@@ -50,7 +50,7 @@ class AgyConversationService {
      */
     fun subscribeToSummaries(hubUrl: String = AuthPreferences.currentHubUrl, cloud: Boolean = false): Flow<SummariesUpdate> = flow {
         if (!com.example.gemini.data.remote.AgyBridgeService.instance.awaitHubReady(timeoutMs = 10_000L)) {
-            throw Exception("Antigravity Hub is not running")
+            throw Exception("Hub daemon is not running")
         }
         // cloud = the account's Antigravity cloud chats (Remote Agents), which the hub lists on request
         val request = if (cloud) JetboxSubscribeToSummariesRequest(backend = exa.language_server_pb.BackendType.BACKEND_TYPE_REMOTE_AICODE)

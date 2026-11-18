@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">BoopIDE</string>
-    <string name="anti_term_name">BoopTerm</string>
+    <string name="app_name">LimitX</string>
+    <string name="anti_term_name">LimitTerm</string>
     <string name="termux_name">Termux</string>
 </resources>

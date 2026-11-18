@@ -84,17 +84,17 @@ import com.example.gemini.data.daemon.TermuxDaemonManager
 import com.example.gemini.data.daemon.IdeApiClient
 
 enum class SettingsSection(val title: String, val subtitle: String) {
-    MAIN("Settings & Preferences", "Configure your BoopIDE experience"),
+    MAIN("Settings & Preferences", "Configure your LimitX experience"),
     THEMES("Themes", "Light and dark mode, and the theme gallery"),
     APPEARANCE("Appearance", "Chat text size, chat list, header icons and the app switcher"),
-    SERVERS("Servers & Connectivity", "Configure Boop Hub and IDE Bridge endpoints"),
-    CONNECT_PC("Connect to PC", "Use the agents on your PC (BoopIDE in VS Code) from this phone"),
-    WEBVIEW_EXTENSIONS("Custom BoopIDE Plugins", "Install and manage plugins: MCP tools and skills"),
+    SERVERS("Servers & Connectivity", "Configure LimitX Hub and IDE Bridge endpoints"),
+    CONNECT_PC("Connect to PC", "Use the agents on your PC (LimitX in VS Code) from this phone"),
+    WEBVIEW_EXTENSIONS("Custom LimitX Plugins", "Install and manage plugins: MCP tools and skills"),
     SLASH_COMMANDS("Slash Commands", "Your own / commands and what they expand to"),
     MCP("MCP Servers", "Model Context Protocol tools & integrations"),
     SKILLS_PLUGINS("Skills & Plugins", "Agent capabilities, Google plugins, and extensions"),
     TERMINAL("Terminal & Shell", "SSH configuration, local tools, and styling"),
-    BACKUPS("Backups & Restore", "Backup rootfs environment and BoopIDE chat histories"),
+    BACKUPS("Backups & Restore", "Backup rootfs environment and LimitX chat histories"),
     DATA_PROTECTION("Data Loss Protection", "Uninstall shield & App Info clear data protection"),
     PROJECT_CHECKPOINTS("Project checkpoints", "Go back to before any chat message: files restored with a preview"),
     COMMANDS("Commands & Permissions", "Auto-run policy, sandbox mode, and tool approvals"),
@@ -134,7 +134,7 @@ enum class SettingsSection(val title: String, val subtitle: String) {
     TERMUX_SUPPORT("Termux Support", "Termux:API and the X11 desktop"),
     TERMUX_API("Termux:API", "How termux-api commands are handled"),
     X11_DESKTOP("X11 Desktop", "Linux desktop apps with Termux:X11"),
-    CHANGELOG("What's new", "Every BoopIDE version and what changed"),
+    CHANGELOG("What's new", "Every LimitX version and what changed"),
     ABOUT("About & Info", "App version, package details, and bridge export");
 
     /** The Jarvis section this page shows (Settings → Jarvis → …), or null. */
@@ -1129,7 +1129,7 @@ private fun rememberDeviceToolRows(onNavigate: (SettingsSection) -> Unit): Devic
 }
 
 /**
- * Settings → Termux Support → Termux:API: how termux-api commands are handled, by BoopIDE's built-in
+ * Settings → Termux Support → Termux:API: how termux-api commands are handled, by LimitX's built-in
  * handlers or by the external Termux:API companion app (that one needs the Shared UID build).
  */
 @Composable
@@ -1634,7 +1634,7 @@ private fun AppearanceSubScreen(
                         color = ClaudeTerracotta.copy(alpha = 0.15f)
                     ) {
                         Text(
-                            text = "How does BoopIDE connect to Boop Hub?",
+                            text = "How does LimitX connect to LimitX Hub?",
                             fontSize = (13 * chatFontScale).sp,
                             color = MaterialTheme.colorScheme.onSurface,
                             modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)
@@ -1654,7 +1654,7 @@ private fun AppearanceSubScreen(
                     ) {
                         Column(modifier = Modifier.padding(12.dp)) {
                             Text(
-                                text = "BoopIDE connects via gRPC-Web to stream live agent steps and tool executions.",
+                                text = "LimitX connects via gRPC-Web to stream live agent steps and tool executions.",
                                 fontSize = (13 * chatFontScale).sp,
                                 lineHeight = (18 * chatFontScale).sp,
                                 color = MaterialTheme.colorScheme.onSurface
@@ -2056,14 +2056,14 @@ private fun AppearanceSubScreen(
                             modifier = Modifier.padding(bottom = 8.dp)
                         )
 
-                        // Option 1: BoopTerm
-                        val isBoopTerm = terminalLauncherStyle == com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
+                        // Option 1: LimitTerm
+                        val isLimitTerm = terminalLauncherStyle == com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                         Surface(
                             shape = RoundedCornerShape(10.dp),
-                            color = if (isBoopTerm) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                            color = if (isLimitTerm) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
                             border = BorderStroke(
                                 1.dp,
-                                if (isBoopTerm) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                                if (isLimitTerm) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -2092,7 +2092,7 @@ private fun AppearanceSubScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     com.example.gemini.ui.components.AppIconImage(
-                                        contentDescription = "BoopTerm",
+                                        contentDescription = "LimitTerm",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
@@ -2101,20 +2101,20 @@ private fun AppearanceSubScreen(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "BoopTerm",
+                                        text = "LimitTerm",
                                         fontSize = 13.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Modern BoopIDE styled icon & name",
+                                        text = "Modern LimitX styled icon & name",
                                         fontSize = 10.5.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
 
                                 RadioButton(
-                                    selected = isBoopTerm,
+                                    selected = isLimitTerm,
                                     onClick = {
                                         terminalLauncherStyle = com.example.gemini.data.preferences.TerminalLauncherManager.STYLE_BOOPTERM
                                         com.example.gemini.data.preferences.TerminalLauncherManager.applyLauncherSetting(
@@ -2680,7 +2680,7 @@ private fun McpSubScreen(
             val presets = listOf(
                 // No spec: opens the picker for an installed plugin's own MCP
                 McpPreset("Custom Plugin MCP", "Pick an installed plugin", Icons.Outlined.Extension, ClaudeTerracotta, null),
-                McpPreset("Plugin Developer", "Build & test BoopIDE plugins", Icons.Outlined.DeveloperMode, GeminiPurple,
+                McpPreset("Plugin Developer", "Build & test LimitX plugins", Icons.Outlined.DeveloperMode, GeminiPurple,
                     localSpec(bridge.DEVELOPER_MCP_NAME, "/extension_developer")),
                 McpPreset("Mini App Developer", "Build, test & sign mini apps", androidx.compose.material.icons.Icons.Outlined.Apps, GeminiBlue,
                     localSpec(bridge.MINI_APP_DEVELOPER_MCP_NAME, "/mini_app_developer")),
@@ -4435,7 +4435,7 @@ private fun TerminalSubScreen(
                     )
 
                     Text(
-                        text = "BoopIDE is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open BoopIDE to start fresh.",
+                        text = "LimitX is wiping all local app data, rootfs, and settings.\n\nThe app will automatically close in $countdownSeconds seconds. Simply re-open LimitX to start fresh.",
                         fontSize = 13.5.sp,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -4602,7 +4602,7 @@ private fun BackupsSubScreen(
             title = "Linux environment",
             subtitle = "Installed packages, binaries and your home folder",
             description = "A full, portable copy of the Linux system (/usr) and \$HOME dotfiles. Sockets, caches and auth tokens are left out.",
-            savesTo = "Download/BoopIDE/backups/bootrapz_<time>.zip",
+            savesTo = "Download/LimitX/backups/bootrapz_<time>.zip",
             cardBg = cardBg,
             cardBorder = cardBorder
         ) {
@@ -4630,7 +4630,7 @@ private fun BackupsSubScreen(
             title = "Chats & credentials",
             subtitle = "Conversations, transcripts, skills and login",
             description = "Archives your ~/.gemini folder: chat history databases, transcripts, summaries, custom skills and the auth token. Can be password-protected.",
-            savesTo = "Download/BoopIDE/backups/agy_chats_backup_<time>.zip",
+            savesTo = "Download/LimitX/backups/agy_chats_backup_<time>.zip",
             note = "Includes your login token. Don't share this file: anyone who has it can sign in as you.",
             cardBg = cardBg,
             cardBorder = cardBorder
@@ -4765,7 +4765,7 @@ private fun BackupsSubScreen(
                         backupChatsPassword = ""
                         requestStoragePermission {
                             activeScriptExecution = ScriptExecutionInfo(
-                                title = "BoopIDE Chats & Credentials Backup",
+                                title = "LimitX Chats & Credentials Backup",
                                 scriptName = "backup_chats",
                                 args = if (pass.isNotEmpty()) listOf("", pass) else emptyList()
                             )
@@ -4844,7 +4844,7 @@ private fun BackupsSubScreen(
                         restoreFilePath = ""
                         restorePassword = ""
                         activeScriptExecution = ScriptExecutionInfo(
-                            title = "Restore BoopIDE Chats & Credentials",
+                            title = "Restore LimitX Chats & Credentials",
                             scriptName = "restore_chats",
                             args = if (pass.isNotEmpty()) listOf(path, pass) else listOf(path)
                         )
@@ -5701,7 +5701,7 @@ private fun ProjectsBackupRestoreDialog(
                                 inspectArchive(it.trim())
                             },
                             label = { Text("Projects Archive File Path") },
-                            placeholder = { Text("/sdcard/Download/BoopIDE/backups/projects_backup_....zip") },
+                            placeholder = { Text("/sdcard/Download/LimitX/backups/projects_backup_....zip") },
                             singleLine = true,
                             trailingIcon = {
                                 IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
@@ -6425,7 +6425,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "Why enable this? BoopIDE hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
+                    text = "Why enable this? LimitX hosts a full local Linux environment with your Node/Python packages, Git repos, and active coding projects. An accidental drag-to-uninstall from the home screen wipes all of it permanently.\n\nActivating Android Device Administrator greys out the 'Uninstall' button at the OS level across phone launchers. You can safely disable this anytime if you wish to uninstall.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6570,7 +6570,7 @@ private fun DataProtectionSubScreen(
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
-                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens BoopIDE's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
+                    text = "When enabled (default), tapping 'Clear Data' in Android's phone Settings > App Info opens LimitX's Safe Space Manager instead of wiping everything instantly with one click. This prevents accidental wipes and allows safe cache-only cleanup.\n\nYou can toggle this off anytime if you prefer the standard raw Android 'Clear Data' button.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
                     lineHeight = 16.sp
@@ -6603,7 +6603,7 @@ private fun DataProtectionSubScreen(
             title = { Text("Disable Uninstall Protection?") },
             text = {
                 Text(
-                    "This will remove BoopIDE's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
+                    "This will remove LimitX's Device Admin status. The app will become vulnerable to accidental home-screen uninstallation.",
                     fontSize = 13.sp
                 )
             },
@@ -6728,7 +6728,7 @@ private fun CommandsSubScreen(
                             color = ClaudeTerracotta
                         )
                         Text(
-                            text = "Connecting to Boop Hub & loading permissions...",
+                            text = "Connecting to LimitX Hub & loading permissions...",
                             fontSize = 13.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -6753,14 +6753,14 @@ private fun CommandsSubScreen(
                             modifier = Modifier.size(48.dp)
                         )
                         Text(
-                            text = "Unable to Load Permissions from Boop Hub",
+                            text = "Unable to Load Permissions from LimitX Hub",
                             fontSize = 16.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center
                         )
                         Text(
-                            text = "Could not retrieve daemon permissions and security state:\n${globalSettingsError ?: "RPC connection failed"}\n\nMake sure Boop Hub is running (e.g. agy --hub) and check your Server settings.",
+                            text = "Could not retrieve daemon permissions and security state:\n${globalSettingsError ?: "RPC connection failed"}\n\nMake sure LimitX Hub is running (e.g. agy --hub) and check your Server settings.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
@@ -7538,7 +7538,7 @@ private fun CommandsSubScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "No workspace projects registered yet on Boop Hub.",
+                    text = "No workspace projects registered yet on LimitX Hub.",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(14.dp)
@@ -7749,7 +7749,7 @@ private fun CommandsSubScreen(
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "Live synced with Boop Hub via Jetbox & Project APIs with zero local-storage desync.",
+                    text = "Live synced with LimitX Hub via Jetbox & Project APIs with zero local-storage desync.",
                     fontSize = 11.5.sp,
                     color = MaterialTheme.colorScheme.onSurface,
                     lineHeight = 16.sp
@@ -8129,7 +8129,7 @@ private fun DiagnosticsSubScreen(
                                 }
                             }
                             Text(
-                                text = "Inspect IDE Bridge HTTP & Boop Hub gRPC calls in real-time",
+                                text = "Inspect IDE Bridge HTTP & LimitX Hub gRPC calls in real-time",
                                 fontSize = 11.5.sp,
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                             )
@@ -8490,20 +8490,20 @@ private fun AboutSubScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 com.example.gemini.ui.components.AppIconImage(
-                    contentDescription = "BoopIDE",
+                    contentDescription = "LimitX",
                     modifier = Modifier
                         .size(64.dp)
                         .clip(RoundedCornerShape(16.dp))
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = "BoopIDE",
+                    text = "LimitX",
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
-                    text = "BoopIDE Mobile Hub & AI Pair Programmer",
+                    text = "LimitX — AI Coding Studio & Mobile Hub",
                     fontSize = 12.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center
@@ -8740,8 +8740,8 @@ private fun AboutSubScreen(
                                         updateCheckResultText = null
                                     } else {
                                         isUpdateCheckError = false
-                                        updateCheckResultText = "BoopIDE is up to date (v${BuildConfig.VERSION_NAME})."
-                                        Toast.makeText(context, "BoopIDE is up to date!", Toast.LENGTH_SHORT).show()
+                                        updateCheckResultText = "LimitX is up to date (v${BuildConfig.VERSION_NAME})."
+                                        Toast.makeText(context, "LimitX is up to date!", Toast.LENGTH_SHORT).show()
                                     }
                                 }.onFailure { err ->
                                     isUpdateCheckError = true
@@ -8935,19 +8935,20 @@ private fun AboutSubScreen(
         ) {
             Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
-                    text = "Resources & Repository",
+                    text = "Official Platforms & Community",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurface
                 )
 
+                // YouTube
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hebimind-boop/antigem"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/@limit_x20"))
                             context.startActivity(intent)
                         }
                 ) {
@@ -8961,20 +8962,20 @@ private fun AboutSubScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Code,
+                                imageVector = Icons.Outlined.PlayCircle,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
+                                tint = Color(0xFFFF0000),
+                                modifier = Modifier.size(22.dp)
                             )
                             Column {
                                 Text(
-                                    text = "GitHub Repository",
+                                    text = "YouTube",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "github.com/hebimind-boop/antigem",
+                                    text = "@limit_x20 • Tutorials & Demos",
                                     fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )
@@ -8989,13 +8990,14 @@ private fun AboutSubScreen(
                     }
                 }
 
+                // Instagram
                 Surface(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/hebimind-boop/antigem/releases"))
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.instagram.com/limit_x20/"))
                             context.startActivity(intent)
                         }
                 ) {
@@ -9009,20 +9011,69 @@ private fun AboutSubScreen(
                             horizontalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             Icon(
-                                imageVector = Icons.Outlined.History,
+                                imageVector = Icons.Outlined.PhotoCamera,
                                 contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
+                                tint = Color(0xFFE1306C),
+                                modifier = Modifier.size(22.dp)
                             )
                             Column {
                                 Text(
-                                    text = "Release Changelogs",
+                                    text = "Instagram",
                                     fontSize = 13.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
                                 )
                                 Text(
-                                    text = "View tag notes & APK downloads",
+                                    text = "@limit_x20 • Official Community",
+                                    fontSize = 11.sp,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        }
+                        Icon(
+                            imageVector = Icons.Default.ChevronRight,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+
+                // Threads
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.threads.net/@limit_x20"))
+                            context.startActivity(intent)
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier.padding(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Chat,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp)
+                            )
+                            Column {
+                                Text(
+                                    text = "Threads",
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Medium,
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
+                                Text(
+                                    text = "@limit_x20 • Updates & Discussions",
                                     fontSize = 11.sp,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant
                                 )

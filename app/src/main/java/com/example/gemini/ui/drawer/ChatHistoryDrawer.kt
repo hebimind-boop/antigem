@@ -474,7 +474,7 @@ fun ChatHistoryDrawer(
             },
             title = {
                 Text(
-                    text = "Exit BoopIDE?",
+                    text = "Exit LimitX?",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface
@@ -630,8 +630,15 @@ fun ChatHistoryDrawer(
                     .padding(start = 2.dp, top = 2.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                com.example.gemini.ui.components.AppIconImage(
+                    contentDescription = "LimitX",
+                    modifier = Modifier
+                        .size(26.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(modifier = Modifier.width(10.dp))
                 Text(
-                    text = "BoopIDE",
+                    text = "LimitX",
                     fontSize = 19.sp,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = (-0.3).sp,

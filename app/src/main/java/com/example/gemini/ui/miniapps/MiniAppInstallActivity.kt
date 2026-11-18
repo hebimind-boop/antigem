@@ -47,7 +47,7 @@ class MiniAppInstallActivity : ComponentActivity() {
         return uri?.takeIf { it.scheme == "content" || it.scheme == "file" && !isPrivate(it) }?.let { InstallSource.FromUri(it) }
     }
 
-    /** Another app can't point the installer at BoopIDE's own private files with a file:// path. */
+    /** Another app can't point the installer at LimitX's own private files with a file:// path. */
     private fun isPrivate(uri: Uri): Boolean = runCatching {
         val path = java.io.File(uri.path ?: return true).canonicalPath
         val own = java.io.File(applicationInfo.dataDir).canonicalPath

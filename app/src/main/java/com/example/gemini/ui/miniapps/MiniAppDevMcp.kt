@@ -40,8 +40,8 @@ import kotlin.coroutines.resume
  */
 object MiniAppDevMcp {
     const val INSTRUCTIONS =
-        "Build, run, debug, sign and install BoopIDE mini apps (HTML/CSS/JS apps with a native BoopIDE.* SDK) on this phone. " +
-            "Start with miniapp_guide: it serves the guide bundled with this BoopIDE version (topic README, then getting-started, manifest " +
+        "Build, run, debug, sign and install LimitX mini apps (HTML/CSS/JS apps with a native LimitX.* SDK) on this phone. " +
+            "Start with miniapp_guide: it serves the guide bundled with this LimitX version (topic README, then getting-started, manifest " +
             "and the API pages you need). Follow it instead of assuming browser, PWA or Cordova behaviour. " +
             "Loop: miniapp_create → miniapp_write_files → miniapp_validate → miniapp_open → miniapp_console / miniapp_eval / miniapp_screenshot → fix " +
             "(open pages reload by themselves when files change). Ship: miniapp_key_status → miniapp_sign → miniapp_install (the user confirms on the phone). " +
@@ -69,7 +69,7 @@ object MiniAppDevMcp {
 
     fun tools(): JSONArray = JSONArray().apply {
         put(tool("miniapp_guide",
-            "START HERE. The mini app guide bundled with this BoopIDE version: architecture, manifest, permissions, every BoopIDE.* API, " +
+            "START HERE. The mini app guide bundled with this LimitX version: architecture, manifest, permissions, every LimitX.* API, " +
                 "UI kit, signing, shared data, this MCP. No topic: the README with the table of contents. Use query to search all pages.",
             emptyList(), true,
             "topic" to prop("string", "Page name, e.g. README, getting-started, manifest, permissions, api-reference, storage, files, network, ui, notifications, background, intents, threads, shared-data, signing-and-distribution, developer-mcp, troubleshooting."),
@@ -81,14 +81,14 @@ object MiniAppDevMcp {
                 "shared_id group, open pages, broken manifests and id conflicts. Also says whether developer mode is on and if the developer key is backed up.",
             emptyList(), true))
         put(tool("miniapp_create",
-            "Create a development app from a small working template (manifest.json, index.html, app.js, style.css using the UI kit and BoopIDE.storage) " +
+            "Create a development app from a small working template (manifest.json, index.html, app.js, style.css using the UI kit and LimitX.storage) " +
                 "in ~/mini-apps/<folder>. Then edit it with miniapp_write_files.",
             listOf("id", "name"), false,
             "id" to prop("string", "Unique reverse-domain id, e.g. com.alex.budget. Letters, digits, '.', '_' or '-'. Data is stored under it: don't change it later."),
             "name" to prop("string", "Display name."),
             "folder" to prop("string", "Folder name in ~/mini-apps (default: from the name)."),
             "description" to prop("string", "One line shown in Mini Apps."),
-            "theme_color" to prop("string", "Splash / status bar color like #2E7D32 (default: follow the BoopIDE theme).")))
+            "theme_color" to prop("string", "Splash / status bar color like #2E7D32 (default: follow the LimitX theme).")))
         put(tool("miniapp_read_file",
             "List a development app's files (no path), or read one text file (paged).",
             listOf("app_id"), true, appIdProp,
@@ -125,7 +125,7 @@ object MiniAppDevMcp {
             "since" to prop("integer", "Only entries after this time (ms), e.g. the \"now\" of a previous call."),
             "clear" to prop("boolean", "Clear the buffer after reading.")))
         put(tool("miniapp_eval",
-            "Run JavaScript in the development app's page on screen and return the result: read the DOM, click buttons, call BoopIDE.* APIs, check state. " +
+            "Run JavaScript in the development app's page on screen and return the result: read the DOM, click buttons, call LimitX.* APIs, check state. " +
                 "The code is the body of an async function (use return / await); a bare expression returns its value. " +
                 "Console lines printed meanwhile are returned too. Opens the app first if needed.",
             listOf("app_id", "code"), false, appIdProp,
@@ -150,7 +150,7 @@ object MiniAppDevMcp {
             listOf("developer"), false,
             "developer" to prop("string", "Developer or team name shown to people who install the apps.")))
         put(tool("miniapp_key_backup",
-            "Open the key backup on the phone: the user types a password there and the key is saved to Download/BoopIDE (kept even if BoopIDE is uninstalled) " +
+            "Open the key backup on the phone: the user types a password there and the key is saved to Download/LimitX (kept even if LimitX is uninstalled) " +
                 "and can be shared to Drive or email. You never see the key or the password.",
             emptyList(), false))
         put(tool("miniapp_sign",
@@ -158,7 +158,7 @@ object MiniAppDevMcp {
                 "Bump the manifest version for every release.",
             listOf("app_id"), false, appIdProp))
         put(tool("miniapp_install",
-            "Open BoopIDE's install screen on the phone for an .agapp package; the user confirms (Install / Update). Returns what the install would do " +
+            "Open LimitX's install screen on the phone for an .agapp package; the user confirms (Install / Update). Returns what the install would do " +
                 "(new, update, downgrade, or why it's refused). Note: a package can't use the id of a development app in ~/mini-apps.",
             listOf("package_path"), false,
             "package_path" to prop("string", "Path of the .agapp, e.g. ~/mini-apps-dist/com.alex.budget-1.0.0.agapp (from miniapp_sign)."),
@@ -259,7 +259,7 @@ object MiniAppDevMcp {
             out.put(JSONObject()
                 .put("id", a.id).put("name", a.name).put("version", a.version)
                 .put("kind", if (a.signed) "installed" else "development")
-                .put("location", if (a.signed) "installed by BoopIDE (read-only)" else show(context, a.folder))
+                .put("location", if (a.signed) "installed by LimitX (read-only)" else show(context, a.folder))
                 .put("entry", a.entry)
                 .put("runs", if (a.signed) !a.tampered else devMode)
                 .apply { if (a.signed) put("signed_by", "${a.developer} (${MiniAppSigning.shortFingerprint(a.signer.orEmpty())})") }
@@ -347,23 +347,23 @@ object MiniAppDevMcp {
             </html>
         """.trimIndent() + "\n")
         File(dir, "app.js").writeText("""
-            // BoopIDE.storage is native and synchronous: it survives restarts and app updates.
+            // LimitX.storage is native and synchronous: it survives restarts and app updates.
             const countEl = document.getElementById('count');
-            let count = BoopIDE.storage.get('count', 0);
+            let count = LimitX.storage.get('count', 0);
             const show = () => { countEl.textContent = count; };
 
             document.getElementById('add').addEventListener('click', () => {
               count++;
-              BoopIDE.storage.set('count', count);
+              LimitX.storage.set('count', count);
               show();
             });
 
             document.getElementById('reset').addEventListener('click', async () => {
-              if (await BoopIDE.ui.confirm('Reset the counter?')) {
+              if (await LimitX.ui.confirm('Reset the counter?')) {
                 count = 0;
-                BoopIDE.storage.set('count', 0);
+                LimitX.storage.set('count', 0);
                 show();
-                BoopIDE.ui.toast('Reset');
+                LimitX.ui.toast('Reset');
               }
             });
 
@@ -529,7 +529,7 @@ object MiniAppDevMcp {
         if (args.optBoolean("clear")) MiniAppConsole.clear(a.id)
         val out = JSONObject().put("app", a.id).put("now", now).put("entries", lines)
         if (entries.isEmpty() && since == 0L) {
-            // nothing in memory (BoopIDE restarted): the log file keeps the last runs
+            // nothing in memory (LimitX restarted): the log file keeps the last runs
             val f = File(MiniApps.dataDir(context, a.id), "console.log")
             if (f.isFile) out.put("from_log_file", JSONArray(f.readLines().takeLast(limit)))
         }
@@ -651,7 +651,7 @@ object MiniAppDevMcp {
             .put("backed_up", b != null)
             .apply {
                 if (b != null) put("backup", JSONObject().put("where", b.path).put("at", java.text.SimpleDateFormat("yyyy-MM-dd HH:mm", java.util.Locale.US).format(java.util.Date(b.at))))
-                else put("warning", "The key is NOT backed up. If BoopIDE is uninstalled, its data cleared or the phone lost, apps signed with it can never be updated. " +
+                else put("warning", "The key is NOT backed up. If LimitX is uninstalled, its data cleared or the phone lost, apps signed with it can never be updated. " +
                     "Call miniapp_key_backup: the user saves it on the phone with a password.")
             }
     }
@@ -669,7 +669,7 @@ object MiniAppDevMcp {
         if (!MiniAppSigning.hasKey(context)) throw ToolError("There is no developer key yet: miniapp_key_create")
         withContext(Dispatchers.Main) { context.startActivity(MiniAppsActivity.keyIntent(context, "backup")) }
         return JSONObject().put("opened", "key backup")
-            .put("note", "The backup screen is open on the phone. The user types a password there; the key is saved to Download/BoopIDE and can be shared to Drive or email. " +
+            .put("note", "The backup screen is open on the phone. The user types a password there; the key is saved to Download/LimitX and can be shared to Drive or email. " +
                 "Ask them to do it, then check miniapp_key_status. Never ask for the password.")
     }
 

@@ -123,7 +123,7 @@ fun TerminalLauncherOnboardingDialog(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // Icon 1: BoopIDE (Main App)
+                            // Icon 1: LimitX (Main App)
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 modifier = Modifier.width(90.dp)
@@ -136,13 +136,13 @@ fun TerminalLauncherOnboardingDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     com.example.gemini.ui.components.AppIconImage(
-                                        contentDescription = "BoopIDE",
+                                        contentDescription = "LimitX",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = "BoopIDE",
+                                    text = "LimitX",
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.Medium,
                                     color = MaterialTheme.colorScheme.onSurface
@@ -192,14 +192,14 @@ fun TerminalLauncherOnboardingDialog(
                                         )
                                     } else {
                                         com.example.gemini.ui.components.AppIconImage(
-                                            contentDescription = "BoopTerm",
+                                            contentDescription = "LimitTerm",
                                             modifier = Modifier.matchParentSize()
                                         )
                                     }
                                 }
                                 Spacer(modifier = Modifier.height(6.dp))
                                 Text(
-                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "BoopTerm",
+                                    text = if (!isEnabled) "Hidden" else if (selectedStyle == TerminalLauncherManager.STYLE_TERMUX) "Termux" else "LimitTerm",
                                     fontSize = 11.5.sp,
                                     fontWeight = FontWeight.SemiBold,
                                     color = if (!isEnabled) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
@@ -277,14 +277,14 @@ fun TerminalLauncherOnboardingDialog(
                             modifier = Modifier.padding(start = 2.dp, bottom = 8.dp)
                         )
 
-                        // Option 1: BoopTerm (Branded)
-                        val isBoopTermSelected = selectedStyle == TerminalLauncherManager.STYLE_BOOPTERM
+                        // Option 1: LimitTerm (Branded)
+                        val isLimitTermSelected = selectedStyle == TerminalLauncherManager.STYLE_BOOPTERM
                         Surface(
                             shape = RoundedCornerShape(12.dp),
-                            color = if (isBoopTermSelected) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
+                            color = if (isLimitTermSelected) ClaudeTerracotta.copy(alpha = 0.12f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f),
                             border = BorderStroke(
                                 1.5.dp,
-                                if (isBoopTermSelected) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
+                                if (isLimitTermSelected) ClaudeTerracotta else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)
                             ),
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -303,7 +303,7 @@ fun TerminalLauncherOnboardingDialog(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     com.example.gemini.ui.components.AppIconImage(
-                                        contentDescription = "BoopTerm",
+                                        contentDescription = "LimitTerm",
                                         modifier = Modifier.matchParentSize()
                                     )
                                 }
@@ -312,20 +312,20 @@ fun TerminalLauncherOnboardingDialog(
 
                                 Column(modifier = Modifier.weight(1f)) {
                                     Text(
-                                        text = "BoopTerm",
+                                        text = "LimitTerm",
                                         fontSize = 13.5.sp,
                                         fontWeight = FontWeight.SemiBold,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
                                     Text(
-                                        text = "Modern unified icon matching BoopIDE",
+                                        text = "Modern unified icon matching LimitX",
                                         fontSize = 11.sp,
                                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                                     )
                                 }
 
                                 RadioButton(
-                                    selected = isBoopTermSelected,
+                                    selected = isLimitTermSelected,
                                     onClick = { selectedStyle = TerminalLauncherManager.STYLE_BOOPTERM },
                                     colors = RadioButtonDefaults.colors(selectedColor = ClaudeTerracotta)
                                 )

@@ -35,7 +35,7 @@ object ConversationExportHelper {
     }
 
     /**
-     * Exports a conversation by ID, saving it to Downloads/BoopIDE/Exports and opening it.
+     * Exports a conversation by ID, saving it to Downloads/LimitX/Exports and opening it.
      */
     suspend fun exportConversation(
         context: Context,
@@ -79,8 +79,8 @@ object ConversationExportHelper {
                 ExportFormat.HTML -> generateHtml(title, conversationId, messages)
             }
 
-            // Save to Downloads/BoopIDE/Exports
-            val (savedUri, mimeType, savedFileName) = saveToBoopIDEExports(context, fileName, content, format.mimeType)
+            // Save to Downloads/LimitX/Exports
+            val (savedUri, mimeType, savedFileName) = saveToLimitXExports(context, fileName, content, format.mimeType)
 
             withContext(Dispatchers.Main) {
                 if (savedUri != null) {
@@ -94,7 +94,7 @@ object ConversationExportHelper {
                             openFile(context, savedUri, mimeType)
                         }
                     } else {
-                        AppToastHelper.showToast("$savedFileName saved to Downloads/BoopIDE/Exports", ChatToastType.SUCCESS)
+                        AppToastHelper.showToast("$savedFileName saved to Downloads/LimitX/Exports", ChatToastType.SUCCESS)
                         openFile(context, savedUri, mimeType)
                     }
                 } else {
@@ -128,7 +128,7 @@ object ConversationExportHelper {
         }
     }
 
-    private fun saveToBoopIDEExports(
+    private fun saveToLimitXExports(
         context: Context,
         fileName: String,
         content: String,
@@ -159,7 +159,7 @@ object ConversationExportHelper {
 
                 return Triple(itemUri, mimeType, fileName)
             } else {
-                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "BoopIDE/Exports")
+                val downloadsDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "LimitX/Exports")
                 if (!downloadsDir.exists()) downloadsDir.mkdirs()
                 val targetFile = File(downloadsDir, fileName)
                 targetFile.writeBytes(bytes)
@@ -172,7 +172,7 @@ object ConversationExportHelper {
                 return Triple(fileUri, mimeType, fileName)
             }
         } catch (e: Exception) {
-            Log.e(TAG, "Failed saving to BoopIDE/Exports: ${e.message}", e)
+            Log.e(TAG, "Failed saving to LimitX/Exports: ${e.message}", e)
             return Triple(null, mimeType, fileName)
         }
     }
@@ -181,7 +181,7 @@ object ConversationExportHelper {
         val sb = StringBuilder()
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
 
-        sb.append("# ").append(title.ifBlank { "BoopIDE Chat" }).append("\n\n")
+        sb.append("# ").append(title.ifBlank { "LimitX Chat" }).append("\n\n")
         sb.append("> **Exported on:** ").append(dateStr).append("\n")
         sb.append("> **Conversation ID:** `").append(conversationId).append("`\n\n")
         sb.append("---\n\n")
@@ -243,7 +243,7 @@ object ConversationExportHelper {
 
     private fun generateHtml(title: String, conversationId: String, messages: List<ChatMessage>): String {
         val dateStr = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date())
-        val htmlTitle = escapeHtml(title.ifBlank { "BoopIDE Chat" })
+        val htmlTitle = escapeHtml(title.ifBlank { "LimitX Chat" })
 
         val sb = StringBuilder()
         sb.append("<!DOCTYPE html>\n")

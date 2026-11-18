@@ -60,7 +60,7 @@ class AppUpdateManager(private val context: Context) {
             }
             val request = Request.Builder()
                 .url(bustUrl)
-                .header("User-Agent", "BoopIDE-Updater/${BuildConfig.VERSION_NAME}")
+                .header("User-Agent", "LimitX-Updater/${BuildConfig.VERSION_NAME}")
                 .header("Cache-Control", "no-cache, no-store, must-revalidate")
                 .header("Pragma", "no-cache")
                 .header("Expires", "0")
