@@ -37,6 +37,8 @@ import com.example.gemini.data.agent.AgentCliManager
 import com.example.gemini.data.agent.AgentPreferences
 import com.example.gemini.data.local.LocalServerManager
 import com.example.gemini.domain.model.AgentKind
+import com.example.gemini.ui.components.accent
+import com.example.gemini.ui.components.label
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
