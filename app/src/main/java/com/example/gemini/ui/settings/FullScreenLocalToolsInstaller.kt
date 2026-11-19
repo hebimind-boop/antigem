@@ -40,6 +40,9 @@ import com.example.gemini.data.local.LocalEnvironmentManager
 import com.example.gemini.data.local.LocalInstallerState
 import com.example.gemini.data.preferences.AuthPreferences
 import com.example.gemini.theme.*
+import com.example.gemini.R
+import androidx.compose.ui.layout.ContentScale
+import com.example.gemini.ui.components.AppIconImage
 
 /** First-launch setup of the local Linux environment (bootstrap / rootfs): pick a source, then watch it install. */
 @Composable
@@ -371,10 +374,8 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
                     .clip(CircleShape)
                     .background(primaryColor.copy(alpha = 0.15f))
             )
-            androidx.compose.foundation.Image(
-                painter = androidx.compose.ui.res.painterResource(id = R.drawable.limitx_logo),
+            AppIconImage(
                 contentDescription = "LimitX",
-                contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .size(88.dp)
                     .clip(CircleShape)
