@@ -1,12 +1,12 @@
 {
-  "version_code": 136,
-  "version_name": "1.2.7",
+  "version_code": 137,
+  "version_name": "1.2.8",
   "min_supported_version_code": 1,
   "changelog": [
-    "LimitX Official Release: AI Coding Studio, Cyber Terminal & Multi-Agent Hub",
-    "Custom LimitX Cyber aesthetic, OLED Monochrome Dark & Clean Monochrome Light themes",
-    "First-time AI agent CLI selection and auto-installer for Antigravity, Claude Code, OpenCode & Codex",
-    "High-performance terminal emulator with native Android Automation MCP tools"
+    "LimitX v1.2.8: Robust AI Agent CLI auto-installer with multi-path verification & live diagnostics",
+    "Fixed background service notification to display official LimitX branding",
+    "Refined onboarding presentation with high-res circular LimitX logo & modern cyber aesthetics",
+    "Enhanced fallback installers for Antigravity (agy), Claude Code, OpenCode & Codex"
   ],
   "is_critical": true
 }

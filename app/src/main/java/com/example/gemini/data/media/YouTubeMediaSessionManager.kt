@@ -629,7 +629,7 @@ object YouTubeMediaSessionManager {
             .setSmallIcon(android.R.drawable.ic_media_play)
             .setContentTitle(activeTitle)
             .setContentText("YouTube Video")
-            .setSubText("Antigravity")
+            .setSubText("LimitX")
             .setContentIntent(contentIntent)
             .setDeleteIntent(stopIntent)
             .setStyle(mediaStyle)

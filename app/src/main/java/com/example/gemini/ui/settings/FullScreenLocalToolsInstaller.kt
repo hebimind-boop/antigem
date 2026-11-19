@@ -359,24 +359,32 @@ private fun UnsupportedDeviceScreen(onContinue: () -> Unit) {
 
 @Composable
 private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     if (state is LocalInstallerState.Idle) {
         Box(
-            modifier = Modifier
-                .size(76.dp)
-                .clip(RoundedCornerShape(22.dp))
-                .background(AppColors.card),
+            modifier = Modifier.size(96.dp),
             contentAlignment = Alignment.Center
         ) {
-            com.example.gemini.ui.components.AppIconImage(
+            Box(
+                modifier = Modifier
+                    .size(86.dp)
+                    .clip(CircleShape)
+                    .background(primaryColor.copy(alpha = 0.15f))
+            )
+            androidx.compose.foundation.Image(
+                painter = androidx.compose.ui.res.painterResource(id = R.drawable.limitx_logo),
                 contentDescription = "LimitX",
-                modifier = Modifier.size(76.dp)
+                contentScale = ContentScale.Fit,
+                modifier = Modifier
+                    .size(88.dp)
+                    .clip(CircleShape)
             )
         }
     } else {
         val (icon, tint) = when (state) {
             is LocalInstallerState.Success -> Icons.Default.Check to QuotaGreen
             is LocalInstallerState.Error -> Icons.Default.ErrorOutline to AppColors.danger
-            else -> Icons.Outlined.Terminal to ClaudeTerracotta
+            else -> Icons.Outlined.Terminal to primaryColor
         }
         val animatedTint by animateColorAsState(tint, label = "heroTint")
         Box(
@@ -394,7 +402,7 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
         text = when (state) {
             is LocalInstallerState.Success -> "You're all set"
             is LocalInstallerState.Error -> "Setup didn't finish"
-            is LocalInstallerState.Idle -> if (isTermux) "Set up your Linux environment" else "Set up the Ubuntu container"
+            is LocalInstallerState.Idle -> if (isTermux) "Set up your Linux environment" else "Set up the local Ubuntu container"
             is LocalInstallerState.Discovering -> "Finding the latest release"
             is LocalInstallerState.AwaitingConfirmation -> "Ready to install"
             is LocalInstallerState.Downloading,
@@ -402,7 +410,7 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
             is LocalInstallerState.Configuring,
             is LocalInstallerState.Verifying -> "Installing"
         },
-        fontSize = 25.sp,
+        fontSize = 24.sp,
         fontWeight = FontWeight.Bold,
         color = AppColors.onBackground,
         textAlign = TextAlign.Center
@@ -410,15 +418,15 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
     Spacer(modifier = Modifier.height(8.dp))
     Text(
         text = when (state) {
-            is LocalInstallerState.Success -> if (isTermux) "The shell, core tools and AGY tools are installed." else "Ubuntu, bash, glibc and AGY tools are installed."
+            is LocalInstallerState.Success -> if (isTermux) "The shell, core utilities and LimitX agents are installed." else "Ubuntu, bash, glibc and LimitX agents are installed."
             is LocalInstallerState.Error -> "You can try again, or install from a ZIP file instead."
-            is LocalInstallerState.Idle -> "LimitX runs its terminal, IDE and agents on a local Linux system. Choose how to install it."
+            is LocalInstallerState.Idle -> "LimitX runs its terminal, IDE and AI agents on a fast local Linux environment. Choose how to install it."
             is LocalInstallerState.Discovering -> "Checking for the latest verified archive."
             is LocalInstallerState.AwaitingConfirmation -> "Review the details and confirm."
             else -> "This takes a few minutes. You can keep using the app meanwhile."
         },
-        fontSize = 14.sp,
-        lineHeight = 20.sp,
+        fontSize = 13.5.sp,
+        lineHeight = 19.sp,
         color = AppColors.textSecondary,
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(horizontal = 8.dp)
@@ -498,14 +506,15 @@ private fun SourceOption(
     onClick: () -> Unit,
     extra: @Composable ColumnScope.() -> Unit = {}
 ) {
+    val primaryColor = MaterialTheme.colorScheme.primary
     val borderColor by animateColorAsState(
-        if (selected) ClaudeTerracotta else AppColors.border.copy(alpha = 0.6f),
+        if (selected) primaryColor else AppColors.border.copy(alpha = 0.5f),
         label = "optionBorder"
     )
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(18.dp),
-        color = if (selected) ClaudeTerracotta.copy(alpha = 0.06f) else AppColors.card,
+        color = if (selected) primaryColor.copy(alpha = 0.08f) else AppColors.card,
         border = BorderStroke(if (selected) 1.5.dp else 1.dp, borderColor),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -515,13 +524,13 @@ private fun SourceOption(
                     modifier = Modifier
                         .size(40.dp)
                         .clip(CircleShape)
-                        .background((if (selected) ClaudeTerracotta else AppColors.textSecondary).copy(alpha = 0.12f)),
+                        .background((if (selected) primaryColor else AppColors.textSecondary).copy(alpha = 0.12f)),
                     contentAlignment = Alignment.Center
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        tint = if (selected) ClaudeTerracotta else AppColors.textSecondary,
+                        tint = if (selected) primaryColor else AppColors.textSecondary,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -529,7 +538,7 @@ private fun SourceOption(
                 Column(modifier = Modifier.weight(1f)) {
                     Text(title, fontSize = 15.sp, fontWeight = FontWeight.SemiBold, color = AppColors.onBackground)
                     if (tag != null) {
-                        Text(tag, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = if (selected) ClaudeTerracotta else AppColors.textSecondary)
+                        Text(tag, fontSize = 12.sp, fontWeight = FontWeight.Medium, color = if (selected) primaryColor else AppColors.textSecondary)
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(description, fontSize = 12.5.sp, lineHeight = 17.sp, color = AppColors.textSecondary)
@@ -541,13 +550,13 @@ private fun SourceOption(
                         .size(22.dp)
                         .clip(CircleShape)
                         .then(
-                            if (selected) Modifier.background(ClaudeTerracotta)
+                            if (selected) Modifier.background(primaryColor)
                             else Modifier.border(1.5.dp, AppColors.border, CircleShape)
                         ),
                     contentAlignment = Alignment.Center
                 ) {
                     if (selected) {
-                        Icon(Icons.Default.Check, contentDescription = "Selected", tint = Color.White, modifier = Modifier.size(14.dp))
+                        Icon(Icons.Default.Check, contentDescription = "Selected", tint = MaterialTheme.colorScheme.surface, modifier = Modifier.size(14.dp))
                     }
                 }
             }

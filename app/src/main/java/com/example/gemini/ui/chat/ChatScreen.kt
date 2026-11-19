@@ -3254,7 +3254,8 @@ fun ChatScreen(
                 showAgentInstallerDialog = false
                 hasSkippedAgentSetupPrompt = true
                 viewModel.retryConnections()
-            }
+            },
+            onOpenTerminal = onNavigateToTerminal
         )
     }
     if (isApplyingAgents) {

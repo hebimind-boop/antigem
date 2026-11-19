@@ -11,25 +11,14 @@ import androidx.compose.ui.res.painterResource
 import com.example.gemini.R
 
 /**
- * The real launcher icon (Prism), drawn from its adaptive-icon layers: the graphite background and the gem foreground.
- * Both layers are 108 units with the visible part in the middle 72, so they are scaled 1.5x and clipped to this box.
- * Clip the caller's modifier to the shape you want (rounded square, circle).
+ * Official LimitX app brand logo, rendered cleanly and crisply at any size.
  */
 @Composable
 fun AppIconImage(contentDescription: String?, modifier: Modifier = Modifier) {
-    Box(modifier.clipToBounds()) {
-        val layer = Modifier.matchParentSize().graphicsLayer { scaleX = 1.5f; scaleY = 1.5f }
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_background),
-            contentDescription = null,
-            contentScale = ContentScale.FillBounds,
-            modifier = layer
-        )
-        Image(
-            painter = painterResource(id = R.drawable.ic_launcher_foreground),
-            contentDescription = contentDescription,
-            contentScale = ContentScale.FillBounds,
-            modifier = layer
-        )
-    }
+    Image(
+        painter = painterResource(id = R.drawable.limitx_logo),
+        contentDescription = contentDescription,
+        contentScale = ContentScale.Fit,
+        modifier = modifier
+    )
 }

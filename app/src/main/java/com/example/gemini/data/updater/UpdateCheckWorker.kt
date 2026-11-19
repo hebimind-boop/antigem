@@ -65,7 +65,7 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("Update available: v${info.versionName}")
-            .setContentText(info.changelog.firstOrNull() ?: "Tap to update BoopIDE")
+            .setContentText(info.changelog.firstOrNull() ?: "Tap to update LimitX")
             .setStyle(NotificationCompat.BigTextStyle().bigText(info.changelog.joinToString("\n") { "• $it" }))
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)

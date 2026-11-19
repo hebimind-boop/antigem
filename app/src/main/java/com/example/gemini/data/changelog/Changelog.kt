@@ -43,6 +43,17 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 137,
+                versionName = "1.2.8",
+                date = "2026-11-19",
+                changes = listOf(
+                    "Fixed: AI agent CLI installer verification, robust multi-path detection and direct download fallbacks",
+                    "Fixed: Background service notifications to display official LimitX branding",
+                    "Improved: Clean circular logo presentation with cyber-cyan glow on onboarding and setup screens",
+                    "Improved: Terminal logs diagnostics, copy logs action, and retry controls on agent setup"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 136,
                 versionName = "1.2.7",
                 date = "2026-11-18",

@@ -426,7 +426,7 @@ fun AppInfoSheet(app: MiniApp, onDismiss: () -> Unit, onClearData: () -> Unit) {
             // LimitX tools (MCP): whether each call needs the user's OK first
             val mcpServers = remember(app) { MiniAppMcpAccess.servers(app) }
             if (mcpServers.isNotEmpty()) {
-                Text("BoopIDE tools", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 16.dp, bottom = 4.dp))
+                Text("LimitX tools", style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, modifier = Modifier.padding(top = 16.dp, bottom = 4.dp))
                 mcpServers.forEach { sv ->
                     val ask = remember(tick) { MiniAppMcpAccess.askSwitch(context, app, sv) }
                     Row(Modifier.fillMaxWidth().padding(vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {

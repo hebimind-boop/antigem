@@ -37,8 +37,11 @@ import com.example.gemini.data.agent.AgentCliManager
 import com.example.gemini.data.agent.AgentPreferences
 import com.example.gemini.data.local.LocalServerManager
 import com.example.gemini.domain.model.AgentKind
-import com.example.gemini.ui.components.accent
-import com.example.gemini.ui.components.label
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Intent
+import android.widget.Toast
+import com.example.gemini.TermuxActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -58,7 +61,8 @@ private enum class InstallerPhase {
  */
 @Composable
 fun AgentSetupAndInstallerDialog(
-    onDismissOrCompleted: () -> Unit
+    onDismissOrCompleted: () -> Unit,
+    onOpenTerminal: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -130,7 +134,7 @@ fun AgentSetupAndInstallerDialog(
         terminalLogs.add("🚀 Preparing to install ${toInstall.size} selected agent CLI(s)...")
 
         scope.launch {
-            var anyFailed = false
+            val failedAgents = mutableListOf<AgentKind>()
             for ((idx, agent) in toInstall.withIndex()) {
                 currentInstallingAgent = agent
                 currentAgentIndex = idx + 1
@@ -138,28 +142,31 @@ fun AgentSetupAndInstallerDialog(
                 terminalLogs.add("▶ Installing [${agent.label()}] (${idx + 1}/${toInstall.size})")
                 terminalLogs.add("========================================")
 
-                val ok = AgentCliManager.installAgent(context, agent) { line ->
+                val result = AgentCliManager.installAgent(context, agent) { line ->
                     terminalLogs.add(line)
                 }
                 refreshInstalledMap()
-                if (!ok) {
-                    anyFailed = true
-                    terminalLogs.add("⚠️ Warning: ${agent.label()} installer exited with non-zero status.")
+                if (!result.success && installedMap[agent] != true) {
+                    failedAgents.add(agent)
+                    terminalLogs.add("❌ ${agent.label()} installer error (code ${result.exitCode}): ${result.errorMessage ?: "binary not detected"}")
                 }
             }
 
             refreshInstalledMap()
             terminalLogs.add("\n========================================")
-            if (anyFailed) {
-                terminalLogs.add("⚠️ Installation completed with one or more warnings.")
+            val stillMissing = selectedAgents.filter { installedMap[it] != true }
+            if (stillMissing.isNotEmpty() || failedAgents.isNotEmpty()) {
+                val names = (failedAgents + stillMissing).distinct().joinToString { it.label() }
+                terminalLogs.add("❌ Installation incomplete for: $names")
+                errorMessage = "Could not install or locate the binary for: $names.\nSee logs below for details."
+                phase = InstallerPhase.ERROR
             } else {
-                terminalLogs.add("🎉 All selected agent CLIs are installed and ready!")
+                terminalLogs.add("🎉 All selected agent CLIs are installed and verified!")
+                terminalLogs.add("▶ Starting LimitX Hub & IDE Bridge...")
+                terminalLogs.add("========================================")
+                LocalServerManager.startServer(context, forceRestart = true)
+                phase = InstallerPhase.SUCCESS
             }
-            terminalLogs.add("▶ Starting LimitX Hub & IDE Bridge...")
-            terminalLogs.add("========================================")
-
-            LocalServerManager.startServer(context, forceRestart = true)
-            phase = InstallerPhase.SUCCESS
         }
     }
 
@@ -532,39 +539,149 @@ fun AgentSetupAndInstallerDialog(
                         Column(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .verticalScroll(rememberScrollState()),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                                .padding(vertical = 4.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Icon(
                                 imageVector = Icons.Default.ErrorOutline,
                                 contentDescription = null,
                                 tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(48.dp)
-                            )
-                            Spacer(modifier = Modifier.height(12.dp))
-                            Text(
-                                text = "Installation Incomplete",
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSurface
+                                modifier = Modifier.size(42.dp)
                             )
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = errorMessage ?: "One or more agents failed to install.",
-                                fontSize = 13.sp,
-                                textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.error
+                                text = "Installation Failed / Incomplete",
+                                fontSize = 17.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onSurface
                             )
-                            Spacer(modifier = Modifier.height(20.dp))
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = errorMessage ?: "One or more agent CLIs failed to install.",
+                                fontSize = 12.sp,
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colorScheme.error,
+                                modifier = Modifier.padding(horizontal = 12.dp)
+                            )
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Terminal Logs Box with Copy button
                             Row(
-                                horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                OutlinedButton(onClick = { phase = InstallerPhase.SELECTING }) {
-                                    Text("Change Agents")
+                                Text(
+                                    text = "Terminal Output & Diagnostics:",
+                                    fontSize = 11.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                                TextButton(
+                                    onClick = {
+                                        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as? ClipboardManager
+                                        cm?.setPrimaryClip(ClipData.newPlainText("LimitX Agent Install Logs", terminalLogs.joinToString("\n")))
+                                        Toast.makeText(context, "Logs copied to clipboard", Toast.LENGTH_SHORT).show()
+                                    },
+                                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
+                                ) {
+                                    Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(14.dp))
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    Text("Copy Logs", fontSize = 11.5.sp)
                                 }
-                                Button(onClick = onDismissOrCompleted) {
-                                    Text("Continue Anyway")
+                            }
+
+                            val errorLogListState = rememberLazyListState()
+                            Surface(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth(),
+                                shape = RoundedCornerShape(12.dp),
+                                color = Color(0xFF1E1E1E)
+                            ) {
+                                LazyColumn(
+                                    state = errorLogListState,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(8.dp)
+                                ) {
+                                    items(terminalLogs) { line ->
+                                        Text(
+                                            text = line,
+                                            fontFamily = FontFamily.Monospace,
+                                            fontSize = 10.5.sp,
+                                            lineHeight = 14.sp,
+                                            color = when {
+                                                line.startsWith("✅") || line.contains("successfully") -> Color(0xFF4ADE80)
+                                                line.startsWith("❌") || line.contains("failed") -> Color(0xFFF87171)
+                                                line.startsWith("⚠️") -> Color(0xFFFBBF24)
+                                                line.startsWith("$") -> Color(0xFF60A5FA)
+                                                else -> Color(0xFFE2E8F0)
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.height(10.dp))
+
+                            // Action buttons
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Button(
+                                        onClick = { runBatchInstallation() },
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Retry Installation", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                    }
+                                    OutlinedButton(
+                                        onClick = {
+                                            if (onOpenTerminal != null) {
+                                                onOpenTerminal()
+                                            } else {
+                                                try {
+                                                    context.startActivity(Intent(context, TermuxActivity::class.java))
+                                                } catch (_: Exception) {}
+                                            }
+                                        },
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Open Terminal", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                    }
+                                }
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    OutlinedButton(
+                                        onClick = { phase = InstallerPhase.SELECTING },
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Change Selection", fontSize = 12.5.sp)
+                                    }
+                                    TextButton(
+                                        onClick = {
+                                            LocalServerManager.startServer(context, forceRestart = true)
+                                            onDismissOrCompleted()
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    ) {
+                                        Text("Continue Anyway", fontSize = 12.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                    }
                                 }
                             }
                         }
