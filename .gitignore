@@ -41,6 +41,8 @@ app/src/main/assets/bin/agy_ide_bridge_linux_arm64
 app/src/main/assets/bin/backup_bootstrap
 app/src/main/assets/bin/backup_chats
 app/src/main/assets/bin/restore_chats
+app/src/main/assets/agy_arm64.zip
+app/src/main/assets/agy.zip
 # Python Cache & Bytecode
 __pycache__/
 *.py[cod]

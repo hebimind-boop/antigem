@@ -8,6 +8,8 @@ import com.example.gemini.domain.model.AgentKind
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.zip.ZipInputStream
+import android.system.Os
 
 /**
  * Manages checking, installing, and status detection for AI agent CLIs (agy, claude, opencode, codex)
@@ -80,23 +82,104 @@ object AgentCliManager {
             )
         } else {
             val ubuntuDir = LocalEnvironmentManager.getUbuntuRootDir(context)
-            if (!ubuntuDir.exists()) return emptyList()
-            listOf(
-                File(ubuntuDir, "root/.local/bin/$binaryName"),
-                File(ubuntuDir, "usr/local/bin/$binaryName"),
-                File(ubuntuDir, "usr/bin/$binaryName"),
-                File(ubuntuDir, "bin/$binaryName"),
-                File(ubuntuDir, "root/.opencode/bin/$binaryName"),
-                File(ubuntuDir, "root/.bun/bin/$binaryName"),
-                File(ubuntuDir, "root/.cargo/bin/$binaryName"),
-                File(ubuntuDir, "root/.npm-global/bin/$binaryName"),
-                File(ubuntuDir, "root/.claude/local/$binaryName"),
-                File(ubuntuDir, "root/.codex/packages/standalone/current/bin/$binaryName"),
-                File(ubuntuDir, "root/.antigravity/bin/$binaryName"),
-                File(ubuntuDir, "root/.gemini/bin/$binaryName"),
-                File(ubuntuDir, "antigem/bin/$binaryName"),
-                File(ubuntuDir, "boopide/bin/$binaryName")
-            )
+            val hostBin = LocalEnvironmentManager.getBinDir(context)
+            val hostPrefix = LocalEnvironmentManager.getPrefixDir(context)
+            val list = mutableListOf<File>()
+            list.add(File(hostBin, binaryName))
+            list.add(File(hostPrefix, "bin/$binaryName"))
+            if (ubuntuDir.exists()) {
+                list.add(File(ubuntuDir, "root/.local/bin/$binaryName"))
+                list.add(File(ubuntuDir, "usr/local/bin/$binaryName"))
+                list.add(File(ubuntuDir, "usr/bin/$binaryName"))
+                list.add(File(ubuntuDir, "bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.opencode/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.bun/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.cargo/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.npm-global/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.claude/local/$binaryName"))
+                list.add(File(ubuntuDir, "root/.codex/packages/standalone/current/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.antigravity/bin/$binaryName"))
+                list.add(File(ubuntuDir, "root/.gemini/bin/$binaryName"))
+                list.add(File(ubuntuDir, "antigem/bin/$binaryName"))
+                list.add(File(ubuntuDir, "boopide/bin/$binaryName"))
+            }
+            list
+        }
+    }
+
+    /**
+     * Extracts the pre-bundled Antigravity CLI (agy) binary from APK assets (agy_arm64.zip)
+     * directly into the container and host execution paths with executable permissions.
+     */
+    fun extractBundledAgy(context: Context): Boolean {
+        return try {
+            val assets = context.assets.list("") ?: emptyArray()
+            val zipName = when {
+                "agy_arm64.zip" in assets -> "agy_arm64.zip"
+                "agy.zip" in assets -> "agy.zip"
+                else -> null
+            } ?: return false
+
+            val isTermux = LocalEnvironmentManager.isTermuxPackage(context)
+            val targets = mutableListOf<File>()
+
+            if (isTermux) {
+                val home = LocalEnvironmentManager.getHomeDir(context)
+                val prefix = LocalEnvironmentManager.getPrefixDir(context)
+                targets.add(File(home, ".local/bin/agy"))
+                targets.add(File(prefix, "bin/agy"))
+            } else {
+                val ubuntuDir = LocalEnvironmentManager.getUbuntuRootDir(context)
+                if (ubuntuDir.exists()) {
+                    targets.add(File(ubuntuDir, "root/.local/bin/agy"))
+                    targets.add(File(ubuntuDir, "usr/local/bin/agy"))
+                    targets.add(File(ubuntuDir, "bin/agy"))
+                }
+                targets.add(File(LocalEnvironmentManager.getBinDir(context), "agy"))
+            }
+
+            if (targets.isEmpty()) return false
+
+            var extracted = false
+            context.assets.open(zipName).use { rawIn ->
+                ZipInputStream(rawIn.buffered()).use { zis ->
+                    var entry = zis.nextEntry
+                    while (entry != null) {
+                        val name = entry.name
+                        if (name == "agy" || name.endsWith("/agy") || name == "antigravity" || name.endsWith("/antigravity")) {
+                            val primaryTarget = targets.first()
+                            primaryTarget.parentFile?.mkdirs()
+                            primaryTarget.outputStream().buffered().use { out ->
+                                zis.copyTo(out)
+                            }
+                            primaryTarget.setExecutable(true, false)
+                            primaryTarget.setReadable(true, false)
+                            try {
+                                Os.chmod(primaryTarget.absolutePath, 493) // 0755
+                            } catch (_: Exception) {}
+
+                            for (i in 1 until targets.size) {
+                                try {
+                                    val sec = targets[i]
+                                    sec.parentFile?.mkdirs()
+                                    primaryTarget.copyTo(sec, overwrite = true)
+                                    sec.setExecutable(true, false)
+                                    sec.setReadable(true, false)
+                                    Os.chmod(sec.absolutePath, 493)
+                                } catch (_: Exception) {}
+                            }
+                            extracted = true
+                            Log.i(TAG, "Extracted bundled agy CLI to: ${primaryTarget.absolutePath}")
+                            break
+                        }
+                        entry = zis.nextEntry
+                    }
+                }
+            }
+            extracted
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to extract bundled agy: ${e.message}", e)
+            false
         }
     }
 
@@ -110,7 +193,13 @@ object AgentCliManager {
                 else -> true
             }
         }
-        return getCandidatePaths(context, agent).any { it.exists() }
+        var installed = getCandidatePaths(context, agent).any { it.exists() }
+        if (!installed && agent == AgentKind.AGY) {
+            if (extractBundledAgy(context)) {
+                installed = getCandidatePaths(context, agent).any { it.exists() }
+            }
+        }
+        return installed
     }
 
     /**
@@ -175,38 +264,26 @@ object AgentCliManager {
                 AgentKind.AGY -> {
                     """
                     $toolGuard
-                    mkdir -p /root/.local/bin /usr/local/bin
+                    mkdir -p /root/.local/bin /usr/local/bin /tmp
                     export PATH="/root/.local/bin:/usr/local/bin:${'$'}PATH"
-                    if ! (curl -fsSLk https://antigravity.google/cli/install.sh | bash); then
-                        echo "Official install script failed. Downloading release binary directly..."
-                        ARCH=${'$'}(uname -m)
-                        if [ "${'$'}ARCH" = "aarch64" ] || [ "${'$'}ARCH" = "arm64" ]; then
-                            PLATFORM="linux_arm64"
-                            FALLBACK_URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.12-5281398513336320/linux-arm/cli_linux_arm64.tar.gz"
-                        else
-                            PLATFORM="linux_amd64"
-                            FALLBACK_URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.12-5281398513336320/linux-x64/cli_linux_amd64.tar.gz"
-                        fi
-                        MANIFEST_URL="https://antigravity-cli-auto-updater-974169037036.us-central1.run.app/manifests/${'$'}PLATFORM.json"
-                        URL=${'$'}(curl -fsSLk "${'$'}MANIFEST_URL" 2>/dev/null | grep -o '"url": *"[^"]*"' | head -n1 | cut -d'"' -f4)
-                        if [ -z "${'$'}URL" ]; then URL="${'$'}FALLBACK_URL"; fi
-                        echo "Downloading from ${'$'}URL..."
-                        curl -fsSLk "${'$'}URL" -o /tmp/agy.tar.gz
-                        tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/ antigravity 2>/dev/null || tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/ agy 2>/dev/null || tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/
-                        if [ -f /root/.local/bin/antigravity ] && [ ! -f /root/.local/bin/agy ]; then
-                            mv -f /root/.local/bin/antigravity /root/.local/bin/agy
-                        fi
-                        chmod +x /root/.local/bin/agy 2>/dev/null || true
-                        rm -f /tmp/agy.tar.gz
+                    ARCH=${'$'}(uname -m)
+                    if [ "${'$'}ARCH" = "aarch64" ] || [ "${'$'}ARCH" = "arm64" ]; then
+                        URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.13-5999302598852608/linux-arm/cli_linux_arm64.tar.gz"
+                    else
+                        URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.13-5999302598852608/linux-x64/cli_linux_amd64.tar.gz"
                     fi
-                    if [ -f /root/.local/bin/agy ]; then
-                        cp -f /root/.local/bin/agy /usr/local/bin/agy 2>/dev/null || true
-                        chmod +x /root/.local/bin/agy /usr/local/bin/agy 2>/dev/null || true
-                    elif [ -f /usr/local/bin/agy ]; then
-                        cp -f /usr/local/bin/agy /root/.local/bin/agy 2>/dev/null || true
-                        chmod +x /root/.local/bin/agy /usr/local/bin/agy 2>/dev/null || true
+                    echo "Downloading Antigravity CLI from ${'$'}URL..."
+                    curl -fsSLk "${'$'}URL" -o /tmp/agy.tar.gz
+                    echo "Extracting release payload..."
+                    tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/ antigravity 2>/dev/null || tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/ agy 2>/dev/null || tar -xzf /tmp/agy.tar.gz -C /root/.local/bin/
+                    if [ -f /root/.local/bin/antigravity ] && [ ! -f /root/.local/bin/agy ]; then
+                        mv -f /root/.local/bin/antigravity /root/.local/bin/agy
                     fi
-                    command -v agy || [ -f /root/.local/bin/agy ] || [ -f /usr/local/bin/agy ]
+                    chmod +x /root/.local/bin/agy 2>/dev/null || true
+                    cp -f /root/.local/bin/agy /usr/local/bin/agy 2>/dev/null || true
+                    chmod +x /usr/local/bin/agy 2>/dev/null || true
+                    rm -f /tmp/agy.tar.gz
+                    command -v agy || [ -x /root/.local/bin/agy ] || [ -x /usr/local/bin/agy ]
                     """.trimIndent()
                 }
                 AgentKind.CLAUDE -> {
@@ -293,6 +370,18 @@ object AgentCliManager {
         agent: AgentKind,
         onLogLine: (String) -> Unit
     ): InstallResult = withContext(Dispatchers.IO) {
+        if (agent == AgentKind.AGY) {
+            onLogLine("📦 Checking for pre-bundled Antigravity CLI in app assets...")
+            if (extractBundledAgy(context)) {
+                onLogLine("✅ Successfully extracted pre-bundled Antigravity (agy) CLI!\n")
+                return@withContext InstallResult(
+                    success = true,
+                    exitCode = 0,
+                    output = "Pre-bundled Antigravity CLI extracted successfully"
+                )
+            }
+            onLogLine("ℹ️ Pre-bundled asset not found; downloading from Google Cloud Storage...")
+        }
         val cmd = getInstallCommand(context, agent)
         onLogLine("📦 Starting installation for ${agent.name}...")
         onLogLine("$ $cmd\n")

@@ -1,12 +1,12 @@
 {
-  "version_code": 137,
-  "version_name": "1.2.8",
+  "version_code": 138,
+  "version_name": "1.2.9",
   "min_supported_version_code": 1,
   "changelog": [
-    "LimitX v1.2.8: Robust AI Agent CLI auto-installer with multi-path verification & live diagnostics",
-    "Fixed background service notification to display official LimitX branding",
-    "Refined onboarding presentation with high-res circular LimitX logo & modern cyber aesthetics",
-    "Enhanced fallback installers for Antigravity (agy), Claude Code, OpenCode & Codex"
+    "LimitX v1.2.9: Pre-bundled Antigravity CLI (agy) for instant offline ready status",
+    "Auto-extraction of bundled agy to /root/.local/bin/agy with executable permissions upon setup",
+    "Pure alpha transparent circular logo rendering with zero square framing or edge artifacts on OLED black",
+    "Redesigned AI Agent Onboarding with sleek modern cyber theme, pre-bundled status badge, and Continue with Ready Agents"
   ],
   "is_critical": true
 }

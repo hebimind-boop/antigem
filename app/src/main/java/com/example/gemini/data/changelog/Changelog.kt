@@ -43,6 +43,17 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 138,
+                versionName = "1.2.9",
+                date = "2026-11-20",
+                changes = listOf(
+                    "New: Pre-bundled Antigravity CLI (agy) directly in app assets for instant offline availability",
+                    "Improved: Auto-extraction of bundled agy to rootfs environment with executable permissions",
+                    "Fixed: Clean circular logo transparency with radial feathering, eliminating edge artifacts on OLED black",
+                    "Improved: Redesigned agent selection dialog with ready status badges and Continue with Ready Agents"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 137,
                 versionName = "1.2.8",
                 date = "2026-11-19",

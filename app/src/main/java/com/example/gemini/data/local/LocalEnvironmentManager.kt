@@ -1745,6 +1745,13 @@ object LocalEnvironmentManager {
             authPreferences.setLocalToolsEnabled(true)
             authPreferences.setTerminalToolEnabled(true)
 
+            // Automatically extract pre-bundled agy if available in assets
+            try {
+                com.example.gemini.data.agent.AgentCliManager.extractBundledAgy(appContext)
+            } catch (e: Exception) {
+                Log.w(TAG, "Bundled agy extraction failed: ${e.message}")
+            }
+
             _installerState.value = LocalInstallerState.Success(
                 message = "Termux Linux environment verified and installed successfully!",
                 prefixPath = prefixDir.absolutePath,

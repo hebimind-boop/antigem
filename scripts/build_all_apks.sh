@@ -30,6 +30,45 @@ fi
 echo "📦 Version Name: v${VERSION_NAME} (Code: ${VERSION_CODE})"
 mkdir -p "${OUTPUT_DIR}"
 
+# -----------------------------------------------------------------------------
+# Pre-bundle Antigravity CLI (agy) into APK assets
+# -----------------------------------------------------------------------------
+ASSETS_DIR="${ROOT_DIR}/app/src/main/assets"
+mkdir -p "${ASSETS_DIR}"
+
+if [[ ! -f "${ASSETS_DIR}/agy_arm64.zip" && ! -f "${ASSETS_DIR}/agy.zip" ]]; then
+    echo "⬇️  Checking Antigravity CLI (agy) pre-bundled asset..."
+    GCS_URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.13-5999302598852608/linux-arm/cli_linux_arm64.tar.gz"
+    MANIFEST_URL="https://antigravity-cli-auto-updater-974169037036.us-central1.run.app/manifests/linux_arm64.json"
+
+    TMP_DIR=$(mktemp -d)
+    TARBALL_URL="${GCS_URL}"
+    RESOLVED_URL=$(curl -sL --max-time 10 "${MANIFEST_URL}" 2>/dev/null | grep -o 'https://[^"]*cli_linux_arm64.tar.gz' || true)
+    if [[ -n "${RESOLVED_URL}" ]]; then
+        TARBALL_URL="${RESOLVED_URL}"
+    fi
+
+    echo "⬇️  Downloading agy ARM64 binary from: ${TARBALL_URL}"
+    if curl -sSL --max-time 300 "${TARBALL_URL}" -o "${TMP_DIR}/cli.tar.gz"; then
+        echo "📦 Extracting tarball..."
+        tar -xzf "${TMP_DIR}/cli.tar.gz" -C "${TMP_DIR}"
+        AGY_BIN=$(find "${TMP_DIR}" -type f \( -name "antigravity" -o -name "agy" \) | head -n 1)
+        if [[ -n "${AGY_BIN}" && -f "${AGY_BIN}" ]]; then
+            echo "📦 Found binary: ${AGY_BIN} ($(wc -c < "${AGY_BIN}") bytes)"
+            echo "📦 Creating compressed assets/agy_arm64.zip..."
+            (cd "$(dirname "${AGY_BIN}")" && zip -9 "${ASSETS_DIR}/agy_arm64.zip" "$(basename "${AGY_BIN}")")
+            ls -lh "${ASSETS_DIR}/agy_arm64.zip"
+        else
+            echo "⚠️ Could not find agy binary in tarball, continuing build."
+        fi
+    else
+        echo "⚠️ Failed to download agy tarball, continuing build."
+    fi
+    rm -rf "${TMP_DIR}"
+else
+    echo "✅ Pre-bundled Antigravity CLI asset already present: $(ls -lh ${ASSETS_DIR}/agy* 2>/dev/null)"
+fi
+
 if [[ "${MODE}" == "release" ]]; then
     echo "🔨 Compiling Standard Release (clean :app:assembleStandardRelease)..."
     "${ROOT_DIR}/gradlew" -p "${ROOT_DIR}" clean :app:assembleStandardRelease

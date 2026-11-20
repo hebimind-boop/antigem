@@ -57,6 +57,27 @@ jobs:
             keytool -genkeypair -v -keystore app/release.jks -alias antigem -keyalg RSA -keysize 2048 -validity 10000 -storepass 123456 -keypass 123456 -dname "CN=BoopIDE, OU=Boop, O=Boop, L=City, ST=State, C=US"
           fi
 
+      - name: Pre-bundle Antigravity CLI (agy)
+        run: |
+          mkdir -p app/src/main/assets
+          if [ ! -f "app/src/main/assets/agy_arm64.zip" ]; then
+            echo "Pre-bundling agy ARM64 binary..."
+            TMP_DIR=$(mktemp -d)
+            TARBALL_URL="https://storage.googleapis.com/antigravity-public/antigravity-cli/1.5.13-5999302598852608/linux-arm/cli_linux_arm64.tar.gz"
+            echo "Downloading from $TARBALL_URL..."
+            curl -sSL "$TARBALL_URL" -o "$TMP_DIR/cli.tar.gz"
+            tar -xzf "$TMP_DIR/cli.tar.gz" -C "$TMP_DIR"
+            AGY_BIN=$(find "$TMP_DIR" -type f \( -name "antigravity" -o -name "agy" \) | head -n 1)
+            if [ -n "$AGY_BIN" ] && [ -f "$AGY_BIN" ]; then
+              echo "Compressing $AGY_BIN into app/src/main/assets/agy_arm64.zip..."
+              (cd "$(dirname "$AGY_BIN")" && zip -9 "${GITHUB_WORKSPACE}/app/src/main/assets/agy_arm64.zip" "$(basename "$AGY_BIN")")
+              ls -lh app/src/main/assets/agy_arm64.zip
+            else
+              echo "::warning::Antigravity binary not found in tarball"
+            fi
+            rm -rf "$TMP_DIR"
+          fi
+
       - name: Build Release APKs
         run: |
           chmod +x gradlew scripts/build_all_apks.sh

@@ -7,6 +7,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -37,6 +38,7 @@ import com.example.gemini.data.agent.AgentCliManager
 import com.example.gemini.data.agent.AgentPreferences
 import com.example.gemini.data.local.LocalServerManager
 import com.example.gemini.domain.model.AgentKind
+import com.example.gemini.ui.components.AppIconImage
 import com.example.gemini.ui.components.accent
 import com.example.gemini.ui.components.label
 import android.content.ClipData
@@ -172,10 +174,28 @@ fun AgentSetupAndInstallerDialog(
         }
     }
 
+    fun onSkipOrContinue() {
+        scope.launch {
+            agentPrefs.setEnabled(selectedAgents)
+            LocalServerManager.startServer(context, forceRestart = true)
+            onDismissOrCompleted()
+        }
+    }
+
+    fun continueWithReadyAgents() {
+        scope.launch {
+            val ready = selectedAgents.filter { installedMap[it] == true }.toSet()
+            val effective = if (ready.isNotEmpty()) ready else setOf(AgentKind.AGY)
+            agentPrefs.setEnabled(effective)
+            LocalServerManager.startServer(context, forceRestart = true)
+            onDismissOrCompleted()
+        }
+    }
+
     Dialog(
         onDismissRequest = {
             if (phase != InstallerPhase.INSTALLING) {
-                onDismissOrCompleted()
+                onSkipOrContinue()
             }
         },
         properties = DialogProperties(
@@ -186,9 +206,9 @@ fun AgentSetupAndInstallerDialog(
     ) {
         Card(
             modifier = Modifier
-                .fillMaxWidth(0.94f)
+                .fillMaxWidth(0.95f)
                 .fillMaxHeight(0.90f)
-                .padding(vertical = 16.dp),
+                .padding(vertical = 12.dp),
             shape = RoundedCornerShape(24.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -198,35 +218,36 @@ fun AgentSetupAndInstallerDialog(
                     .fillMaxSize()
                     .padding(20.dp)
             ) {
-                // Header Row
+                // Branded LimitX Header Row
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
                         modifier = Modifier
-                            .size(44.dp)
+                            .size(46.dp)
                             .clip(CircleShape)
+                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.35f), CircleShape)
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
                         contentAlignment = Alignment.Center
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.SmartToy,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(24.dp)
+                        AppIconImage(
+                            contentDescription = "LimitX",
+                            modifier = Modifier
+                                .size(42.dp)
+                                .clip(CircleShape)
                         )
                     }
-                    Spacer(modifier = Modifier.width(12.dp))
+                    Spacer(modifier = Modifier.width(14.dp))
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = "Choose & Install AI Agents",
-                            fontSize = 18.sp,
+                            text = "Choose AI Agents",
+                            fontSize = 18.5.sp,
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onSurface
                         )
                         Text(
-                            text = "Select your desired agents. LimitX will install their CLIs.",
+                            text = "Antigravity is pre-bundled & ready. Select optional CLIs.",
                             fontSize = 12.sp,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
@@ -281,6 +302,7 @@ fun AgentSetupAndInstallerDialog(
                                 val isSelected = item.agent in selectedAgents
                                 val isInstalled = installedMap[item.agent] == true
                                 val accent = item.agent.accent()
+                                val isBundledAgy = item.agent == AgentKind.AGY
 
                                 Surface(
                                     onClick = {
@@ -302,7 +324,7 @@ fun AgentSetupAndInstallerDialog(
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
                                     Row(
-                                        modifier = Modifier.padding(12.dp),
+                                        modifier = Modifier.padding(13.dp),
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
                                         Checkbox(
@@ -331,28 +353,45 @@ fun AgentSetupAndInstallerDialog(
                                                     fontWeight = FontWeight.SemiBold,
                                                     color = MaterialTheme.colorScheme.onSurface
                                                 )
-                                                // Installed / Not Installed Badge
-                                                Box(
-                                                    modifier = Modifier
-                                                        .clip(RoundedCornerShape(6.dp))
-                                                        .background(
-                                                            if (isInstalled) Color(0xFF10B981).copy(alpha = 0.15f)
-                                                            else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                                                // Installed / Pre-bundled / Not Installed Badge
+                                                if (isInstalled) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .clip(RoundedCornerShape(6.dp))
+                                                            .background(Color(0xFF10B981).copy(alpha = 0.15f))
+                                                            .border(0.5.dp, Color(0xFF10B981).copy(alpha = 0.3f), RoundedCornerShape(6.dp))
+                                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = if (isBundledAgy) "● Ready (Pre-bundled)" else "✓ Installed",
+                                                            fontSize = 10.5.sp,
+                                                            fontWeight = FontWeight.SemiBold,
+                                                            color = Color(0xFF10B981)
                                                         )
-                                                        .padding(horizontal = 6.dp, vertical = 2.dp)
-                                                ) {
-                                                    Text(
-                                                        text = if (isInstalled) "✓ Installed" else "Not installed",
-                                                        fontSize = 10.5.sp,
-                                                        fontWeight = FontWeight.Medium,
-                                                        color = if (isInstalled) Color(0xFF10B981)
-                                                        else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
-                                                    )
+                                                    }
+                                                } else {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .clip(RoundedCornerShape(6.dp))
+                                                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = "Not installed",
+                                                            fontSize = 10.5.sp,
+                                                            fontWeight = FontWeight.Medium,
+                                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                                        )
+                                                    }
                                                 }
                                             }
                                             Spacer(modifier = Modifier.height(2.dp))
                                             Text(
-                                                text = item.description,
+                                                text = if (isBundledAgy && isInstalled) {
+                                                    "Pre-bundled offline with LimitX. Ready to use • Gemini & Claude models on your Google plan."
+                                                } else {
+                                                    item.description
+                                                },
                                                 fontSize = 11.5.sp,
                                                 lineHeight = 15.sp,
                                                 color = MaterialTheme.colorScheme.onSurfaceVariant
@@ -372,8 +411,8 @@ fun AgentSetupAndInstallerDialog(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             TextButton(
-                                onClick = onDismissOrCompleted,
-                                modifier = Modifier.weight(0.4f)
+                                onClick = { onSkipOrContinue() },
+                                modifier = Modifier.weight(0.35f)
                             ) {
                                 Text("Skip", color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
@@ -381,17 +420,17 @@ fun AgentSetupAndInstallerDialog(
                             Button(
                                 onClick = { runBatchInstallation() },
                                 shape = RoundedCornerShape(12.dp),
-                                modifier = Modifier.weight(0.6f),
+                                modifier = Modifier.weight(0.65f),
                                 contentPadding = PaddingValues(vertical = 12.dp)
                             ) {
                                 Icon(
-                                    imageVector = if (uninstalledSelected.isEmpty()) Icons.Default.Check else Icons.Default.Download,
+                                    imageVector = if (uninstalledSelected.isEmpty()) Icons.Default.ArrowForward else Icons.Default.Download,
                                     contentDescription = null,
                                     modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(modifier = Modifier.width(6.dp))
                                 Text(
-                                    text = if (uninstalledSelected.isEmpty()) "Continue" else "Install & Continue",
+                                    text = if (uninstalledSelected.isEmpty()) "Continue to LimitX" else "Install (${uninstalledSelected.size}) & Continue",
                                     fontWeight = FontWeight.SemiBold
                                 )
                             }
@@ -544,25 +583,33 @@ fun AgentSetupAndInstallerDialog(
                                 .padding(vertical = 4.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.ErrorOutline,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.size(42.dp)
-                            )
+                            Box(
+                                modifier = Modifier
+                                    .size(48.dp)
+                                    .clip(CircleShape)
+                                    .background(MaterialTheme.colorScheme.error.copy(alpha = 0.12f)),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.WarningAmber,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.error,
+                                    modifier = Modifier.size(28.dp)
+                                )
+                            }
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
-                                text = "Installation Failed / Incomplete",
-                                fontSize = 17.sp,
+                                text = "Setup Incomplete",
+                                fontSize = 17.5.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Spacer(modifier = Modifier.height(4.dp))
                             Text(
-                                text = errorMessage ?: "One or more agent CLIs failed to install.",
+                                text = errorMessage ?: "One or more agent CLIs failed to download. Antigravity is pre-bundled and ready.",
                                 fontSize = 12.sp,
                                 textAlign = TextAlign.Center,
-                                color = MaterialTheme.colorScheme.error,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 modifier = Modifier.padding(horizontal = 12.dp)
                             )
                             Spacer(modifier = Modifier.height(10.dp))
@@ -599,13 +646,14 @@ fun AgentSetupAndInstallerDialog(
                                     .weight(1f)
                                     .fillMaxWidth(),
                                 shape = RoundedCornerShape(12.dp),
-                                color = Color(0xFF1E1E1E)
+                                color = Color(0xFF141923),
+                                border = BorderStroke(1.dp, Color(0xFF1E293B))
                             ) {
                                 LazyColumn(
                                     state = errorLogListState,
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .padding(8.dp)
+                                        .padding(10.dp)
                                 ) {
                                     items(terminalLogs) { line ->
                                         Text(
@@ -632,18 +680,32 @@ fun AgentSetupAndInstallerDialog(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
+                                val readyAgents = selectedAgents.filter { installedMap[it] == true }
+                                if (readyAgents.isNotEmpty() || installedMap[AgentKind.AGY] == true) {
+                                    Button(
+                                        onClick = { continueWithReadyAgents() },
+                                        shape = RoundedCornerShape(12.dp),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        contentPadding = PaddingValues(vertical = 12.dp)
+                                    ) {
+                                        Icon(Icons.Default.ArrowForward, contentDescription = null, modifier = Modifier.size(16.dp))
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text("Continue with Ready Agents", fontWeight = FontWeight.Bold, fontSize = 13.5.sp)
+                                    }
+                                }
+
                                 Row(
                                     modifier = Modifier.fillMaxWidth(),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Button(
+                                    OutlinedButton(
                                         onClick = { runBatchInstallation() },
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Retry Installation", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                        Icon(Icons.Default.Refresh, contentDescription = null, modifier = Modifier.size(15.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Retry", fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp)
                                     }
                                     OutlinedButton(
                                         onClick = {
@@ -658,31 +720,18 @@ fun AgentSetupAndInstallerDialog(
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text("Open Terminal", fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(15.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Terminal", fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp)
                                     }
-                                }
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                ) {
                                     OutlinedButton(
                                         onClick = { phase = InstallerPhase.SELECTING },
                                         shape = RoundedCornerShape(12.dp),
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                        Text("Change Selection", fontSize = 12.5.sp)
-                                    }
-                                    TextButton(
-                                        onClick = {
-                                            LocalServerManager.startServer(context, forceRestart = true)
-                                            onDismissOrCompleted()
-                                        },
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text("Continue Anyway", fontSize = 12.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                                        Icon(Icons.Default.Edit, contentDescription = null, modifier = Modifier.size(15.dp))
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text("Select", fontWeight = FontWeight.SemiBold, fontSize = 12.5.sp)
                                     }
                                 }
                             }

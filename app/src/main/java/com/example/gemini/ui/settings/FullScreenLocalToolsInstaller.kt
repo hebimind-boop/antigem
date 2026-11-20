@@ -365,19 +365,17 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
     val primaryColor = MaterialTheme.colorScheme.primary
     if (state is LocalInstallerState.Idle) {
         Box(
-            modifier = Modifier.size(96.dp),
+            modifier = Modifier
+                .size(92.dp)
+                .clip(CircleShape)
+                .border(1.5.dp, primaryColor.copy(alpha = 0.35f), CircleShape)
+                .background(primaryColor.copy(alpha = 0.08f)),
             contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(86.dp)
-                    .clip(CircleShape)
-                    .background(primaryColor.copy(alpha = 0.15f))
-            )
             AppIconImage(
                 contentDescription = "LimitX",
                 modifier = Modifier
-                    .size(88.dp)
+                    .size(86.dp)
                     .clip(CircleShape)
             )
         }
