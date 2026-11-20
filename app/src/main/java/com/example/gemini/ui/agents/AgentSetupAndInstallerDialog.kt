@@ -275,16 +275,12 @@ fun AgentSetupAndInstallerDialog(
                             )
                             TextButton(
                                 onClick = {
-                                    selectedAgents = if (allSelected) {
-                                        setOf(AgentKind.AGY) // Keep at least AGY
-                                    } else {
-                                        AgentKind.entries.toSet()
-                                    }
+                                    selectedAgents = setOf(AgentKind.AGY)
                                 },
                                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp)
                             ) {
                                 Text(
-                                    text = if (allSelected) "Deselect All" else "Select All",
+                                    text = "Antigravity (Default)",
                                     fontSize = 12.5.sp,
                                     fontWeight = FontWeight.SemiBold
                                 )
@@ -299,27 +295,39 @@ fun AgentSetupAndInstallerDialog(
                             verticalArrangement = Arrangement.spacedBy(10.dp)
                         ) {
                             AgentCliManager.AGENT_ITEMS.forEach { item ->
-                                val isSelected = item.agent in selectedAgents
+                                val isComingSoon = item.agent != AgentKind.AGY
+                                val isSelected = !isComingSoon && (item.agent in selectedAgents)
                                 val isInstalled = installedMap[item.agent] == true
                                 val accent = item.agent.accent()
                                 val isBundledAgy = item.agent == AgentKind.AGY
 
                                 Surface(
                                     onClick = {
-                                        val next = if (isSelected) {
-                                            selectedAgents - item.agent
-                                        } else {
-                                            selectedAgents + item.agent
-                                        }
-                                        if (next.isNotEmpty()) {
-                                            selectedAgents = next
+                                        if (!isComingSoon) {
+                                            val next = if (isSelected) {
+                                                selectedAgents - item.agent
+                                            } else {
+                                                selectedAgents + item.agent
+                                            }
+                                            if (next.isNotEmpty()) {
+                                                selectedAgents = next
+                                            }
                                         }
                                     },
+                                    enabled = !isComingSoon,
                                     shape = RoundedCornerShape(16.dp),
-                                    color = if (isSelected) accent.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                                    color = when {
+                                        isComingSoon -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.2f)
+                                        isSelected -> accent.copy(alpha = 0.08f)
+                                        else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)
+                                    },
                                     border = BorderStroke(
                                         width = if (isSelected) 1.5.dp else 1.dp,
-                                        color = if (isSelected) accent.copy(alpha = 0.8f) else MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                                        color = when {
+                                            isComingSoon -> MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                                            isSelected -> accent.copy(alpha = 0.8f)
+                                            else -> MaterialTheme.colorScheme.outline.copy(alpha = 0.2f)
+                                        }
                                     ),
                                     modifier = Modifier.fillMaxWidth()
                                 ) {
@@ -329,10 +337,11 @@ fun AgentSetupAndInstallerDialog(
                                     ) {
                                         Checkbox(
                                             checked = isSelected,
-                                            onCheckedChange = { checked ->
+                                            onCheckedChange = if (isComingSoon) null else { checked ->
                                                 val next = if (checked) selectedAgents + item.agent else selectedAgents - item.agent
                                                 if (next.isNotEmpty()) selectedAgents = next
                                             },
+                                            enabled = !isComingSoon,
                                             colors = CheckboxDefaults.colors(
                                                 checkedColor = accent,
                                                 checkmarkColor = Color.White
@@ -351,10 +360,25 @@ fun AgentSetupAndInstallerDialog(
                                                     text = item.title,
                                                     fontSize = 14.5.sp,
                                                     fontWeight = FontWeight.SemiBold,
-                                                    color = MaterialTheme.colorScheme.onSurface
+                                                    color = if (isComingSoon) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f) else MaterialTheme.colorScheme.onSurface
                                                 )
-                                                // Installed / Pre-bundled / Not Installed Badge
-                                                if (isInstalled) {
+                                                // Installed / Pre-bundled / Coming Soon Badge
+                                                if (isComingSoon) {
+                                                    Box(
+                                                        modifier = Modifier
+                                                            .clip(RoundedCornerShape(6.dp))
+                                                            .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                                            .border(0.5.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f), RoundedCornerShape(6.dp))
+                                                            .padding(horizontal = 6.dp, vertical = 2.dp)
+                                                    ) {
+                                                        Text(
+                                                            text = "Coming Soon",
+                                                            fontSize = 10.5.sp,
+                                                            fontWeight = FontWeight.SemiBold,
+                                                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                                        )
+                                                    }
+                                                } else if (isInstalled) {
                                                     Box(
                                                         modifier = Modifier
                                                             .clip(RoundedCornerShape(6.dp))
@@ -394,7 +418,7 @@ fun AgentSetupAndInstallerDialog(
                                                 },
                                                 fontSize = 11.5.sp,
                                                 lineHeight = 15.sp,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                                                color = if (isComingSoon) MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f) else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     }

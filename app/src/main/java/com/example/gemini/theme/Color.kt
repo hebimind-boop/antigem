@@ -1,6 +1,10 @@
 package com.example.gemini.theme
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+
+/** High-contrast content (text/icon) color that is guaranteed legible over [container]. */
+fun contentColorFor(container: Color): Color = if (container.luminance() > 0.5f) Color(0xFF000000) else Color.White
 
 // The app's palette names, from before themes existed. They are now live views of the theme on screen
 // (ThemeManager / AppColors), so every place that uses them follows a theme change. The "Light"/"Dark" pairs were

@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.gemini.theme.contentColorFor
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
@@ -126,13 +127,14 @@ fun OnboardingStepScreen(
                     Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(horizontal = 22.dp, vertical = 14.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    val btnContentColor = contentColorFor(accent)
                     Button(
                         onClick = onPrimary,
                         enabled = primaryEnabled,
                         shape = RoundedCornerShape(16.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = Color.White),
+                        colors = ButtonDefaults.buttonColors(containerColor = accent, contentColor = btnContentColor),
                         modifier = Modifier.fillMaxWidth().height(52.dp)
-                    ) { Text(primaryLabel, fontSize = 15.5.sp, fontWeight = FontWeight.SemiBold) }
+                    ) { Text(primaryLabel, fontSize = 15.5.sp, fontWeight = FontWeight.SemiBold, color = btnContentColor) }
                     footnote?.let {
                         Spacer(Modifier.height(8.dp))
                         Text(it, fontSize = 11.5.sp, textAlign = TextAlign.Center, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f))

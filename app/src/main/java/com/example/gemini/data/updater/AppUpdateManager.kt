@@ -108,25 +108,29 @@ class AppUpdateManager(private val context: Context) {
                 currentPkg == "com.termux" -> "termux"
                 else -> "standard"
             }
-            val downloadUrl = "https://github.com/hebimind-boop/antigem/releases/download/v$remoteVersionName/BoopIDE-$flavorType-v$remoteVersionName-release.apk"
+            val primaryDownloadUrl = "https://github.com/hebimind-boop/antigem/releases/download/v$remoteVersionName/LimitX-$flavorType-v$remoteVersionName-release.apk"
+            val fallbackDownloadUrl = "https://github.com/hebimind-boop/antigem/releases/download/v$remoteVersionName/BoopIDE-$flavorType-v$remoteVersionName-release.apk"
 
-            if (remoteVersionCode > BuildConfig.VERSION_CODE && downloadUrl.isNotBlank()) {
+            if (remoteVersionCode > BuildConfig.VERSION_CODE) {
                 // Verify that the APK asset is actually published and downloadable on GitHub
-                val probeRequest = Request.Builder()
-                    .url(downloadUrl)
-                    .head()
-                    .header("User-Agent", "BoopIDE-Updater/${BuildConfig.VERSION_NAME}")
-                    .build()
-
-                val isAvailable = try {
-                    httpClient.newCall(probeRequest).execute().use { probeResponse ->
-                        probeResponse.isSuccessful || probeResponse.isRedirect
-                    }
+                fun checkUrl(url: String): Boolean = try {
+                    val req = Request.Builder()
+                        .url(url)
+                        .head()
+                        .header("User-Agent", "LimitX-Updater/${BuildConfig.VERSION_NAME}")
+                        .build()
+                    httpClient.newCall(req).execute().use { it.isSuccessful || it.isRedirect }
                 } catch (_: Exception) {
                     false
                 }
 
-                if (!isAvailable) {
+                val downloadUrl = when {
+                    checkUrl(primaryDownloadUrl) -> primaryDownloadUrl
+                    checkUrl(fallbackDownloadUrl) -> fallbackDownloadUrl
+                    else -> null
+                }
+
+                if (downloadUrl == null) {
                     // Release is not yet fully published or APK is still building on CI
                     return@withContext Result.success(null)
                 }
@@ -162,7 +166,7 @@ class AppUpdateManager(private val context: Context) {
         try {
             val request = Request.Builder()
                 .url(downloadUrl)
-                .header("User-Agent", "BoopIDE-Updater/${BuildConfig.VERSION_NAME}")
+                .header("User-Agent", "LimitX-Updater/${BuildConfig.VERSION_NAME}")
                 .build()
 
             val response = httpClient.newCall(request).execute()
@@ -174,7 +178,7 @@ class AppUpdateManager(private val context: Context) {
             val totalBytes = body.contentLength()
 
             val targetDir = context.externalCacheDir ?: context.cacheDir
-            val targetFile = File(targetDir, "BoopIDE_update_${System.currentTimeMillis()}.apk")
+            val targetFile = File(targetDir, "LimitX_update_${System.currentTimeMillis()}.apk")
 
             body.byteStream().use { input ->
                 targetFile.outputStream().use { output ->

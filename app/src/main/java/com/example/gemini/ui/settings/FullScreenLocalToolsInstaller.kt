@@ -379,6 +379,26 @@ private fun InstallerHero(state: LocalInstallerState, isTermux: Boolean) {
                     .clip(CircleShape)
             )
         }
+        Spacer(modifier = Modifier.height(14.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Limit",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                letterSpacing = 0.5.sp
+            )
+            Text(
+                text = "X",
+                fontSize = 28.sp,
+                fontWeight = FontWeight.Black,
+                color = Color(0xFF00F5D4),
+                letterSpacing = 0.5.sp
+            )
+        }
     } else {
         val (icon, tint) = when (state) {
             is LocalInstallerState.Success -> Icons.Default.Check to QuotaGreen
@@ -807,19 +827,20 @@ private fun InstallerLog(lines: List<String>, expanded: Boolean, onToggle: () ->
 
 @Composable
 private fun PrimaryButton(text: String, icon: ImageVector?, onClick: () -> Unit) {
+    val btnContentColor = contentColorFor(ClaudeTerracotta)
     Button(
         onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(54.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White)
+        colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = btnContentColor)
     ) {
         if (icon != null) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+            Icon(icon, contentDescription = null, tint = btnContentColor, modifier = Modifier.size(18.dp))
             Spacer(modifier = Modifier.width(8.dp))
         }
-        Text(text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold)
+        Text(text, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = btnContentColor)
     }
 }
 

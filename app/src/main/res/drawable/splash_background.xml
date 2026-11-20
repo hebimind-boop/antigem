@@ -3,18 +3,19 @@
     <!-- Splash background: deep cyber slate (splash_colors.xml) -->
     <item android:drawable="@color/splash_bg" />
 
-    <!-- Centered LimitX mark -->
+    <!-- Centered circular LimitX logo mark -->
+    <item
+        android:gravity="center"
+        android:width="170dp"
+        android:height="170dp"
+        android:bottom="50dp"
+        android:drawable="@drawable/limitx_logo" />
+
+    <!-- LimitX brand title wordmark placed directly beneath logo -->
     <item
         android:gravity="center"
         android:width="200dp"
-        android:height="200dp"
-        android:drawable="@drawable/limitx_logo" />
-
-    <!-- Transparent wordmark spacer to prevent crashes -->
-    <item
-        android:gravity="bottom|center_horizontal"
-        android:width="200dp"
-        android:height="80dp"
-        android:bottom="60dp"
+        android:height="50dp"
+        android:top="170dp"
         android:drawable="@drawable/splash_wordmark" />
 </layer-list>

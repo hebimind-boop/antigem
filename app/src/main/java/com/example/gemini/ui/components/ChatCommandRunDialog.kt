@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.gemini.theme.ClaudeTerracotta
+import com.example.gemini.theme.contentColorFor
 import com.example.gemini.ui.ide.IdeExecutionRequest
 import com.example.gemini.ui.ide.IdeExecutionRunnerSheet
 
@@ -153,15 +154,16 @@ private fun CommandConfirmCard(initial: String, onCancel: () -> Unit, onRun: (St
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
                 TextButton(onClick = onCancel) { Text("Cancel", color = com.example.gemini.theme.AppColors.editorMuted) }
                 Spacer(Modifier.width(6.dp))
+                val btnContentColor = contentColorFor(ClaudeTerracotta)
                 Button(
                     onClick = run,
                     enabled = canRun,
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White),
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = btnContentColor),
                     contentPadding = PaddingValues(horizontal = 16.dp)
                 ) {
-                    Icon(Icons.Filled.PlayArrow, null, modifier = Modifier.size(18.dp))
+                    Icon(Icons.Filled.PlayArrow, null, tint = btnContentColor, modifier = Modifier.size(18.dp))
                     Spacer(Modifier.width(4.dp))
-                    Text("Run")
+                    Text("Run", color = btnContentColor)
                 }
             }
         }

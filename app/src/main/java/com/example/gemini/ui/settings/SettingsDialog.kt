@@ -4711,9 +4711,9 @@ private fun BackupsSubScreen(
                         Toast.makeText(context, "Stopping server... Please re-run $actionName once stopped.", Toast.LENGTH_SHORT).show()
                     },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
                 ) {
-                    Text("Stop server", fontWeight = FontWeight.SemiBold)
+                    Text("Stop server", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -4772,9 +4772,9 @@ private fun BackupsSubScreen(
                         }
                     },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
                 ) {
-                    Text("Start backup", fontWeight = FontWeight.SemiBold)
+                    Text("Start backup", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -4851,9 +4851,9 @@ private fun BackupsSubScreen(
                     },
                     enabled = restoreFilePath.isNotBlank(),
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White)
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
                 ) {
-                    Text("Start restore", fontWeight = FontWeight.SemiBold)
+                    Text("Start restore", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -5022,16 +5022,17 @@ private fun BackupActionCard(
 
 @Composable
 private fun BackupPrimaryButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
+    val btnContentColor = contentColorFor(ClaudeTerracotta)
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = Color.White),
+        colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = btnContentColor),
         elevation = null,
         modifier = Modifier.fillMaxWidth().height(44.dp)
     ) {
-        Icon(icon, contentDescription = null, modifier = Modifier.size(18.dp))
+        Icon(icon, contentDescription = null, tint = btnContentColor, modifier = Modifier.size(18.dp))
         Spacer(modifier = Modifier.width(8.dp))
-        Text(text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+        Text(text, fontWeight = FontWeight.SemiBold, fontSize = 14.sp, color = btnContentColor)
     }
 }
 

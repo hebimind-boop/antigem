@@ -43,6 +43,17 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 139,
+                versionName = "1.3.0",
+                date = "2026-11-20",
+                changes = listOf(
+                    "Fixed: High-contrast buttons in Monochrome Dark theme (Sign In, Update, Commit, Setup)",
+                    "New: Crisp geometric LimitX brand wordmark directly beneath the circular logo on splash and installer screens",
+                    "Improved: Marked Claude Code, OpenCode, and Codex as Coming Soon in agent settings and setup dialog",
+                    "Improved: Official LimitX release APK artifact naming with backward-compatible in-app update support"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 138,
                 versionName = "1.2.9",
                 date = "2026-11-20",

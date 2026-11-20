@@ -95,7 +95,7 @@ android {
     }
 
     base {
-        archivesName.set("BoopIDE")
+        archivesName.set("LimitX")
     }
 
     compileOptions {

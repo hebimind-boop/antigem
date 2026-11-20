@@ -264,6 +264,7 @@ class ThemeColors(scheme: ColorScheme, map: Map<String, Long>) {
     private fun c(map: Map<String, Long>, k: String, d: Color) = map[k]?.let { Color(it.toInt()) } ?: d
 
     val primary = scheme.primary
+    val onPrimary = scheme.onPrimary
     val secondary = scheme.secondary
     val tertiary = scheme.tertiary
     val background = scheme.background
@@ -328,6 +329,7 @@ class ThemeColors(scheme: ColorScheme, map: Map<String, Long>) {
  */
 object AppColors {
     val primary: Color get() = ThemeManager.colors.primary
+    val onPrimary: Color get() = ThemeManager.colors.onPrimary
     val secondary: Color get() = ThemeManager.colors.secondary
     val tertiary: Color get() = ThemeManager.colors.tertiary
     val background: Color get() = ThemeManager.colors.background

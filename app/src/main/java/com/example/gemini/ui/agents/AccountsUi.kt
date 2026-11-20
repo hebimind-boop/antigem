@@ -44,6 +44,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.example.gemini.theme.contentColorFor
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -456,8 +457,9 @@ private fun SectionButton(
         else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
     }
     if (primary != null) {
+        val textColor = contentColorFor(primary)
         Surface(onClick = onClick, shape = RoundedCornerShape(12.dp), color = primary) {
-            Text(text, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = Color.White, modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp))
+            Text(text, fontSize = 12.5.sp, fontWeight = FontWeight.SemiBold, color = textColor, modifier = Modifier.padding(horizontal = 14.dp, vertical = 7.dp))
         }
         return
     }

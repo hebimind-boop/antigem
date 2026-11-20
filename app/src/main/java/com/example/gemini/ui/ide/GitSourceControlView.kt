@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gemini.data.daemon.*
 import com.example.gemini.theme.ClaudeTerracotta
+import com.example.gemini.theme.contentColorFor
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
@@ -500,20 +501,21 @@ fun GitSourceControlView(
                 shape = RoundedCornerShape(8.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = ClaudeTerracotta,
-                    contentColor = Color.White
+                    contentColor = contentColorFor(ClaudeTerracotta)
                 ),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(36.dp)
             ) {
+                val btnContentColor = contentColorFor(ClaudeTerracotta)
                 if (isOperating) {
-                    CircularProgressIndicator(modifier = Modifier.size(14.dp), color = Color.White, strokeWidth = 2.dp)
+                    CircularProgressIndicator(modifier = Modifier.size(14.dp), color = btnContentColor, strokeWidth = 2.dp)
                     Spacer(modifier = Modifier.width(6.dp))
                 } else {
-                    Icon(imageVector = Icons.Default.Check, contentDescription = null, modifier = Modifier.size(14.dp))
+                    Icon(imageVector = Icons.Default.Check, contentDescription = null, tint = btnContentColor, modifier = Modifier.size(14.dp))
                     Spacer(modifier = Modifier.width(6.dp))
                 }
-                Text("Commit", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                Text("Commit", fontSize = 13.sp, fontWeight = FontWeight.Bold, color = btnContentColor)
             }
 
             Spacer(modifier = Modifier.height(8.dp))

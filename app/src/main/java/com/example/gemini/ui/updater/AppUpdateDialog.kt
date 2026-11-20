@@ -36,6 +36,7 @@ import com.example.gemini.data.updater.AppUpdateManager
 import com.example.gemini.data.updater.DownloadState
 import com.example.gemini.theme.QuotaGreen
 import com.example.gemini.theme.QuotaRed
+import com.example.gemini.theme.contentColorFor
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
@@ -402,54 +403,57 @@ fun AppUpdateDialog(
                             }
                         }
 
-                        Button(
-                            onClick = {
-                                if (downloadState is DownloadState.Completed) {
-                                    val file = (downloadState as DownloadState.Completed).file
-                                    updateManager.installApk(file)
-                                } else if (downloadState !is DownloadState.Downloading) {
-                                    coroutineScope.launch {
-                                        downloadState = DownloadState.Downloading(0f, 0L, 0L)
-                                        val result = updateManager.downloadApk(updateInfo.downloadUrl) { progress, down, total ->
-                                            downloadState = DownloadState.Downloading(progress, down, total)
-                                        }
-                                        result.onSuccess { apkFile ->
-                                            downloadState = DownloadState.Completed(apkFile)
-                                            updateManager.installApk(apkFile)
-                                        }.onFailure { err ->
-                                            downloadState = DownloadState.Error(err.message ?: "Unknown error")
+                            val btnContentColor = contentColorFor(primaryColor)
+                            Button(
+                                onClick = {
+                                    if (downloadState is DownloadState.Completed) {
+                                        val file = (downloadState as DownloadState.Completed).file
+                                        updateManager.installApk(file)
+                                    } else if (downloadState !is DownloadState.Downloading) {
+                                        coroutineScope.launch {
+                                            downloadState = DownloadState.Downloading(0f, 0L, 0L)
+                                            val result = updateManager.downloadApk(updateInfo.downloadUrl) { progress, down, total ->
+                                                downloadState = DownloadState.Downloading(progress, down, total)
+                                            }
+                                            result.onSuccess { apkFile ->
+                                                downloadState = DownloadState.Completed(apkFile)
+                                                updateManager.installApk(apkFile)
+                                            }.onFailure { err ->
+                                                downloadState = DownloadState.Error(err.message ?: "Unknown error")
+                                            }
                                         }
                                     }
+                                },
+                                enabled = downloadState !is DownloadState.Downloading,
+                                contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = primaryColor,
+                                    contentColor = btnContentColor
+                                ),
+                                shape = RoundedCornerShape(10.dp),
+                                modifier = Modifier.height(38.dp)
+                            ) {
+                                val btnText = when (downloadState) {
+                                    is DownloadState.Downloading -> "Downloading..."
+                                    is DownloadState.Completed -> "Install"
+                                    is DownloadState.Error -> "Retry"
+                                    else -> "Update"
                                 }
-                            },
-                            enabled = downloadState !is DownloadState.Downloading,
-                            contentPadding = PaddingValues(horizontal = 14.dp, vertical = 6.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = primaryColor,
-                                contentColor = Color.White
-                            ),
-                            shape = RoundedCornerShape(10.dp),
-                            modifier = Modifier.height(38.dp)
-                        ) {
-                            val btnText = when (downloadState) {
-                                is DownloadState.Downloading -> "Downloading..."
-                                is DownloadState.Completed -> "Install"
-                                is DownloadState.Error -> "Retry"
-                                else -> "Update"
+                                Icon(
+                                    imageVector = if (downloadState is DownloadState.Completed) Icons.Rounded.InstallMobile else Icons.Rounded.Download,
+                                    contentDescription = null,
+                                    tint = btnContentColor,
+                                    modifier = Modifier.size(15.dp)
+                                )
+                                Spacer(modifier = Modifier.width(5.dp))
+                                Text(
+                                    text = btnText,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 13.sp,
+                                    color = btnContentColor,
+                                    maxLines = 1
+                                )
                             }
-                            Icon(
-                                imageVector = if (downloadState is DownloadState.Completed) Icons.Rounded.InstallMobile else Icons.Rounded.Download,
-                                contentDescription = null,
-                                modifier = Modifier.size(15.dp)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Text(
-                                text = btnText,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 13.sp,
-                                maxLines = 1
-                            )
-                        }
                     }
                 }
             }

@@ -905,10 +905,13 @@ class AgyChatBackend(
                         _currentConversation.value = _currentConversation.value?.copy(isRunning = false)
                     }
                     val rawErr = e.message ?: "Connection failed"
-                    val helpfulMsg = if (rawErr.contains("Connect", ignoreCase = true) || rawErr.contains("Failed to connect", ignoreCase = true)) {
-                        "Cannot connect to LimitX Hub (${AuthPreferences.currentHubUrl}). Make sure LimitX Hub is running and tap Retry."
-                    } else {
-                        "LimitX Hub unreachable: $rawErr"
+                    val helpfulMsg = when {
+                        rawErr.contains("Antigravity Hub is not running", ignoreCase = true) || rawErr.contains("Hub is not running", ignoreCase = true) ->
+                            "LimitX Hub unreachable: Hub daemon is not running"
+                        rawErr.contains("Connect", ignoreCase = true) || rawErr.contains("Failed to connect", ignoreCase = true) ->
+                            "Cannot connect to LimitX Hub (${AuthPreferences.currentHubUrl}). Make sure LimitX Hub is running and tap Retry."
+                        else ->
+                            "LimitX Hub unreachable: $rawErr"
                     }
                     val isStarting = agyBridgeService.hubStatus.value.status == "starting"
                     if (_conversations.value.isEmpty() && !isStarting) {

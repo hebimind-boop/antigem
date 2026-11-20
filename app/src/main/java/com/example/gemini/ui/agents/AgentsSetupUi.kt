@@ -89,31 +89,86 @@ private val AGENT_OPTIONS = listOf(
 fun AgentSelector(selected: Set<AgentKind>, onSelect: (Set<AgentKind>) -> Unit, modifier: Modifier = Modifier, allowEmpty: Boolean = false) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         AGENT_OPTIONS.forEach { option ->
-            val isOn = option.agent in selected
+            val isComingSoon = option.agent != AgentKind.AGY
+            val isOn = if (isComingSoon) false else (option.agent in selected)
             val accent = option.agent.accent()
             Surface(
                 onClick = {
-                    val next = if (isOn) selected - option.agent else selected + option.agent
-                    if (allowEmpty || next.isNotEmpty()) onSelect(next)
+                    if (!isComingSoon) {
+                        val next = if (isOn) selected - option.agent else selected + option.agent
+                        if (allowEmpty || next.isNotEmpty()) onSelect(next)
+                    }
                 },
+                enabled = !isComingSoon,
                 shape = RoundedCornerShape(16.dp),
-                color = if (isOn) accent.copy(alpha = 0.08f) else MaterialTheme.colorScheme.surface,
-                border = BorderStroke(if (isOn) 1.5.dp else 1.dp, if (isOn) accent.copy(alpha = 0.8f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)),
+                color = when {
+                    isComingSoon -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.25f)
+                    isOn -> accent.copy(alpha = 0.08f)
+                    else -> MaterialTheme.colorScheme.surface
+                },
+                border = BorderStroke(
+                    if (isOn) 1.5.dp else 1.dp,
+                    when {
+                        isComingSoon -> MaterialTheme.colorScheme.outline.copy(alpha = 0.15f)
+                        isOn -> accent.copy(alpha = 0.8f)
+                        else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                    }
+                ),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(Modifier.padding(14.dp), verticalAlignment = Alignment.CenterVertically) {
                     AgentMark(option.agent, size = 40.dp)
                     Spacer(Modifier.width(12.dp))
                     Column(Modifier.weight(1f)) {
-                        Text(option.title, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                        Text(option.description, fontSize = 12.sp, lineHeight = 16.sp, color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                option.title,
+                                fontSize = 15.sp,
+                                fontWeight = FontWeight.SemiBold,
+                                color = if (isComingSoon) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f) else MaterialTheme.colorScheme.onSurface
+                            )
+                            if (isComingSoon) {
+                                Box(
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(6.dp))
+                                        .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
+                                        .border(0.5.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f), RoundedCornerShape(6.dp))
+                                        .padding(horizontal = 6.dp, vertical = 2.dp)
+                                ) {
+                                    Text(
+                                        text = "Coming Soon",
+                                        fontSize = 10.5.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(Modifier.height(2.dp))
+                        Text(
+                            option.description,
+                            fontSize = 12.sp,
+                            lineHeight = 16.sp,
+                            color = if (isComingSoon) MaterialTheme.colorScheme.onSurface.copy(alpha = 0.42f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.62f)
+                        )
                     }
                     Spacer(Modifier.width(10.dp))
                     Box(
                         Modifier
                             .size(20.dp)
                             .clip(RoundedCornerShape(6.dp))
-                            .border(1.5.dp, if (isOn) accent else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f), RoundedCornerShape(6.dp))
+                            .border(
+                                1.5.dp,
+                                when {
+                                    isComingSoon -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.15f)
+                                    isOn -> accent
+                                    else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+                                },
+                                RoundedCornerShape(6.dp)
+                            )
                             .background(if (isOn) accent else Color.Transparent),
                         contentAlignment = Alignment.Center
                     ) {
@@ -134,36 +189,27 @@ fun AgentSelector(selected: Set<AgentKind>, onSelect: (Set<AgentKind>) -> Unit, 
 }
 
 /**
- * First launch: which agents the app should run. Nothing is preselected: the user ticks one or more (the same
- * choice as Settings → Agents). Full screen, as step [step] of [total] of the setup.
+ * First launch: which agents the app should run. Antigravity is active and ready out of the box.
  */
 @Composable
 fun AgentChoiceDialog(step: Int = 1, total: Int = 1, onConfirm: (Set<AgentKind>) -> Unit) {
-    var selected by remember { mutableStateOf(emptySet<AgentKind>()) }
+    var selected by remember { mutableStateOf(setOf(AgentKind.AGY)) }
     com.example.gemini.ui.onboarding.OnboardingStepScreen(
         step = step,
         total = total,
         accent = MaterialTheme.colorScheme.primary,
         icon = {
-            // one mark per agent, two by two (fits the round icon)
-            Box(Modifier.size(52.dp)) {
-                val corners = listOf(Alignment.TopStart, Alignment.TopEnd, Alignment.BottomStart, Alignment.BottomEnd)
-                AgentKind.entries.take(corners.size).forEachIndexed { i, agent ->
-                    AgentMark(agent, size = 28.dp, modifier = Modifier.align(corners[i]))
-                }
+            Box(Modifier.size(52.dp), contentAlignment = Alignment.Center) {
+                AgentMark(AgentKind.AGY, size = 48.dp)
             }
         },
         title = "Choose your agents",
-        subtitle = "Tick the coding agents you want to use. The app runs only the ones you pick; you can change this later in Settings → Agents.",
-        primaryLabel = when (selected.size) {
-            0 -> "Pick at least one agent"
-            1 -> "Continue with ${selected.first().label()}"
-            else -> "Continue with ${selected.size} agents"
-        },
-        primaryEnabled = selected.isNotEmpty(),
-        onPrimary = { onConfirm(selected) }
+        subtitle = "Antigravity is ready out of the box with pre-bundled CLI tools. Other agents are coming soon.",
+        primaryLabel = "Continue with Antigravity",
+        primaryEnabled = true,
+        onPrimary = { onConfirm(setOf(AgentKind.AGY)) }
     ) {
-        AgentSelector(selected, { selected = it }, allowEmpty = true)
+        AgentSelector(selected, { selected = it }, allowEmpty = false)
     }
 }
 

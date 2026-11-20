@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import com.example.gemini.theme.contentColorFor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -493,12 +494,13 @@ fun AgentSetupPrompt(
         )
         if (actionLabel != null) {
             Spacer(Modifier.height(20.dp))
+            val btnContentColor = contentColorFor(accent)
             androidx.compose.material3.Button(
                 onClick = onAction,
                 shape = RoundedCornerShape(12.dp),
-                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = accent, contentColor = Color.White),
+                colors = androidx.compose.material3.ButtonDefaults.buttonColors(containerColor = accent, contentColor = btnContentColor),
                 contentPadding = PaddingValues(horizontal = 24.dp, vertical = 10.dp)
-            ) { Text(actionLabel, fontSize = 14.sp, fontWeight = FontWeight.Medium) }
+            ) { Text(actionLabel, fontSize = 14.sp, fontWeight = FontWeight.Medium, color = btnContentColor) }
         }
         if (secondaryLabel != null) {
             androidx.compose.material3.TextButton(onClick = onSecondary) {

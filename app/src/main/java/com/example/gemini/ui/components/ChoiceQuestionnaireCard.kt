@@ -28,6 +28,7 @@ import com.example.gemini.data.remote.dto.AskQuestionResponseItemDto
 import com.example.gemini.domain.model.*
 import com.example.gemini.theme.ClaudeTerracotta
 import com.example.gemini.theme.QuotaGreen
+import com.example.gemini.theme.contentColorFor
 
 /** True where the chat shows unanswered questions in the docked question panel; the card then stays compact. */
 val LocalQuestionPanelActive = staticCompositionLocalOf { false }
@@ -299,6 +300,7 @@ fun ChoiceQuestionnaireCard(
 
                         Spacer(modifier = Modifier.width(8.dp))
 
+                        val btnContentColor = contentColorFor(ClaudeTerracotta)
                         Button(
                             onClick = {
                                 val responses = questionnaire.questions.map { q ->
@@ -336,8 +338,8 @@ fun ChoiceQuestionnaireCard(
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = ClaudeTerracotta,
                                 disabledContainerColor = ClaudeTerracotta.copy(alpha = 0.3f),
-                                contentColor = Color.White,
-                                disabledContentColor = Color.White.copy(alpha = 0.5f)
+                                contentColor = btnContentColor,
+                                disabledContentColor = btnContentColor.copy(alpha = 0.5f)
                             ),
                             shape = RoundedCornerShape(8.dp),
                             contentPadding = PaddingValues(horizontal = 14.dp, vertical = 4.dp),
@@ -346,13 +348,15 @@ fun ChoiceQuestionnaireCard(
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.Send,
                                 contentDescription = null,
+                                tint = btnContentColor,
                                 modifier = Modifier.size(12.dp)
                             )
                             Spacer(modifier = Modifier.width(6.dp))
                             Text(
                                 text = if (questionnaire.questions.size > 1) "Submit All" else "Submit",
                                 fontSize = 12.sp,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                color = btnContentColor
                             )
                         }
                     }

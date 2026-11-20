@@ -1,12 +1,12 @@
 {
-  "version_code": 138,
-  "version_name": "1.2.9",
+  "version_code": 139,
+  "version_name": "1.3.0",
   "min_supported_version_code": 1,
   "changelog": [
-    "LimitX v1.2.9: Pre-bundled Antigravity CLI (agy) for instant offline ready status",
-    "Auto-extraction of bundled agy to /root/.local/bin/agy with executable permissions upon setup",
-    "Pure alpha transparent circular logo rendering with zero square framing or edge artifacts on OLED black",
-    "Redesigned AI Agent Onboarding with sleek modern cyber theme, pre-bundled status badge, and Continue with Ready Agents"
+    "LimitX v1.3.0: High-contrast buttons in Monochrome Dark theme (Sign In, Update, Commit)",
+    "Added crisp geometric LimitX brand wordmark directly beneath the circular logo on splash and installer screens",
+    "Marked Claude Code, OpenCode, and Codex as Coming Soon in agent settings and setup dialog",
+    "Updated release APK artifact naming to LimitX with backward-compatible in-app update support"
   ],
   "is_critical": true
 }

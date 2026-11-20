@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="200dp"
-    android:height="80dp"
+    android:height="50dp"
     android:viewportWidth="200"
-    android:viewportHeight="80">
+    android:viewportHeight="50">
+
+    <!-- "LIMIT" in crisp solid white -->
+    <!-- L -->
     <path
-        android:fillColor="#00000000"
-        android:pathData="M0,0h1v1h-1z" />
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M37,11 h5 v22 h13 v5 H37 Z" />
+
+    <!-- I -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M61,11 h5 v27 h-5 Z" />
+
+    <!-- M -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M72,11 h5.5 l6.5,13 l6.5,-13 h5.5 v27 h-5 v-17.5 l-7,14 h-1 l-7,-14 v17.5 h-4.5 Z" />
+
+    <!-- I -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M102,11 h5 v27 h-5 Z" />
+
+    <!-- T -->
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M113,11 h19 v5 h-7 v22 h-5 v-22 h-7 Z" />
+
+    <!-- "X" in electric neon cyan -->
+    <path
+        android:fillColor="#FF00F5D4"
+        android:pathData="M142,11 h6 l5,6.5 l5,-6.5 h6 l-8,10.5 l8,16.5 h-6 l-5,-7.5 l-5,7.5 h-6 l8,-16.5 Z" />
 </vector>

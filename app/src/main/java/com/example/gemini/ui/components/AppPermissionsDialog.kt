@@ -345,6 +345,7 @@ fun AppPermissionsDialog(
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
+                val btnContentColor = contentColorFor(ClaudeTerracotta)
                 Button(
                     onClick = onDismissOrCompleted,
                     enabled = hasNotification,
@@ -354,12 +355,12 @@ fun AppPermissionsDialog(
                     shape = RoundedCornerShape(16.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = ClaudeTerracotta,
-                        contentColor = Color.White,
+                        contentColor = btnContentColor,
                         disabledContainerColor = AppColors.fill,
                         disabledContentColor = AppColors.textSecondary
                     )
                 ) {
-                    Text(text = "Continue", fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
+                    Text(text = "Continue", fontWeight = FontWeight.SemiBold, fontSize = 16.sp, color = if (hasNotification) btnContentColor else AppColors.textSecondary)
                 }
             }
         }
