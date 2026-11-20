@@ -827,7 +827,7 @@ private fun InstallerLog(lines: List<String>, expanded: Boolean, onToggle: () ->
 
 @Composable
 private fun PrimaryButton(text: String, icon: ImageVector?, onClick: () -> Unit) {
-    val btnContentColor = contentColorFor(ClaudeTerracotta)
+    val btnContentColor = contrastContentColor(ClaudeTerracotta)
     Button(
         onClick = onClick,
         modifier = Modifier

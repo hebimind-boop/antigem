@@ -28,7 +28,7 @@ import com.example.gemini.data.remote.dto.AskQuestionResponseItemDto
 import com.example.gemini.domain.model.*
 import com.example.gemini.theme.ClaudeTerracotta
 import com.example.gemini.theme.QuotaGreen
-import com.example.gemini.theme.contentColorFor
+import com.example.gemini.theme.contrastContentColor
 
 /** True where the chat shows unanswered questions in the docked question panel; the card then stays compact. */
 val LocalQuestionPanelActive = staticCompositionLocalOf { false }
@@ -300,7 +300,7 @@ fun ChoiceQuestionnaireCard(
 
                         Spacer(modifier = Modifier.width(8.dp))
 
-                        val btnContentColor = contentColorFor(ClaudeTerracotta)
+                        val btnContentColor = contrastContentColor(ClaudeTerracotta)
                         Button(
                             onClick = {
                                 val responses = questionnaire.questions.map { q ->

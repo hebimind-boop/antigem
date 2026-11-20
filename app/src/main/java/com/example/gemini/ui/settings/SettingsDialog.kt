@@ -4711,9 +4711,9 @@ private fun BackupsSubScreen(
                         Toast.makeText(context, "Stopping server... Please re-run $actionName once stopped.", Toast.LENGTH_SHORT).show()
                     },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contrastContentColor(ClaudeTerracotta))
                 ) {
-                    Text("Stop server", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
+                    Text("Stop server", fontWeight = FontWeight.SemiBold, color = contrastContentColor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -4772,9 +4772,9 @@ private fun BackupsSubScreen(
                         }
                     },
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contrastContentColor(ClaudeTerracotta))
                 ) {
-                    Text("Start backup", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
+                    Text("Start backup", fontWeight = FontWeight.SemiBold, color = contrastContentColor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -4851,9 +4851,9 @@ private fun BackupsSubScreen(
                     },
                     enabled = restoreFilePath.isNotBlank(),
                     shape = RoundedCornerShape(10.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contentColorFor(ClaudeTerracotta))
+                    colors = ButtonDefaults.buttonColors(containerColor = ClaudeTerracotta, contentColor = contrastContentColor(ClaudeTerracotta))
                 ) {
-                    Text("Start restore", fontWeight = FontWeight.SemiBold, color = contentColorFor(ClaudeTerracotta))
+                    Text("Start restore", fontWeight = FontWeight.SemiBold, color = contrastContentColor(ClaudeTerracotta))
                 }
             },
             dismissButton = {
@@ -5022,7 +5022,7 @@ private fun BackupActionCard(
 
 @Composable
 private fun BackupPrimaryButton(text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, onClick: () -> Unit) {
-    val btnContentColor = contentColorFor(ClaudeTerracotta)
+    val btnContentColor = contrastContentColor(ClaudeTerracotta)
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),

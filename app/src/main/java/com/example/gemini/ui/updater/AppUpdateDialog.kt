@@ -36,7 +36,7 @@ import com.example.gemini.data.updater.AppUpdateManager
 import com.example.gemini.data.updater.DownloadState
 import com.example.gemini.theme.QuotaGreen
 import com.example.gemini.theme.QuotaRed
-import com.example.gemini.theme.contentColorFor
+import com.example.gemini.theme.contrastContentColor
 import kotlinx.coroutines.launch
 import java.io.File
 import java.util.Locale
@@ -403,7 +403,7 @@ fun AppUpdateDialog(
                             }
                         }
 
-                            val btnContentColor = contentColorFor(primaryColor)
+                            val btnContentColor = contrastContentColor(primaryColor)
                             Button(
                                 onClick = {
                                     if (downloadState is DownloadState.Completed) {

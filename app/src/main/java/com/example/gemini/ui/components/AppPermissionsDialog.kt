@@ -345,7 +345,7 @@ fun AppPermissionsDialog(
                         modifier = Modifier.padding(bottom = 10.dp)
                     )
                 }
-                val btnContentColor = contentColorFor(ClaudeTerracotta)
+                val btnContentColor = contrastContentColor(ClaudeTerracotta)
                 Button(
                     onClick = onDismissOrCompleted,
                     enabled = hasNotification,

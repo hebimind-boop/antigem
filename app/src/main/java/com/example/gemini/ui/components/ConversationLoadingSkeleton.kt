@@ -27,7 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gemini.theme.ClaudeTerracotta
-import com.example.gemini.theme.contentColorFor
+import com.example.gemini.theme.contrastContentColor
 
 @Composable
 fun EngineWarmingUpView(
@@ -401,7 +401,7 @@ fun NewChatSignInPromptCard(
         Spacer(modifier = Modifier.height(20.dp))
 
         val btnContainerColor = ClaudeTerracotta
-        val btnContentColor = contentColorFor(btnContainerColor)
+        val btnContentColor = contrastContentColor(btnContainerColor)
         Button(
             onClick = onSignInClick,
             shape = RoundedCornerShape(12.dp),
