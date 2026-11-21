@@ -15,6 +15,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.*
@@ -1670,10 +1671,10 @@ fun ChatScreen(
                         var statusMenuOpen by remember { mutableStateOf(false) }
 
                         // Brand pill & Connection indicator
-                        val hubConnected = systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.CONNECTED ||
-                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.IDLE
+                        val hubConnected = systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.READY
                         val hubChecking = systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.CHECKING_AUTH ||
-                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.STARTING_HUB
+                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.STARTING ||
+                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.ACQUIRING_CSRF
                         val hubPulseTransition = rememberInfiniteTransition(label = "hubPulse")
                         val hubPulseAlpha by hubPulseTransition.animateFloat(
                             initialValue = 0.35f,
