@@ -12,9 +12,7 @@ import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.compose.animation.*
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -1671,6 +1669,27 @@ fun ChatScreen(
                             systemConnectionState.status != com.example.gemini.data.remote.SystemStatus.OFFLINE
                         var statusMenuOpen by remember { mutableStateOf(false) }
 
+                        // Brand pill & Connection indicator
+                        val hubConnected = systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.CONNECTED ||
+                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.IDLE
+                        val hubChecking = systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.CHECKING_AUTH ||
+                            systemConnectionState.status == com.example.gemini.data.remote.SystemStatus.STARTING_HUB
+                        val hubPulseTransition = rememberInfiniteTransition(label = "hubPulse")
+                        val hubPulseAlpha by hubPulseTransition.animateFloat(
+                            initialValue = 0.35f,
+                            targetValue = 1f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(1000, easing = FastOutSlowInEasing),
+                                repeatMode = RepeatMode.Reverse
+                            ),
+                            label = "hubPulseAlpha"
+                        )
+                        val statusIndicatorColor = when {
+                            hubConnected -> QuotaGreen
+                            hubChecking -> com.example.gemini.theme.AppColors.warning
+                            else -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.35f)
+                        }
+
                         // title on the left; "◐ project" and the new-chat button on the right. Title and project shorten
                         // with "…" and keep a gap between them and from the screen edge, so nothing runs into anything.
                         Row(
@@ -1684,23 +1703,37 @@ fun ChatScreen(
                                 label = "chat_title",
                                 modifier = Modifier.weight(1f)
                             ) { chatTitle ->
-                                Text(
-                                    text = chatTitle,
-                                    fontSize = 16.sp,
-                                    fontWeight = FontWeight.SemiBold,
-                                    color = MaterialTheme.colorScheme.onSurface,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Text(
+                                        text = chatTitle,
+                                        fontSize = 15.5.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        letterSpacing = (-0.2).sp,
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
+                                    Box(
+                                        modifier = Modifier
+                                            .size(7.dp)
+                                            .clip(CircleShape)
+                                            .background(
+                                                if (hubConnected || hubChecking) statusIndicatorColor.copy(alpha = hubPulseAlpha)
+                                                else statusIndicatorColor
+                                            )
+                                    )
+                                }
                             }
-                            Spacer(modifier = Modifier.width(10.dp))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Box {
                                 // before the chat starts a tap picks the project; after, it shows the agents' status
                                 Row(
                                     modifier = Modifier
                                         .widthIn(max = 150.dp)
-                                        .clip(RoundedCornerShape(50))
+                                        .clip(RoundedCornerShape(10.dp))
                                         .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f))
+                                        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)), RoundedCornerShape(10.dp))
                                         .clickable {
                                             if (!isChatStarted) showProjectPickerDialog = true
                                             else if (showStatusDot) statusMenuOpen = true
@@ -1832,93 +1865,120 @@ fun ChatScreen(
                             val anyRunGoing = runsGoing.any { it.status == com.example.gemini.data.run.RunStatus.RUNNING }
                             if (headerShortcuts.isNotEmpty()) Spacer(modifier = Modifier.width(4.dp))
                             headerShortcuts.forEach { id ->
-                                Box(
-                                    modifier = Modifier
-                                        .size(34.dp)
-                                        .clip(CircleShape)
-                                        .clickable {
-                                            when (id) {
-                                                "newchat" -> {
-                                                    // same as the sidebar's New chat
-                                                    val currentId = currentConv?.id
-                                                    if (!currentId.isNullOrBlank() && feedItems.isNotEmpty()) {
-                                                        ConversationScrollCache.save(currentId, listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, isAtBottom)
-                                                    }
-                                                    conversationBackStack.clear()
-                                                    viewModel.startNewChat()
-                                                }
-                                                "ide" -> onNavigateToIde()
-                                                "browser" -> onNavigateToBrowser()
-                                                "notes" -> onNavigateToNotes?.invoke()
-                                                "files" -> onNavigateToFiles?.invoke()
-                                                "run" -> com.example.gemini.data.run.RunPanel.show()
-                                                "terminal" -> {
-                                                    // like the floating switcher: needs SSH, server mode or the local Linux tools
-                                                    val ready = useSshTerminal || AuthPreferences.currentRemoteMode ||
-                                                        (isLocalToolsInstalled && isLocalToolsEnabled)
-                                                    when {
-                                                        ready -> onNavigateToTerminal()
-                                                        isLocalToolsInstalled -> {
-                                                            viewModel.setLocalToolsEnabled(true)
-                                                            onNavigateToTerminal()
-                                                        }
-                                                        else -> showLocalToolsInstallDialog = true
-                                                    }
-                                                }
+                                if (id == "newchat") {
+                                    Surface(
+                                        onClick = {
+                                            val currentId = currentConv?.id
+                                            if (!currentId.isNullOrBlank() && feedItems.isNotEmpty()) {
+                                                ConversationScrollCache.save(currentId, listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, isAtBottom)
                                             }
+                                            conversationBackStack.clear()
+                                            viewModel.startNewChat()
                                         },
-                                    contentAlignment = Alignment.Center
-                                ) {
-                                    // a command running: a ring around the Run icon
-                                    if (id == "run" && anyRunGoing) {
-                                        CircularProgressIndicator(
-                                            modifier = Modifier.size(30.dp),
-                                            strokeWidth = 2.dp,
-                                            color = ClaudeTerracotta
+                                        shape = RoundedCornerShape(10.dp),
+                                        color = MaterialTheme.colorScheme.primary,
+                                        contentColor = MaterialTheme.colorScheme.onPrimary,
+                                        modifier = Modifier.size(34.dp)
+                                    ) {
+                                        Box(contentAlignment = Alignment.Center) {
+                                            Icon(
+                                                imageVector = Icons.Default.Add,
+                                                contentDescription = "New Session",
+                                                tint = MaterialTheme.colorScheme.onPrimary,
+                                                modifier = Modifier.size(19.dp)
+                                            )
+                                        }
+                                    }
+                                } else {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(34.dp)
+                                            .clip(CircleShape)
+                                            .clickable {
+                                                when (id) {
+                                                    "ide" -> onNavigateToIde()
+                                                    "browser" -> onNavigateToBrowser()
+                                                    "notes" -> onNavigateToNotes?.invoke()
+                                                    "files" -> onNavigateToFiles?.invoke()
+                                                    "run" -> com.example.gemini.data.run.RunPanel.show()
+                                                    "terminal" -> {
+                                                        // like the floating switcher: needs SSH, server mode or the local Linux tools
+                                                        val ready = useSshTerminal || AuthPreferences.currentRemoteMode ||
+                                                            (isLocalToolsInstalled && isLocalToolsEnabled)
+                                                        when {
+                                                            ready -> onNavigateToTerminal()
+                                                            isLocalToolsInstalled -> {
+                                                                viewModel.setLocalToolsEnabled(true)
+                                                                onNavigateToTerminal()
+                                                            }
+                                                            else -> showLocalToolsInstallDialog = true
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        // a command running: a ring around the Run icon
+                                        if (id == "run" && anyRunGoing) {
+                                            CircularProgressIndicator(
+                                                modifier = Modifier.size(30.dp),
+                                                strokeWidth = 2.dp,
+                                                color = ClaudeTerracotta
+                                            )
+                                        }
+                                        Icon(
+                                            imageVector = when (id) {
+                                                "run" -> Icons.Outlined.PlayCircle
+                                                "ide" -> Icons.Outlined.Code
+                                                "terminal" -> Icons.Outlined.Terminal
+                                                "browser" -> Icons.Outlined.Language
+                                                "notes" -> Icons.Outlined.EditNote
+                                                "files" -> Icons.Outlined.FolderOpen
+                                                else -> Icons.Outlined.AddComment
+                                            },
+                                            contentDescription = when (id) {
+                                                "ide" -> "Open IDE"
+                                                "terminal" -> "Open Terminal"
+                                                "browser" -> "Open Browser"
+                                                "notes" -> "Open Notes"
+                                                "files" -> "Open Files"
+                                                "run" -> if (anyRunGoing) "Run (a command is running)" else "Open Run panel"
+                                                else -> "New chat"
+                                            },
+                                            tint = if (id == "run" && anyRunGoing) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                            modifier = Modifier.size(19.dp)
                                         )
                                     }
-                                    Icon(
-                                        imageVector = when (id) {
-                                            "run" -> Icons.Outlined.PlayCircle
-                                            "ide" -> Icons.Outlined.Code
-                                            "terminal" -> Icons.Outlined.Terminal
-                                            "browser" -> Icons.Outlined.Language
-                                            "notes" -> Icons.Outlined.EditNote
-                                            "files" -> Icons.Outlined.FolderOpen
-                                            else -> Icons.Outlined.AddComment
-                                        },
-                                        contentDescription = when (id) {
-                                            "ide" -> "Open IDE"
-                                            "terminal" -> "Open Terminal"
-                                            "browser" -> "Open Browser"
-                                            "notes" -> "Open Notes"
-                                            "files" -> "Open Files"
-                                            "run" -> if (anyRunGoing) "Run (a command is running)" else "Open Run panel"
-                                            else -> "New chat"
-                                        },
-                                        tint = if (id == "run" && anyRunGoing) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                                        modifier = Modifier.size(19.dp)
-                                    )
                                 }
                             }
                         }
                     },
                     navigationIcon = {
-                        if (conversationBackStack.isNotEmpty()) {
-                            IconButton(onClick = navigateBackConversation) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                    contentDescription = "Back",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                        } else {
-                            IconButton(onClick = { scope.launch { drawerState.open() } }) {
-                                Icon(
-                                    imageVector = Icons.Default.Menu,
-                                    contentDescription = "Open Drawer",
-                                    tint = MaterialTheme.colorScheme.onSurface
-                                )
+                        Box(
+                            modifier = Modifier.padding(start = 10.dp, end = 2.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Surface(
+                                onClick = {
+                                    if (conversationBackStack.isNotEmpty()) {
+                                        navigateBackConversation()
+                                    } else {
+                                        scope.launch { drawerState.open() }
+                                    }
+                                },
+                                shape = CircleShape,
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f),
+                                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Box(contentAlignment = Alignment.Center) {
+                                    Icon(
+                                        imageVector = if (conversationBackStack.isNotEmpty()) Icons.AutoMirrored.Filled.ArrowBack else Icons.Default.Menu,
+                                        contentDescription = if (conversationBackStack.isNotEmpty()) "Back" else "Open Drawer",
+                                        tint = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                }
                             }
                         }
                     },
@@ -2201,19 +2261,10 @@ fun ChatScreen(
                                             inputState.setTextAndPlaceCursorAtEnd(example)
                                         }
                                     } else {
-                                        Text(
-                                            text = "How can I help you today?",
-                                            fontSize = 22.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            color = MaterialTheme.colorScheme.onSurface,
-                                            textAlign = TextAlign.Center
-                                        )
-                                        Spacer(modifier = Modifier.height(8.dp))
-                                        Text(
-                                            text = "Ask a question, brainstorm ideas, or start coding",
-                                            fontSize = 14.sp,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.55f),
-                                            textAlign = TextAlign.Center
+                                        LimitXCommandCenterWelcome(
+                                            onPromptSelected = { selectedPrompt ->
+                                                inputState.setTextAndPlaceCursorAtEnd(selectedPrompt)
+                                            }
                                         )
                                     }
                                 }
@@ -4092,5 +4143,180 @@ internal fun resolveChatFileLink(path: String, workspaceUri: String?): String {
         }
     }
     return "/" + parts.joinToString("/")
+}
+
+@Composable
+private fun LimitXCommandCenterWelcome(
+    onPromptSelected: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        // LimitX circular emblem with glowing subtle outline
+        Box(
+            modifier = Modifier
+                .size(64.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f), CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            com.example.gemini.ui.components.AppIconImage(
+                contentDescription = "LimitX",
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        Text(
+            text = "LimitX Studio",
+            fontSize = 22.sp,
+            fontWeight = FontWeight.Bold,
+            letterSpacing = (-0.3).sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Text(
+            text = "Autonomous AI Coding & Mobile Engine",
+            fontSize = 13.5.sp,
+            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+            textAlign = TextAlign.Center
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Status Strip
+        Surface(
+            shape = RoundedCornerShape(16.dp),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
+        ) {
+            Row(
+                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(6.dp)
+                        .clip(CircleShape)
+                        .background(QuotaGreen)
+                )
+                Spacer(modifier = Modifier.width(6.dp))
+                Text(
+                    text = "ARM64 Ubuntu • Local Hub • Antigravity agy",
+                    fontSize = 11.5.sp,
+                    fontFamily = FontFamily.Monospace,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(22.dp))
+
+        // 4 Interactive Quick Action Cards (2x2 grid)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            QuickActionPromptCard(
+                icon = Icons.Outlined.Layers,
+                title = "Create Full-Stack App",
+                description = "Scaffold React, Node, or Python app",
+                onClick = { onPromptSelected("Create a modern full-stack web application with a responsive UI.") },
+                modifier = Modifier.weight(1f)
+            )
+            QuickActionPromptCard(
+                icon = Icons.Default.AutoFixHigh,
+                title = "Fix & Refactor Code",
+                description = "Analyze and optimize codebase",
+                onClick = { onPromptSelected("Review the current codebase, find bugs or bottlenecks, and optimize the architecture.") },
+                modifier = Modifier.weight(1f)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            QuickActionPromptCard(
+                icon = Icons.Outlined.Terminal,
+                title = "Run Shell Command",
+                description = "Execute bash in Linux terminal",
+                onClick = { onPromptSelected("Run a shell command to inspect the system environment, installed packages, and active ports.") },
+                modifier = Modifier.weight(1f)
+            )
+            QuickActionPromptCard(
+                icon = Icons.Outlined.AccountTree,
+                title = "Clone & Inspect Repo",
+                description = "Clone repository and explore files",
+                onClick = { onPromptSelected("Help me clone a GitHub repository and inspect its project structure.") },
+                modifier = Modifier.weight(1f)
+            )
+        }
+    }
+}
+
+@Composable
+private fun QuickActionPromptCard(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    title: String,
+    description: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(14.dp),
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.45f),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f)),
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(15.dp)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = title,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurface,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = description,
+                fontSize = 11.sp,
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                lineHeight = 14.sp
+            )
+        }
+    }
 }
 

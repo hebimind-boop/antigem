@@ -637,14 +637,20 @@ fun ChatHistoryDrawer(
                         .clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Text(
-                    text = "LimitX",
-                    fontSize = 19.sp,
-                    fontWeight = FontWeight.Bold,
-                    letterSpacing = (-0.3).sp,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    modifier = Modifier.weight(1f)
-                )
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "LimitX",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = (-0.3).sp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    Text(
+                        text = "Studio Workspace",
+                        fontSize = 11.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f)
+                    )
+                }
 
                 @Composable
                 fun HeaderIcon(icon: androidx.compose.ui.graphics.vector.ImageVector, description: String, active: Boolean, onClick: () -> Unit) {
@@ -1558,13 +1564,19 @@ private fun ChatHistoryItemRow(
             .padding(
                 start = startPadding,
                 end = 0.dp,
-                top = if (isSubagent) 1.dp else 2.dp,
-                bottom = if (isSubagent) 1.dp else 2.dp
+                top = if (isSubagent) 1.5.dp else 2.dp,
+                bottom = if (isSubagent) 1.5.dp else 2.dp
             )
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(10.dp))
             .background(
                 if (isSelected) MaterialTheme.colorScheme.surfaceVariant
                 else Color.Transparent
+            )
+            .then(
+                if (isSelected) Modifier.border(
+                    BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
+                    RoundedCornerShape(10.dp)
+                ) else Modifier
             )
             .clickable {
                 Log.d("CHAT_OPEN_DEBUG", "📂 [Drawer Row] User clicked: id=${conv.id}, title='${conv.title}'")

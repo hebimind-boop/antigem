@@ -623,14 +623,16 @@ fun ChatInputBar(
                 modifier = Modifier.padding(bottom = 6.dp)
             )
 
-            // Claude-style unified rounded input card
+            // Floating LimitX studio dock input card
             Surface(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(22.dp),
                 color = com.example.gemini.theme.AppColors.card,
+                tonalElevation = 2.dp,
+                shadowElevation = 3.dp,
                 border = BorderStroke(
                     1.dp,
-                    if (isDark) Color.White.copy(alpha = 0.08f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                    if (isDark) Color.White.copy(alpha = 0.12f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.16f)
                 )
             ) {
                 if (isRecordingAudio) {
@@ -1152,14 +1154,14 @@ fun ChatInputBar(
                             onClick = onAttachClick,
                             shape = CircleShape,
                             color = MaterialTheme.colorScheme.background,
-                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)),
                             modifier = Modifier.size(34.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Outlined.Add,
                                     contentDescription = "Add attachments",
-                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.75f),
+                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
                                     modifier = Modifier.size(19.dp)
                                 )
                             }
@@ -1178,11 +1180,11 @@ fun ChatInputBar(
                                     keyboardController?.hide()
                                     onOpenModelSelector()
                                 },
-                                shape = RoundedCornerShape(18.dp),
+                                shape = RoundedCornerShape(16.dp),
                                 color = MaterialTheme.colorScheme.background,
                                 border = BorderStroke(
                                     1.dp,
-                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f)
+                                    MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
                                 )
                             ) {
                                 Row(

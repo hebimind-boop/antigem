@@ -162,15 +162,15 @@ fun AppUpdateDialog(
                     }
 
                     Surface(
-                        color = surfaceColor,
+                        color = primaryColor.copy(alpha = 0.12f),
                         shape = RoundedCornerShape(6.dp),
-                        border = BorderStroke(1.dp, onSurfaceColor.copy(alpha = 0.1f))
+                        border = BorderStroke(1.dp, primaryColor.copy(alpha = 0.25f))
                     ) {
                         Text(
-                            text = updateInfo.packageName,
-                            color = onSurfaceColor,
+                            text = "Official Release",
+                            color = primaryColor,
                             fontSize = 10.sp,
-                            fontFamily = FontFamily.Monospace,
+                            fontWeight = FontWeight.SemiBold,
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
                         )
                     }

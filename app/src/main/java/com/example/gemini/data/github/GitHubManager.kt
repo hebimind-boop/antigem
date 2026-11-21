@@ -468,6 +468,10 @@ object GitHubManager {
     /** After a sign-in: git gets gh's credentials, and a commit identity from the profile when it has none yet. */
     private suspend fun finishLogin() {
         _state.update { it.copy(login = Login.Finishing) }
+        if (!_state.value.gitInstalled && !remote) {
+            ensureGitInstalled()
+            refreshNow()
+        }
         val setup = shell("gh auth setup-git -h $HOST", 30)
         val notes = refreshNow().filter { !it.startsWith("git now uses") }
         val account = _state.value.account
@@ -493,9 +497,33 @@ object GitHubManager {
 
     // ---------------- git ----------------
 
+    /** Installs git in the local Linux environment. */
+    fun installGit() = scope.launch {
+        if (_state.value.busy != null || remote) return@launch
+        _state.update { it.copy(busy = "Installing git…") }
+        val ok = ensureGitInstalled()
+        _state.update { it.copy(busy = null) }
+        refreshNow()
+        if (ok) report("Git installed successfully.") else report("Failed to install git.", true)
+    }
+
+    private suspend fun ensureGitInstalled(): Boolean {
+        if (remote) return false
+        val isTermux = LocalEnvironmentManager.isTermuxPackage(appContext)
+        val cmd = if (isTermux) "pkg install -y git" else "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git"
+        val r = shell(cmd, 600)
+        return r.exitCode == 0
+    }
+
     /** Makes git use gh's GitHub login for https remotes (clone, pull, push). */
     fun setupGit() = scope.launch {
         _state.update { it.copy(busy = "Setting up git…") }
+        if (!_state.value.gitInstalled && !remote) {
+            _state.update { it.copy(busy = "Installing git…") }
+            ensureGitInstalled()
+            refreshNow()
+            _state.update { it.copy(busy = "Setting up git…") }
+        }
         val r = shell("gh auth setup-git -h $HOST", 30)
         _state.update { it.copy(busy = null) }
         refreshNow()

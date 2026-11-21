@@ -567,7 +567,7 @@ fun LocalToolsInstallDialog(
                                         horizontalArrangement = Arrangement.SpaceBetween
                                     ) {
                                         Text("Target Sandbox:", fontSize = 11.5.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                                        Text(info.packageName, fontSize = 11.5.sp, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurface)
+                                        Text("LimitX Sandbox", fontSize = 11.5.sp, fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurface)
                                     }
                                     HorizontalDivider(
                                         modifier = Modifier.padding(vertical = 4.dp),

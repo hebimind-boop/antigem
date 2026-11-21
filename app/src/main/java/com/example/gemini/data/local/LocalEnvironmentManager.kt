@@ -582,6 +582,25 @@ object LocalEnvironmentManager {
         }
     }
 
+    suspend fun ensureGitInstalled(context: Context): Boolean = withContext(Dispatchers.IO) {
+        try {
+            val check = executeCommand("command -v git", context, timeoutSeconds = 15)
+            if (check.exitCode == 0 && check.output.trim().contains("git")) {
+                Log.i(TAG, "Git is already installed: ${check.output.trim()}")
+                return@withContext true
+            }
+            Log.i(TAG, "Git not found in PATH, auto-installing...")
+            val isTermux = isTermuxPackage(context)
+            val installCmd = if (isTermux) "pkg install -y git" else "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y git"
+            val installRes = executeCommand(installCmd, context, timeoutSeconds = 600)
+            Log.i(TAG, "Git install result (${installRes.exitCode}): ${installRes.output.take(300)}")
+            installRes.exitCode == 0
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to ensure git installed: ${e.message}")
+            false
+        }
+    }
+
     const val PREF_TERMUX_API_PROVIDER = "termux_api_provider"
     const val TERMUX_API_PROVIDER_BUILTIN = "builtin"
     const val TERMUX_API_PROVIDER_EXTERNAL = "external"
@@ -1753,6 +1772,13 @@ object LocalEnvironmentManager {
                 com.example.gemini.data.agent.AgentCliManager.extractBundledAgy(appContext)
             } catch (e: Exception) {
                 Log.w(TAG, "Bundled agy extraction failed: ${e.message}")
+            }
+
+            // Ensure git is installed in the local environment
+            try {
+                ensureGitInstalled(appContext)
+            } catch (e: Exception) {
+                Log.w(TAG, "Auto git installation failed: ${e.message}")
             }
 
             _installerState.value = LocalInstallerState.Success(

@@ -322,8 +322,34 @@ private fun GitSetupCard(state: GitHubManager.State, cardBg: Color, cardBorder: 
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Text("Git", fontSize = 14.5.sp, fontWeight = FontWeight.Bold)
             if (!state.gitInstalled) {
-                Text("git isn't installed" + (if (GitHubManager.remote) " on the server." else ". Run \"pkg install git\" in the terminal."),
-                    fontSize = 12.5.sp, color = MaterialTheme.colorScheme.error)
+                Text(
+                    "git isn't installed" + (if (GitHubManager.remote) " on the server." else " in the Linux environment."),
+                    fontSize = 12.5.sp,
+                    color = MaterialTheme.colorScheme.error
+                )
+                if (!GitHubManager.remote) {
+                    val isInstallingGit = state.busy?.contains("git", true) == true
+                    Button(
+                        enabled = state.busy == null,
+                        onClick = { GitHubManager.installGit() },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primary,
+                            contentColor = MaterialTheme.colorScheme.onPrimary
+                        )
+                    ) {
+                        if (isInstallingGit) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(14.dp),
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                strokeWidth = 2.dp
+                            )
+                            Spacer(Modifier.width(8.dp))
+                            Text("Installing Git...")
+                        } else {
+                            Text("Install Git")
+                        }
+                    }
+                }
                 return@Column
             }
             CheckRow("git uses your GitHub login", state.gitCredentialHelper)
