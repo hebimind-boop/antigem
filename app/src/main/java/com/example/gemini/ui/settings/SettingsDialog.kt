@@ -1020,11 +1020,10 @@ private fun UtilitiesSubScreen(
     SettingsRowList(cardBg = cardBg, groups = listOf(utilityRows(onNavigate)))
 }
 
-/** The GitHub row of the main settings page (com.termux builds only), with the sign-in state; null elsewhere. */
+/** The GitHub row of the main settings page, with the sign-in state. */
 @Composable
 private fun rememberGitHubRow(onNavigate: (SettingsSection) -> Unit): SettingsRowItem? {
     val context = LocalContext.current
-    if (!com.example.gemini.data.local.LocalEnvironmentManager.isTermuxPackage(context)) return null
     LaunchedEffect(Unit) {
         com.example.gemini.data.github.GitHubManager.init(context)
         com.example.gemini.data.github.GitHubManager.refreshIfStale()

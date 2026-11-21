@@ -642,7 +642,7 @@ object RemoteServerManager {
             _detail.value = "Connecting to ${pc.pcName}…"
             val s = session()
             syncTunnels(s)
-            _detail.value = "Checking BoopIDE on ${pc.pcName}…"
+            _detail.value = "Checking LimitX on ${pc.pcName}…"
             var up = false
             for (i in 0 until 12) {
                 if (bridgeReachable()) { up = true; break }
@@ -653,7 +653,7 @@ object RemoteServerManager {
                 LocalServerManager.publishRemoteStatus(LocalServerStatus.Running())
             } else {
                 LocalServerManager.publishRemoteStatus(LocalServerStatus.Error(
-                    "Connected to ${pc.pcName}, but BoopIDE's bridge is not running there. Open VS Code with BoopIDE on the PC " +
+                    "Connected to ${pc.pcName}, but LimitX's bridge is not running there. Open VS Code with LimitX on the PC " +
                         "(if it was stopped, press ▶ in its side bar), then tap Retry."
                 ))
             }

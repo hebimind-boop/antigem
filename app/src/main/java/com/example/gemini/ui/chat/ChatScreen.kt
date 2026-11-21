@@ -3305,6 +3305,11 @@ fun ChatScreen(
                 scope.launch { drawerState.close() }
                 openCodexSettings = true
                 showSettingsDialog = true
+            },
+            onGitHubSettings = {
+                scope.launch { drawerState.close() }
+                requestedSettingsSection = com.example.gemini.ui.settings.SettingsSection.GITHUB
+                showSettingsDialog = true
             }
         )
     }

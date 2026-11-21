@@ -2,8 +2,8 @@
 set -euo pipefail
 
 # -----------------------------------------------------------------------------
-# BoopIDE Multi-Package APK Build & Output Packager
-# Builds standard (com.boopide) and termux (com.termux) flavors.
+# LimitX Multi-Package APK Build & Output Packager
+# Builds standard (com.hebimind.boopide) and termux (com.termux) flavors.
 # -----------------------------------------------------------------------------
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,7 +16,7 @@ if [[ "${1:-}" == "--release" || "${1:-}" == "-r" ]]; then
 fi
 
 echo "================================================================="
-echo "🚀 Building BoopIDE Packages in [${MODE^^}] mode"
+echo "🚀 Building LimitX Packages in [${MODE^^}] mode"
 echo "================================================================="
 
 # Extract version from version.json

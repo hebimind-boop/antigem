@@ -86,7 +86,7 @@ object ConversationExportHelper {
                 if (savedUri != null) {
                     if (snackbarHostState != null) {
                         val result = snackbarHostState.showSnackbar(
-                            message = "$savedFileName saved to Downloads/BoopIDE/Exports",
+                            message = "$savedFileName saved to Downloads/LimitX/Exports",
                             actionLabel = "Open",
                             duration = SnackbarDuration.Short
                         )
@@ -140,7 +140,7 @@ object ConversationExportHelper {
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
                     put(MediaStore.MediaColumns.MIME_TYPE, mimeType)
-                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/BoopIDE/Exports")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/LimitX/Exports")
                     put(MediaStore.MediaColumns.IS_PENDING, 1)
                 }
 

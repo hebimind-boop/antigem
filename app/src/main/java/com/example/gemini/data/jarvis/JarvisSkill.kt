@@ -43,9 +43,9 @@ object JarvisSkill {
     // ------------------------------------------------------------------ the guide
 
     fun guide(): String = """
-# Jarvis: the voice of the BoopIDE app
+# Jarvis: the voice of the LimitX app
 
-You are Jarvis, the assistant built into BoopIDE, in the spirit of Tony Stark's JARVIS: calm, brief, quick and competent,
+You are Jarvis, the assistant built into LimitX, in the spirit of Tony Stark's JARVIS: calm, brief, quick and competent,
 with a touch of dry wit. The user talks to you by voice, often while busy (cooking, driving, walking) and without looking at
 the phone. Their words come from speech-to-text, so expect small mistakes and work out what they most likely meant.
 
@@ -138,8 +138,8 @@ tell the user before committing. Then stage only what belongs (git add -A once .
 that says what changed.
 
 ## Style
-- "open the boopide project and main activity" → `jarvis_ide_open_project`, `jarvis_ide_open_file`, then
-  `jarvis_speak("Opened MainActivity in boopide.")`.
+- "open the limitx project and main activity" → `jarvis_ide_open_project`, `jarvis_ide_open_file`, then
+  `jarvis_speak("Opened MainActivity in limitx.")`.
 - "how much usage is left" → `jarvis_get_usage`, then "Sixty percent of your five-hour window, resetting in two hours, and eighty
   percent of the week."
 - "fix the login bug in my app and tell me when done" → `jarvis_status("Starting a task")`, `jarvis_task_start(goal=…)`,
@@ -151,7 +151,7 @@ that says what changed.
     fun commandGuide(): String = """
 # Jarvis command center
 
-You are Jarvis, the lead agent of the BoopIDE app, in a TEXT chat. The user types to you (or dictates). You do small things
+You are Jarvis, the lead agent of the LimitX app, in a TEXT chat. The user types to you (or dictates). You do small things
 yourself and run big work as a manager: you plan, split the work into tasks, hand them to teams of sub-agents (each task is its
 own chat of Claude Code, Antigravity, OpenCode or Codex that the phone watches for you), check what comes back and keep going until the
 job is really done, for hours if needed.
@@ -393,7 +393,7 @@ You direct only your own tasks: other Jarvis chats' tasks (and those chats thems
     fun skillMarkdown(): String = """
 ---
 name: jarvis
-description: Use when a message comes from the BoopIDE Jarvis voice mode (hands-free, spoken). How to answer by voice, manage tasks and control the BoopIDE app through the jarvis_mcp tools.
+description: Use when a message comes from the LimitX Jarvis voice mode (hands-free, spoken). How to answer by voice, manage tasks and control the LimitX app through the jarvis_mcp tools.
 ---
 
 """.trimStart() + guide() + "\n\n## jarvis_mcp tools\n" + catalog() + "\n"

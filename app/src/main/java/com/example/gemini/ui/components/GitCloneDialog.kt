@@ -59,8 +59,7 @@ fun GitCloneDialog(
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var repoUrl by remember { mutableStateOf(initialUrl) }
-    // Signed in to GitHub (Settings → GitHub): private repositories clone too, and can be picked from a list
-    val githubAvailable = LocalEnvironmentManager.isTermuxPackage(context)
+    val githubAvailable = true
     val github by com.example.gemini.data.github.GitHubManager.state.collectAsState()
     val githubSignedIn = githubAvailable && github.signedIn
     var showRepoPicker by remember { mutableStateOf(false) }

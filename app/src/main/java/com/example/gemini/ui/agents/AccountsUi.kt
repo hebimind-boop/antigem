@@ -28,10 +28,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Login
 import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.AccountTree
 import androidx.compose.material.icons.automirrored.outlined.OpenInNew
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import com.example.gemini.theme.QuotaGreen
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -193,7 +196,8 @@ fun AccountsDialog(
     /** Plan, version, usage. */
     codexFacts: List<String> = emptyList(),
     onCodexSignOut: () -> Unit = {},
-    onCodexSettings: () -> Unit = {}
+    onCodexSettings: () -> Unit = {},
+    onGitHubSettings: () -> Unit = {}
 ) {
     val context = LocalContext.current
     // `agy --version`, asked from the bridge (this phone's or the server's) each time the dialog opens
@@ -304,6 +308,126 @@ fun AccountsDialog(
                 codex?.let { entry ->
                     if (agy != null || claude != null || openCode != null) Spacer(Modifier.height(12.dp))
                     CodexAccountSection(entry, codexEmail, codexFacts, onCodexSignOut, onCodexSettings, onDismiss)
+                }
+
+                Spacer(Modifier.height(16.dp))
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+                Spacer(Modifier.height(14.dp))
+
+                GitHubAccountSection(onGitHubSettings = {
+                    onGitHubSettings()
+                    onDismiss()
+                })
+            }
+        }
+    }
+}
+
+@Composable
+private fun GitHubAccountSection(onGitHubSettings: () -> Unit) {
+    val context = LocalContext.current
+    LaunchedEffect(Unit) {
+        com.example.gemini.data.github.GitHubManager.init(context)
+        com.example.gemini.data.github.GitHubManager.refreshIfStale()
+    }
+    val ghState by com.example.gemini.data.github.GitHubManager.state.collectAsState()
+    val isConnected = ghState.signedIn
+    val account = ghState.account
+    val subtitle = when {
+        isConnected -> account?.name ?: account?.email ?: "Connected for git clone, pull and push"
+        ghState.ghInstalled == false -> "GitHub CLI (gh) not installed. Connect to set up."
+        else -> "Connect GitHub for private repositories, pull and push."
+    }
+    val facts = if (isConnected) {
+        listOfNotNull(
+            account?.publicRepos?.let { "$it public repos" },
+            account?.privateRepos?.let { "$it private repos" },
+            ghState.ghVersion?.takeIf { it.isNotBlank() }
+        )
+    } else emptyList()
+
+    Card(
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f)),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.12f)),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(Modifier.padding(14.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(com.example.gemini.theme.AppColors.accentAlt.copy(alpha = 0.15f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (account?.avatarUrl != null) {
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(context).data(account.avatarUrl).crossfade(true).build(),
+                            contentDescription = null,
+                            modifier = Modifier.fillMaxSize().clip(CircleShape),
+                            contentScale = ContentScale.Crop,
+                            error = { Icon(Icons.Outlined.AccountTree, null, tint = com.example.gemini.theme.AppColors.accentAlt, modifier = Modifier.size(20.dp)) }
+                        )
+                    } else {
+                        Icon(Icons.Outlined.AccountTree, null, tint = com.example.gemini.theme.AppColors.accentAlt, modifier = Modifier.size(20.dp))
+                    }
+                }
+                Spacer(Modifier.width(12.dp))
+                Column(Modifier.weight(1f)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            if (isConnected) "GitHub (${account?.login ?: "Connected"})" else "GitHub Account",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 14.sp
+                        )
+                        Spacer(Modifier.width(6.dp))
+                        Box(
+                            Modifier
+                                .size(8.dp)
+                                .clip(CircleShape)
+                                .background(if (isConnected) QuotaGreen else MaterialTheme.colorScheme.outline.copy(alpha = 0.4f))
+                        )
+                    }
+                    Text(
+                        subtitle,
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
+            if (facts.isNotEmpty()) {
+                Spacer(Modifier.height(8.dp))
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    facts.forEach { fact ->
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
+                        ) {
+                            Text(fact, fontSize = 10.5.sp, modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                    }
+                }
+            }
+            Spacer(Modifier.height(10.dp))
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (isConnected) {
+                    SectionButton("GitHub settings", Icons.Outlined.Settings) {
+                        onGitHubSettings()
+                    }
+                    SectionButton("Sign out", Icons.AutoMirrored.Outlined.Logout, danger = true) {
+                        com.example.gemini.data.github.GitHubManager.logout()
+                    }
+                } else {
+                    SectionButton(
+                        text = "Connect GitHub",
+                        icon = Icons.AutoMirrored.Outlined.Login,
+                        primary = com.example.gemini.theme.AppColors.accentAlt
+                    ) {
+                        onGitHubSettings()
+                    }
                 }
             }
         }

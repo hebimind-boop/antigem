@@ -71,7 +71,7 @@ object LocalEnvironmentManager {
     const val UBUNTU_ROOTFS_ASSET = "ubuntu-questing-aarch64-pd-v4.30.1.tar.xz"
     const val UBUNTU_ROOTFS_SIZE_BYTES = 35 * 1024 * 1024L
 
-    private const val NOTIFICATION_CHANNEL_ID = "boopide_bootstrap_install"
+    private const val NOTIFICATION_CHANNEL_ID = "limitx_bootstrap_install"
     private const val NOTIFICATION_ID = 4096
     @Volatile
     private var lastNotificationTime = 0L
@@ -394,6 +394,7 @@ object LocalEnvironmentManager {
         File(ubuntuDir, "proc").mkdirs()
         File(ubuntuDir, "sys").mkdirs()
         File(ubuntuDir, "root").mkdirs()
+        File(ubuntuDir, "limitx/bin").mkdirs()
         File(ubuntuDir, "antigem/bin").mkdirs()
         File(ubuntuDir, "boopide/bin").mkdirs()
         val rootBashrc = File(File(ubuntuDir, "root"), ".bashrc")
@@ -409,13 +410,15 @@ object LocalEnvironmentManager {
         val profileD = File(File(ubuntuDir, "etc"), "profile.d").apply { mkdirs() }
         val termuxProfile = File(profileD, "termux-profile.sh")
         termuxProfile.writeText(
-            "export PATH=\"/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:\$PATH\"\n" +
+            "export PATH=\"/root/.local/bin:/root/.opencode/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:\$PATH\"\n" +
             "export HOME=\"/root\"\n" +
             "export USER=\"root\"\n" +
             "export LOGNAME=\"root\"\n" +
             "export TERM=\"xterm-256color\"\n" +
             "export COLORTERM=\"truecolor\"\n" +
-            "export LANG=\"C.UTF-8\"\n"
+            "export LANG=\"C.UTF-8\"\n" +
+            "export LIMITX_APP_NAME=\"LimitX\"\n" +
+            "export APP_NAME=\"LimitX\"\n"
         )
         try { Os.chmod(termuxProfile.absolutePath, 420) } catch (_: Exception) {}
 
@@ -2363,6 +2366,7 @@ All files created here persist inside the application.
                 mkdirs()
                 try { Os.chmod(absolutePath, 511) } catch (_: Exception) {}
             }
+            File(ubuntuDir, "limitx/bin").mkdirs()
             File(ubuntuDir, "antigem/bin").mkdirs()
             File(ubuntuDir, "boopide/bin").mkdirs()
             val sysdataBindings = setupFakeSysdata(context)
@@ -2382,6 +2386,7 @@ All files created here persist inside the application.
                 "--bind=/dev/urandom:/dev/random",
                 "--bind=${shmDir.absolutePath}:/dev/shm",
                 "--bind=${prootTmpDir.absolutePath}:/tmp",
+                "--bind=${getBinDir(context).absolutePath}:/limitx/bin",
                 "--bind=${getBinDir(context).absolutePath}:/antigem/bin",
                 "--bind=${getBinDir(context).absolutePath}:/boopide/bin"
             )
@@ -2432,6 +2437,8 @@ All files created here persist inside the application.
             processBuilder.environment()["PATH"] = "/root/.local/bin:/root/.opencode/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
             processBuilder.environment()["TMPDIR"] = "/tmp"
             processBuilder.environment()["DEBIAN_FRONTEND"] = "noninteractive"
+            processBuilder.environment()["LIMITX_APP_NAME"] = "LimitX"
+            processBuilder.environment()["APP_NAME"] = "LimitX"
             // processBuilder.environment()["PROOT_NO_SECCOMP"] = "1"
             processBuilder.environment()["PROOT_LOADER"] = getProotLoaderPath(context)
             processBuilder.environment()["PROOT_TMP_DIR"] = prootTmpDir.absolutePath

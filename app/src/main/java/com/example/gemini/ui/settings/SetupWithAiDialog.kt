@@ -54,7 +54,7 @@ import com.example.gemini.ui.components.ClaudeAccent
 import com.example.gemini.ui.components.CodexAccent
 import com.example.gemini.ui.components.OpenCodeAccent
 
-/** What the user wants out of a repository BoopIDE could not install by itself. */
+/** What the user wants out of a repository LimitX could not install by itself. */
 enum class RepoSetupKind(val label: String) { ALL("All"), SKILLS("Skills"), PLUGINS("Plugin / marketplace") }
 
 private fun agentName(agent: AgentKind) = when (agent) {

@@ -380,7 +380,7 @@ func AuthMiddleware(token string, next http.Handler) http.Handler {
 
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte(`{"error":"unauthorized","message":"Missing or invalid BoopIDE security token header"}`))
+		w.Write([]byte(`{"error":"unauthorized","message":"Missing or invalid LimitX security token header"}`))
 	})
 }
 

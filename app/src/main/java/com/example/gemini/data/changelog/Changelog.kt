@@ -43,6 +43,16 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 140,
+                versionName = "1.3.1",
+                date = "2026-11-21",
+                changes = listOf(
+                    "Fixed: High-contrast Send and Stop/Pause buttons in chat input bar across Monochrome Dark, Cyberpunk, and Light themes",
+                    "Improved: Complete purge of legacy BoopIDE references across system prompts, MCP servers, bridge, and environment to LimitX",
+                    "New: Restored GitHub Connect integration in Settings and Accounts with full support for cloning, pulling, and pushing repositories"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 139,
                 versionName = "1.3.0",
                 date = "2026-11-20",

@@ -56,7 +56,7 @@ class LocalPtySession(
     val sshUser: String = "root",
     val sshPass: String = "root",
     var tmuxWindowIndex: Int? = null,
-    val tmuxSessionName: String = "boopide",
+    val tmuxSessionName: String = "limitx",
     initialWorkingDir: String? = null,
     initialPaneId: String? = null,
     initialWindowId: String? = null,
@@ -70,7 +70,7 @@ class LocalPtySession(
     /** False for one-off runs (the Run panel): they show their own status, so no "Press Enter to close tab" line. */
     val showExitNotice: Boolean = true
 ) : TerminalSessionClient {
-    private val TAG = "BoopIDETerminal"
+    private val TAG = "LimitXTerminal"
 
     var assignedPaneId: String? = initialPaneId
     var assignedWindowId: String? = initialWindowId
@@ -159,6 +159,7 @@ class LocalPtySession(
                 }
                 val sysdataBindings = LocalEnvironmentManager.setupFakeSysdata(context)
 
+                File(ubuntuDir, "limitx/bin").mkdirs()
                 File(ubuntuDir, "antigem/bin").mkdirs()
                 File(ubuntuDir, "boopide/bin").mkdirs()
 
@@ -178,6 +179,7 @@ class LocalPtySession(
                     "--bind=/dev/urandom:/dev/random",
                     "--bind=${shmDir.absolutePath}:/dev/shm",
                     "--bind=${prootTmpDir.absolutePath}:/tmp",
+                    "--bind=${LocalEnvironmentManager.getBinDir(context).absolutePath}:/limitx/bin",
                     "--bind=${LocalEnvironmentManager.getBinDir(context).absolutePath}:/antigem/bin",
                     "--bind=${LocalEnvironmentManager.getBinDir(context).absolutePath}:/boopide/bin"
                 )
@@ -221,6 +223,8 @@ class LocalPtySession(
                     "TERM=xterm-256color",
                     "COLORTERM=truecolor",
                     "LANG=C.UTF-8",
+                    "LIMITX_APP_NAME=LimitX",
+                    "APP_NAME=LimitX",
                     "TMPDIR=/tmp"
                 )
                 val interactiveShell = if (File(ubuntuDir, "usr/bin/zsh").exists()) "/usr/bin/zsh" else "/bin/bash"
@@ -246,6 +250,8 @@ class LocalPtySession(
                         "TERM=xterm-256color",
                         "COLORTERM=truecolor",
                         "LANG=C.UTF-8",
+                        "LIMITX_APP_NAME=LimitX",
+                        "APP_NAME=LimitX",
                         "TMPDIR=/tmp",
                         "DEBIAN_FRONTEND=noninteractive",
                         "COLUMNS=$safeCols",
@@ -606,15 +612,17 @@ class LocalPtySession(
                 }
             } else if (data.isNotEmpty()) {
                 val str = String(data, Charsets.UTF_8)
-                if (str.contains("BOOPIDE_INFO:")) {
+                val infoTag = if (str.contains("LIMITX_INFO:")) "LIMITX_INFO:" else if (str.contains("BOOPIDE_INFO:")) "BOOPIDE_INFO:" else null
+                val paneTag = if (str.contains("LIMITX_PANE_ID:")) "LIMITX_PANE_ID:" else if (str.contains("BOOPIDE_PANE_ID:")) "BOOPIDE_PANE_ID:" else null
+                if (infoTag != null) {
                     val line =
-                        str.lines().find { it.contains("BOOPIDE_INFO:") }?.substringAfter("BOOPIDE_INFO:")?.trim()
+                        str.lines().find { it.contains(infoTag) }?.substringAfter(infoTag)?.trim()
                     if (!line.isNullOrEmpty()) {
                         handleBoopideInfo(line)
                     }
-                } else if (str.contains("BOOPIDE_PANE_ID:")) {
+                } else if (paneTag != null) {
                     val extracted =
-                        str.lines().find { it.contains("BOOPIDE_PANE_ID:") }?.substringAfter("BOOPIDE_PANE_ID:")?.trim()
+                        str.lines().find { it.contains(paneTag) }?.substringAfter(paneTag)?.trim()
                     if (!extracted.isNullOrEmpty()) {
                         assignedPaneId = extracted
                         Log.d(TAG, "[$id] Bound session to pane $assignedPaneId from command response")
@@ -648,13 +656,15 @@ class LocalPtySession(
             }
         },
         onUnhandledEvent = { event ->
-            if (event.contains("BOOPIDE_INFO:")) {
-                val line = event.substringAfter("BOOPIDE_INFO:").trim()
+            val infoTag = if (event.contains("LIMITX_INFO:")) "LIMITX_INFO:" else if (event.contains("BOOPIDE_INFO:")) "BOOPIDE_INFO:" else null
+            val paneTag = if (event.contains("LIMITX_PANE_ID:")) "LIMITX_PANE_ID:" else if (event.contains("BOOPIDE_PANE_ID:")) "BOOPIDE_PANE_ID:" else null
+            if (infoTag != null) {
+                val line = event.substringAfter(infoTag).trim()
                 if (line.isNotEmpty()) {
                     handleBoopideInfo(line)
                 }
-            } else if (event.contains("BOOPIDE_PANE_ID:")) {
-                val extracted = event.substringAfter("BOOPIDE_PANE_ID:").trim()
+            } else if (paneTag != null) {
+                val extracted = event.substringAfter(paneTag).trim()
                 if (extracted.isNotEmpty()) {
                     assignedPaneId = extracted
                     Log.d(TAG, "[$id] Bound session to pane $assignedPaneId from unhandled event")
@@ -755,7 +765,7 @@ class LocalPtySession(
                     val target = assignedPaneId ?: (tmuxWindowIndex?.let { "$tmuxSessionName:$it" } ?: "")
                     val targetArg = if (target.isNotEmpty()) "-t $target " else ""
                     val cmd =
-                        "display-message ${targetArg}-p \"BOOPIDE_INFO:#{window_index}|#{window_name}|#{pane_current_path}|#{pane_id}|#{alternate_on}|#{mouse_any_flag}|#{mouse_sgr_flag}|#{window_id}\"\n"
+                        "display-message ${targetArg}-p \"LIMITX_INFO:#{window_index}|#{window_name}|#{pane_current_path}|#{pane_id}|#{alternate_on}|#{mouse_any_flag}|#{mouse_sgr_flag}|#{window_id}\"\n"
                     sshOut?.write(cmd.toByteArray(Charsets.UTF_8))
                     sshOut?.flush()
                 } catch (_: Exception) {
@@ -910,7 +920,7 @@ class LocalPtySession(
                     "tmux set-option -t $tmuxSessionName mouse on 2>/dev/null; " +
                     "fi; " +
                     "targetWin=\$(if [ -n \"$winIdx\" ] && tmux list-windows -t $tmuxSessionName -F \"#{window_index}\" 2>/dev/null | grep -qx \"$winIdx\"; then echo \"$winIdx\"; else tmux list-windows -t $tmuxSessionName -F \"#{window_index}\" 2>/dev/null | head -n 1; fi); " +
-                    "tmux -CC new-session -A -t $tmuxSessionName -s ${tmuxSessionName}_\${targetWin} \\; select-window -t $tmuxSessionName:\$targetWin \\; display-message -p -t $tmuxSessionName:\$targetWin \"BOOPIDE_INFO:#{window_index}|#{window_name}|#{pane_current_path}|#{pane_id}|#{alternate_on}|#{mouse_any_flag}|#{mouse_sgr_flag}|#{window_id}\"; " +
+                    "tmux -CC new-session -A -t $tmuxSessionName -s ${tmuxSessionName}_\${targetWin} \\; select-window -t $tmuxSessionName:\$targetWin \\; display-message -p -t $tmuxSessionName:\$targetWin \"LIMITX_INFO:#{window_index}|#{window_name}|#{pane_current_path}|#{pane_id}|#{alternate_on}|#{mouse_any_flag}|#{mouse_sgr_flag}|#{window_id}\"; " +
                     "else \${SHELL:-sh}; fi"
 
             Log.d(TAG, "[$id] Executing SSH command: $tmuxCmd")
@@ -1186,8 +1196,8 @@ class LocalPtySession(
 }
 
 object LocalTerminalManager {
-    private const val TAG = "BoopIDETerminal"
-    private const val TMUX_SESSION_NAME = "boopide"
+    private const val TAG = "LimitXTerminal"
+    private const val TMUX_SESSION_NAME = "limitx"
 
     var lastKnownCols: Int = 60
     var lastKnownRows: Int = 30

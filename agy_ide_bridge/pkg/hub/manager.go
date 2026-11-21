@@ -261,7 +261,7 @@ func (m *HubManager) FetchCsrfToken() string {
 		log.Printf("[FetchCsrfToken] NewRequest error: %v", err)
 		return ""
 	}
-	req.Header.Set("User-Agent", "BoopIDE-Go-Supervisor")
+	req.Header.Set("User-Agent", "LimitX-Go-Supervisor")
 
 	resp, err := client.Do(req)
 	if err != nil {
@@ -528,6 +528,8 @@ func (m *HubManager) Start() error {
 		"CI=1",
 		"AGY_NO_UPDATE_PROMPT=1",
 		"DEBIAN_FRONTEND=noninteractive",
+		"LIMITX_APP_NAME=LimitX",
+		"APP_NAME=LimitX",
 	)
 
 	stdoutPipe, errOut := cmd.StdoutPipe()

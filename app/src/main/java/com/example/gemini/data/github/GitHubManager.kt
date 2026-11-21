@@ -33,8 +33,8 @@ object GitHubManager {
     private const val HOST = "github.com"
     /** Extra scopes on top of gh's defaults (repo, read:org, gist): workflow lets git push .github/workflows files. */
     private const val EXTRA_SCOPES = "workflow"
-    private const val LOGIN_PID_FILE = "\"\${TMPDIR:-/tmp}/boopide-gh-login.pid\""
-    const val TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo,read:org,gist,workflow&description=BoopIDE"
+    private const val LOGIN_PID_FILE = "\"\${TMPDIR:-/tmp}/limitx-gh-login.pid\""
+    const val TOKEN_URL = "https://github.com/settings/tokens/new?scopes=repo,read:org,gist,workflow&description=LimitX"
     const val INSTALL_DOCS_URL = "https://github.com/cli/cli#installation"
 
     data class Account(
@@ -158,7 +158,7 @@ object GitHubManager {
         // Local commands take no stdin: [stdin] goes through a private temp file instead of the command line
         var stdinFile: File? = null
         val redirect = if (stdin != null) {
-            stdinFile = File(LocalEnvironmentManager.getTmpDir(appContext), "boopide-gh-${System.nanoTime()}.in").apply {
+            stdinFile = File(LocalEnvironmentManager.getTmpDir(appContext), "limitx-gh-${System.nanoTime()}.in").apply {
                 writeText(stdin)
                 setReadable(false, false); setReadable(true, true)
             }
@@ -387,14 +387,14 @@ object GitHubManager {
         if (installJob?.isActive == true || remote) return
         installJob = scope.launch {
             _state.update { it.copy(installing = true, installLog = emptyList(), installError = null) }
-            // Stale package lists point at files the mirror no longer has (404), so refresh them first
-            val command = "apt-get update && pkg install -y gh"
+            val isTermux = LocalEnvironmentManager.isTermuxPackage(appContext)
+            val command = if (isTermux) "apt-get update && pkg install -y gh" else "apt-get update && apt-get install -y gh"
             appendInstallLog("$ $command")
             val result = shell(command, 900) { line -> if (line.isNotBlank()) appendInstallLog(line) }
             refreshNow()
             val ok = _state.value.ghInstalled == true
             _state.update {
-                it.copy(installing = false, installError = if (ok) null else "Install failed (exit ${result.exitCode}). Check the log above, or run \"pkg install gh\" in the terminal.")
+                it.copy(installing = false, installError = if (ok) null else "Install failed (exit ${result.exitCode}). Check the log above, or install gh in the terminal.")
             }
             if (ok) appendInstallLog("✓ ${_state.value.ghVersion ?: "gh installed"}")
         }

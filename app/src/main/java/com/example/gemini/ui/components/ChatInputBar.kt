@@ -771,17 +771,19 @@ fun ChatInputBar(
                         Spacer(modifier = Modifier.width(6.dp))
 
                         // 4. Send directly
+                        val directSendBtnColor = ClaudeTerracotta
+                        val directSendIconColor = contrastContentColor(directSendBtnColor)
                         Surface(
                             onClick = { stopAudioRecording(andSend = true) },
                             shape = CircleShape,
-                            color = ClaudeTerracotta,
+                            color = directSendBtnColor,
                             modifier = Modifier.size(34.dp)
                         ) {
                             Box(contentAlignment = Alignment.Center) {
                                 Icon(
                                     imageVector = Icons.Default.ArrowUpward,
                                     contentDescription = "Send voice note",
-                                    tint = Color.White,
+                                    tint = directSendIconColor,
                                     modifier = Modifier.size(18.dp)
                                 )
                             }
@@ -1294,23 +1296,30 @@ fun ChatInputBar(
                         // Action Button (Send / Stop / Voice Recorder). While the agent works, a typed message is
                         // sent (it is queued, or injected by Claude); Stop shows when the box is empty.
                         if (isStreaming && !canSend) {
+                            val stopBtnColor = ClaudeTerracotta
+                            val stopIconColor = contrastContentColor(stopBtnColor)
                             Surface(
                                 onClick = onStopStreaming,
                                 shape = CircleShape,
-                                color = ClaudeTerracotta,
+                                color = stopBtnColor,
                                 modifier = Modifier.size(36.dp)
                             ) {
                                 Box(contentAlignment = Alignment.Center) {
                                     Icon(
                                         imageVector = Icons.Default.Stop,
                                         contentDescription = "Stop",
-                                        tint = Color.White,
+                                        tint = stopIconColor,
                                         modifier = Modifier.size(18.dp)
                                     )
                                 }
                             }
                         } else if (canSend) {
                             val sendBtnColor = if (!isAuth) com.example.gemini.theme.AppColors.textSecondary else if (!isOnline) com.example.gemini.theme.AppColors.textSecondary else if (attachmentsBusy) com.example.gemini.theme.AppColors.textSecondary else if (isBackgroundActive) com.example.gemini.theme.AppColors.warning else ClaudeTerracotta
+                            val sendIconColor = if (!isAuth || !isOnline || attachmentsBusy) {
+                                com.example.gemini.theme.AppColors.background
+                            } else {
+                                contrastContentColor(sendBtnColor)
+                            }
                             Surface(
                                 onClick = {
                                     val trimmed = textFieldState.text.toString().trim()
@@ -1340,7 +1349,7 @@ fun ChatInputBar(
                                     Icon(
                                         imageVector = Icons.Default.ArrowUpward,
                                         contentDescription = "Send",
-                                        tint = if (isAuth && isOnline) (if (isBackgroundActive) com.example.gemini.theme.AppColors.onBackground else Color.White) else com.example.gemini.theme.AppColors.textSecondary,
+                                        tint = sendIconColor,
                                         modifier = Modifier.size(19.dp)
                                     )
                                 }
