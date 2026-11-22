@@ -427,7 +427,6 @@ fun AppUpdateDialog(
                                     maxLines = 1
                                 )
                             }
-                    }
                 }
             }
         }

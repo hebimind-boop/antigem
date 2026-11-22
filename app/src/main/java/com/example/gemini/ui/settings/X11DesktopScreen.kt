@@ -377,3 +377,9 @@ internal fun SharedUidRequiredCard(feature: String, cardBg: Color, cardBorder: B
         }
     }
 }
+
+private fun openUrl(context: android.content.Context, url: String) {
+    runCatching {
+        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
+    }
+}
