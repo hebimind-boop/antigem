@@ -906,6 +906,7 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
                     }
                 }
             }
+            fileName = fileName.removePrefix("null-").ifBlank { "attachment_${System.currentTimeMillis()}" }
 
             val ext = fileName.substringAfterLast('.', "").lowercase()
             val mimeType = contentResolver.getType(uri)

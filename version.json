@@ -1,12 +1,11 @@
 {
-  "version_code": 141,
-  "version_name": "1.4.0",
+  "version_code": 142,
+  "version_name": "1.4.1",
   "min_supported_version_code": 1,
   "changelog": [
-    "LimitX Studio v1.4.0: Complete flagship visual UI redesign with signature LimitX Studio Header and live pulsing connection indicator",
-    "LimitX Command Center: Brand welcome view with interactive quick-action cards for full-stack apps, refactoring, shell, and GitHub",
-    "Floating Studio Input Dock: Refined composer with high-contrast actions, model selector, and attachment dock",
-    "Auto-Install Git: Automatic git setup in Linux environment during onboarding and GitHub sign-in, with one-tap Git install button"
+    "LimitX Studio v1.4.1: Compact, modern 2x2 'Add to Chat' action menu with concise hints and crisp icons",
+    "Clean Image Preview: Rounded square thumbnail preview directly inside prompt composer with circular close button",
+    "Refined Model Picker: Sleek compact model selection sheet with clean section headers, subtle quota pills, and crisp thinking controls"
   ],
   "is_critical": true
 }

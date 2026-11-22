@@ -196,7 +196,7 @@ fun ModelSelectorBottomSheet(
                                     onSelectModel(id)
                                     onDismiss()
                                 },
-                                modifier = Modifier.padding(vertical = 3.dp).animateItem()
+                                modifier = Modifier.padding(vertical = 2.5.dp).animateItem()
                             )
                         }
                     }
@@ -251,24 +251,25 @@ private fun AgyModelCard(
     val active = variants.firstOrNull { it.model.id == selectedModelId }
     val isActive = active != null
     val borderColor by animateColorAsState(
-        if (isActive) accent.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.07f),
+        if (isActive) accent.copy(alpha = 0.65f) else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.28f),
         label = "model_card_border"
     )
+    val cardBg = if (isActive) accent.copy(alpha = 0.05f) else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.025f)
     Surface(
         onClick = { onSelect((active ?: defaultVariant(variants)).model.id) },
         enabled = !editing,
-        shape = RoundedCornerShape(14.dp),
-        color = com.example.gemini.theme.AppColors.card,
-        border = BorderStroke(if (isActive) 1.5.dp else 1.dp, borderColor),
+        shape = RoundedCornerShape(12.dp),
+        color = cardBg,
+        border = BorderStroke(if (isActive) 1.2.dp else 1.dp, borderColor),
         modifier = modifier.fillMaxWidth()
     ) {
-        Column(Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
+        Column(Modifier.padding(horizontal = 12.dp, vertical = if (variants.size > 1) 10.dp else 9.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f)) {
                     Text(
                         family.baseName,
-                        fontSize = 14.sp,
-                        fontWeight = if (isActive) FontWeight.Bold else FontWeight.SemiBold,
+                        fontSize = 13.5.sp,
+                        fontWeight = if (isActive) FontWeight.SemiBold else FontWeight.Medium,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
@@ -276,9 +277,9 @@ private fun AgyModelCard(
                     if (family.description.isNotBlank()) {
                         Text(
                             family.description,
-                            fontSize = 12.sp,
-                            lineHeight = 16.sp,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                            fontSize = 11.5.sp,
+                            lineHeight = 15.sp,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.55f),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
                         )
@@ -290,11 +291,11 @@ private fun AgyModelCard(
                 }
             }
             if (variants.size > 1) {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(8.dp))
                 TierSelector(variants, selectedModelId, accent, enabled = !editing, onSelect = onSelect)
             }
             if (groupControl != null) {
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(8.dp))
                 groupControl()
             }
         }
@@ -313,7 +314,7 @@ private fun TierSelector(
     val selIdx = variants.indexOfFirst { it.model.id == selectedModelId }
     val track = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
     BoxWithConstraints(
-        Modifier.fillMaxWidth().height(36.dp).clip(RoundedCornerShape(10.dp)).background(track).padding(3.dp)
+        Modifier.fillMaxWidth().height(32.dp).clip(RoundedCornerShape(8.dp)).background(track).padding(2.5.dp)
     ) {
         val segment = maxWidth / variants.size
         val offset by animateDpAsState(
@@ -325,7 +326,7 @@ private fun TierSelector(
         Box(
             Modifier.offset(x = offset).width(segment).fillMaxHeight()
                 .graphicsLayer { alpha = highlight }
-                .clip(RoundedCornerShape(8.dp)).background(accent)
+                .clip(RoundedCornerShape(6.dp)).background(accent)
         )
         Row(Modifier.fillMaxSize()) {
             variants.forEachIndexed { i, v ->
@@ -335,7 +336,7 @@ private fun TierSelector(
                     label = "tier_text"
                 )
                 Box(
-                    Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(8.dp))
+                    Modifier.weight(1f).fillMaxHeight().clip(RoundedCornerShape(6.dp))
                         .clickable(enabled = enabled) { onSelect(v.model.id) },
                     contentAlignment = Alignment.Center
                 ) {
@@ -343,11 +344,11 @@ private fun TierSelector(
                         val level = tierRank(v.tierLabel).takeIf { it in 1..3 }
                         if (level != null) {
                             TierBars(level, content)
-                            Spacer(Modifier.width(6.dp))
+                            Spacer(Modifier.width(5.dp))
                         }
                         Text(
                             v.tierLabel.ifBlank { v.model.displayName },
-                            fontSize = 12.sp,
+                            fontSize = 11.5.sp,
                             fontWeight = if (on) FontWeight.SemiBold else FontWeight.Medium,
                             color = content,
                             maxLines = 1,

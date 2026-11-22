@@ -16,6 +16,7 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import com.example.gemini.theme.isAppInDarkTheme
@@ -991,150 +992,189 @@ fun ChatInputBar(
                                     }
                                 }
 
-                                Surface(
-                                    shape = RoundedCornerShape(12.dp),
-                                    color = MaterialTheme.colorScheme.background,
-                                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-                                ) {
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
+                                if (isImg && imgSource != null) {
+                                    // Reference Image 3 style: Rounded square thumbnail with floating circular close button at top-right
+                                    Box(
+                                        modifier = Modifier
+                                            .size(62.dp)
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f), RoundedCornerShape(12.dp))
                                     ) {
-                                        // Clickable preview + name container
-                                        Row(
+                                        AsyncImage(
+                                            model = imgSource,
+                                            contentDescription = att.name,
+                                            contentScale = ContentScale.Crop,
                                             modifier = Modifier
-                                                .clickable {
-                                                    if (att.reference && !isImg) {
-                                                        // a file on the agent's machine: opened like any file link (encoded, the handler decodes);
-                                                        // still copying: nothing to open yet
-                                                        if (att.path.isNotBlank()) fileLinkHandler.onOpenFile(java.net.URLEncoder.encode(att.path, "UTF-8"))
-                                                        return@clickable
-                                                    }
-                                                    val ext = (att.name.ifBlank { att.path }).substringAfterLast('.', "").lowercase()
-                                                    val isText = att.mimeType?.startsWith("text/") == true ||
-                                                            att.mimeType?.contains("json") == true ||
-                                                            att.mimeType?.contains("javascript") == true ||
-                                                            att.mimeType?.contains("xml") == true ||
-                                                            att.mimeType?.contains("yaml") == true ||
-                                                            att.mimeType?.contains("toml") == true ||
-                                                            ext in listOf("txt", "md", "markdown", "kt", "kts", "java", "py", "js", "ts", "jsx", "tsx", "html", "css", "json", "xml", "yaml", "yml", "toml", "sh", "bash", "c", "cpp", "h", "hpp", "rs", "go", "sql", "gradle", "properties", "conf", "ini", "log", "env")
-                                                    if (isImg && imgSource != null) {
-                                                        previewImageUrl = imgSource
-                                                    } else if (isText) {
-                                                        val targetPath = when {
-                                                            att.path.isNotBlank() -> att.path
-                                                            !att.localUri.isNullOrBlank() -> att.localUri
-                                                            else -> att.name
-                                                        }
-                                                        fileLinkHandler.onOpenFile(targetPath)
-                                                    } else {
-                                                        try {
-                                                            val uri = when {
-                                                                !att.url.isNullOrBlank() && (att.url.startsWith("content://") || att.url.startsWith("file://")) -> Uri.parse(att.url)
-                                                                att.path.isNotBlank() && File(att.path).exists() -> {
-                                                                    val file = File(att.path)
-                                                                    androidx.core.content.FileProvider.getUriForFile(
-                                                                        context,
-                                                                        "${context.packageName}.fileprovider",
-                                                                        file
-                                                                    )
-                                                                }
-                                                                !att.url.isNullOrBlank() -> Uri.parse(att.url)
-                                                                else -> null
-                                                            }
-                                                            if (uri != null) {
-                                                                val intent = Intent(Intent.ACTION_VIEW).apply {
-                                                                    setDataAndType(uri, att.mimeType ?: "*/*")
-                                                                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                                                }
-                                                                context.startActivity(Intent.createChooser(intent, "Open ${att.name}"))
-                                                            } else {
-                                                                Toast.makeText(context, att.name, Toast.LENGTH_SHORT).show()
-                                                            }
-                                                        } catch (e: Exception) {
-                                                            Toast.makeText(context, "Cannot open: ${e.message}", Toast.LENGTH_SHORT).show()
-                                                        }
-                                                    }
-                                                }
-                                                .padding(start = 5.dp, end = 2.dp, top = 4.dp, bottom = 4.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            if (isImg && imgSource != null) {
-                                                Box(
-                                                    modifier = Modifier
-                                                        .size(36.dp)
-                                                        .clip(RoundedCornerShape(8.dp))
-                                                ) {
-                                                    AsyncImage(
-                                                        model = imgSource,
-                                                        contentDescription = att.name,
-                                                        contentScale = ContentScale.Crop,
-                                                        modifier = Modifier.fillMaxSize()
-                                                    )
-                                                }
-                                            } else if (att.isAudio) {
-                                                Icon(
-                                                    imageVector = Icons.Rounded.Mic,
-                                                    contentDescription = null,
-                                                    tint = ClaudeTerracotta,
-                                                    modifier = Modifier.size(20.dp).padding(start = 4.dp)
+                                                .fillMaxSize()
+                                                .clickable { previewImageUrl = imgSource }
+                                        )
+
+                                        if (copyProgress != null) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .fillMaxSize()
+                                                    .background(Color.Black.copy(alpha = 0.45f)),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                CircularProgressIndicator(
+                                                    progress = { copyProgress },
+                                                    modifier = Modifier.size(24.dp),
+                                                    strokeWidth = 2.5.dp,
+                                                    color = Color.White
                                                 )
-                                            } else {
-                                                Icon(
-                                                    imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
-                                                    contentDescription = null,
-                                                    tint = ClaudeTerracotta,
-                                                    modifier = Modifier.size(20.dp).padding(start = 4.dp)
-                                                )
-                                            }
-                                            Spacer(modifier = Modifier.width(6.dp))
-                                            Column(modifier = Modifier.widthIn(max = 130.dp)) {
-                                                Text(
-                                                    text = att.name,
-                                                    fontSize = 12.sp,
-                                                    fontWeight = FontWeight.Medium,
-                                                    color = MaterialTheme.colorScheme.onSurface,
-                                                    maxLines = 1,
-                                                    overflow = TextOverflow.Ellipsis
-                                                )
-                                                // a file sent by path: its size, or how far its copy to the agent's machine is
-                                                if (copyProgress != null) {
-                                                    Text(
-                                                        text = "Copying ${(copyProgress * 100).toInt()}%",
-                                                        fontSize = 10.5.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        maxLines = 1
-                                                    )
-                                                    LinearProgressIndicator(
-                                                        progress = { copyProgress },
-                                                        modifier = Modifier
-                                                            .width(110.dp)
-                                                            .padding(top = 2.dp)
-                                                            .height(3.dp)
-                                                            .clip(RoundedCornerShape(2.dp)),
-                                                        color = ClaudeTerracotta
-                                                    )
-                                                } else if (att.reference && att.size > 0) {
-                                                    Text(
-                                                        text = com.example.gemini.data.files.FileKinds.formatSize(att.size),
-                                                        fontSize = 10.5.sp,
-                                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                                        maxLines = 1
-                                                    )
-                                                }
                                             }
                                         }
 
-                                        Spacer(modifier = Modifier.width(2.dp))
-                                        IconButton(
-                                            onClick = { onRemoveAttachment(att.id) },
-                                            modifier = Modifier.size(24.dp).padding(end = 4.dp)
+                                        // Circular dark translucent close button at top right
+                                        Box(
+                                            modifier = Modifier
+                                                .align(Alignment.TopEnd)
+                                                .padding(4.dp)
+                                                .size(20.dp)
+                                                .clip(CircleShape)
+                                                .background(Color(0xD9000000))
+                                                .clickable { onRemoveAttachment(att.id) },
+                                            contentAlignment = Alignment.Center
                                         ) {
                                             Icon(
                                                 imageVector = Icons.Outlined.Close,
                                                 contentDescription = "Remove",
-                                                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                                                modifier = Modifier.size(13.dp)
+                                                tint = Color.White,
+                                                modifier = Modifier.size(11.dp)
                                             )
+                                        }
+                                    }
+                                } else {
+                                    // Non-image file card (documents, audio, code files)
+                                    val displayName = remember(att.name) {
+                                        att.name.removePrefix("null-").ifBlank { "attachment" }
+                                    }
+                                    Surface(
+                                        shape = RoundedCornerShape(10.dp),
+                                        color = MaterialTheme.colorScheme.background,
+                                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f))
+                                    ) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            Row(
+                                                modifier = Modifier
+                                                    .clickable {
+                                                        if (att.reference) {
+                                                            if (att.path.isNotBlank()) fileLinkHandler.onOpenFile(java.net.URLEncoder.encode(att.path, "UTF-8"))
+                                                            return@clickable
+                                                        }
+                                                        val ext = (displayName.ifBlank { att.path }).substringAfterLast('.', "").lowercase()
+                                                        val isText = att.mimeType?.startsWith("text/") == true ||
+                                                                att.mimeType?.contains("json") == true ||
+                                                                att.mimeType?.contains("javascript") == true ||
+                                                                att.mimeType?.contains("xml") == true ||
+                                                                att.mimeType?.contains("yaml") == true ||
+                                                                att.mimeType?.contains("toml") == true ||
+                                                                ext in listOf("txt", "md", "markdown", "kt", "kts", "java", "py", "js", "ts", "jsx", "tsx", "html", "css", "json", "xml", "yaml", "yml", "toml", "sh", "bash", "c", "cpp", "h", "hpp", "rs", "go", "sql", "gradle", "properties", "conf", "ini", "log", "env")
+                                                        if (isText) {
+                                                            val targetPath = when {
+                                                                att.path.isNotBlank() -> att.path
+                                                                !att.localUri.isNullOrBlank() -> att.localUri
+                                                                else -> displayName
+                                                            }
+                                                            fileLinkHandler.onOpenFile(targetPath)
+                                                        } else {
+                                                            try {
+                                                                val uri = when {
+                                                                    !att.url.isNullOrBlank() && (att.url.startsWith("content://") || att.url.startsWith("file://")) -> Uri.parse(att.url)
+                                                                    att.path.isNotBlank() && File(att.path).exists() -> {
+                                                                        val file = File(att.path)
+                                                                        androidx.core.content.FileProvider.getUriForFile(
+                                                                            context,
+                                                                            "${context.packageName}.fileprovider",
+                                                                            file
+                                                                        )
+                                                                    }
+                                                                    !att.url.isNullOrBlank() -> Uri.parse(att.url)
+                                                                    else -> null
+                                                                }
+                                                                if (uri != null) {
+                                                                    val intent = Intent(Intent.ACTION_VIEW).apply {
+                                                                        setDataAndType(uri, att.mimeType ?: "*/*")
+                                                                        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                                                    }
+                                                                    context.startActivity(Intent.createChooser(intent, "Open $displayName"))
+                                                                } else {
+                                                                    Toast.makeText(context, displayName, Toast.LENGTH_SHORT).show()
+                                                                }
+                                                            } catch (e: Exception) {
+                                                                Toast.makeText(context, "Cannot open: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                            }
+                                                        }
+                                                    }
+                                                    .padding(start = 6.dp, end = 2.dp, top = 5.dp, bottom = 5.dp),
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                if (att.isAudio) {
+                                                    Icon(
+                                                        imageVector = Icons.Rounded.Mic,
+                                                        contentDescription = null,
+                                                        tint = ClaudeTerracotta,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                } else {
+                                                    Icon(
+                                                        imageVector = Icons.AutoMirrored.Outlined.InsertDriveFile,
+                                                        contentDescription = null,
+                                                        tint = ClaudeTerracotta,
+                                                        modifier = Modifier.size(18.dp)
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.width(6.dp))
+                                                Column(modifier = Modifier.widthIn(max = 130.dp)) {
+                                                    Text(
+                                                        text = displayName,
+                                                        fontSize = 12.sp,
+                                                        fontWeight = FontWeight.Medium,
+                                                        color = MaterialTheme.colorScheme.onSurface,
+                                                        maxLines = 1,
+                                                        overflow = TextOverflow.Ellipsis
+                                                    )
+                                                    if (copyProgress != null) {
+                                                        Text(
+                                                            text = "Copying ${(copyProgress * 100).toInt()}%",
+                                                            fontSize = 10.5.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                            maxLines = 1
+                                                        )
+                                                        LinearProgressIndicator(
+                                                            progress = { copyProgress },
+                                                            modifier = Modifier
+                                                                .width(110.dp)
+                                                                .padding(top = 2.dp)
+                                                                .height(3.dp)
+                                                                .clip(RoundedCornerShape(2.dp)),
+                                                            color = ClaudeTerracotta
+                                                        )
+                                                    } else if (att.reference && att.size > 0) {
+                                                        Text(
+                                                            text = com.example.gemini.data.files.FileKinds.formatSize(att.size),
+                                                            fontSize = 10.5.sp,
+                                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                                            maxLines = 1
+                                                        )
+                                                    }
+                                                }
+                                            }
+
+                                            Spacer(modifier = Modifier.width(2.dp))
+                                            IconButton(
+                                                onClick = { onRemoveAttachment(att.id) },
+                                                modifier = Modifier.size(24.dp).padding(end = 4.dp)
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.Close,
+                                                    contentDescription = "Remove",
+                                                    tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                                    modifier = Modifier.size(13.dp)
+                                                )
+                                            }
                                         }
                                     }
                                 }

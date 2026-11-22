@@ -43,6 +43,16 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 142,
+                versionName = "1.4.1",
+                date = "2026-11-22",
+                changes = listOf(
+                    "Improved: Sleek, compact 2x2 'Add to Chat' menu with crisp icons and concise action hints",
+                    "New: Clean rounded square image preview thumbnail directly inside prompt box with floating top-right close button",
+                    "Improved: Modernized model selection sheet with clean section headers, subtle quota pills, and compact thinking controls"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 141,
                 versionName = "1.4.0",
                 date = "2026-11-21",

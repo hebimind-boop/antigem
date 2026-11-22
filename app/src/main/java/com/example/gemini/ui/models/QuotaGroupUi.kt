@@ -63,7 +63,7 @@ fun quotaLeftColor(remaining: Float): Color = when {
     else -> QuotaRed
 }
 
-/** "5h ▬▬▬▭ 85% · 2h 4m": a limit's share left as a small meter. */
+/** "5h ▬▬▬▭ 85% · 2h 4m": a limit's share left as a sleek subtle pill. */
 @Composable
 fun QuotaMeter(window: QuotaWindowUi, modifier: Modifier = Modifier) {
     val pctText = quotaPercentText(window.remaining, window.oneDecimal)
@@ -73,26 +73,28 @@ fun QuotaMeter(window: QuotaWindowUi, modifier: Modifier = Modifier) {
     val muted = MaterialTheme.colorScheme.onSurface
     Surface(
         modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(50),
         color = muted.copy(alpha = 0.04f),
-        border = BorderStroke(1.dp, muted.copy(alpha = 0.07f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
     ) {
-        Row(Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(window.label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = muted.copy(alpha = 0.8f))
+        Row(Modifier.padding(horizontal = 9.dp, vertical = 3.5.dp), verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(5.dp).clip(CircleShape).background(color))
+            Spacer(Modifier.width(5.dp))
+            Text(window.label, fontSize = 11.sp, fontWeight = FontWeight.Bold, color = muted.copy(alpha = 0.85f))
             Spacer(Modifier.width(6.dp))
-            Box(Modifier.width(30.dp).height(5.dp).clip(RoundedCornerShape(3.dp)).background(muted.copy(alpha = 0.1f))) {
-                Box(Modifier.fillMaxWidth(fill).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(color))
+            Box(Modifier.width(26.dp).height(4.dp).clip(RoundedCornerShape(2.dp)).background(muted.copy(alpha = 0.12f))) {
+                Box(Modifier.fillMaxWidth(fill).fillMaxHeight().clip(RoundedCornerShape(2.dp)).background(color))
             }
             Spacer(Modifier.width(6.dp))
             Text(pctText, fontSize = 11.sp, fontWeight = FontWeight.SemiBold, color = color)
             if (time.isNotBlank()) {
-                Text(" · $time", fontSize = 11.sp, color = muted.copy(alpha = 0.5f), maxLines = 1)
+                Text(" · $time", fontSize = 10.5.sp, color = muted.copy(alpha = 0.5f), maxLines = 1)
             }
         }
     }
 }
 
-/** Section header of a quota group: accent dot, name, model count, then its limits. */
+/** Section header of a quota group: accent dot, clean title, model count, then its limits. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun QuotaGroupHeader(
@@ -102,16 +104,22 @@ fun QuotaGroupHeader(
     windows: List<QuotaWindowUi>,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier.fillMaxWidth().padding(top = 18.dp, bottom = 8.dp)) {
+    val cleanTitle = remember(title) {
+        when {
+            title.contains("gemini", ignoreCase = true) -> "Gemini"
+            title.contains("claude", ignoreCase = true) || title.contains("gpt", ignoreCase = true) -> "Claude & GPT"
+            else -> title.replace(Regex("(?i)\\s*models"), "").trim().ifBlank { title }
+        }
+    }
+    Column(modifier.fillMaxWidth().padding(top = 14.dp, bottom = 6.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Box(Modifier.size(8.dp).clip(CircleShape).background(accent))
+            Box(Modifier.size(7.dp).clip(CircleShape).background(accent))
             Spacer(Modifier.width(8.dp))
             Text(
-                title.uppercase(),
-                fontSize = 11.sp,
+                cleanTitle,
+                fontSize = 12.5.sp,
                 fontWeight = FontWeight.Bold,
-                letterSpacing = 1.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.85f),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier.weight(1f)
@@ -119,11 +127,11 @@ fun QuotaGroupHeader(
             Text(
                 if (count == 1) "1 model" else "$count models",
                 fontSize = 11.sp,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f)
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.45f)
             )
         }
         if (windows.isNotEmpty()) {
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(6.dp))
             FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 windows.forEach { QuotaMeter(it) }
             }
