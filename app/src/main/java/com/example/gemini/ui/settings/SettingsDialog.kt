@@ -885,9 +885,7 @@ private fun MainSettingsMenu(
                 if (openCode != null && openCodeOn) row(SettingsSection.OPENCODE, Icons.Outlined.Code, com.example.gemini.ui.components.OpenCodeAccent, openCodeState?.label,
                     if (openCodeState == com.example.gemini.data.agent.opencode.OpenCodeState.READY) QuotaGreen else c.warning) else null,
                 if (codex != null && codexOn) row(SettingsSection.CODEX, Icons.Outlined.Terminal, com.example.gemini.ui.components.CodexAccent, codexState?.label,
-                    if (codexState == com.example.gemini.data.agent.codex.CodexState.READY) QuotaGreen else c.warning) else null,
-                row(SettingsSection.JARVIS, Icons.Outlined.RecordVoiceOver, c.accentTeal, if (jarvisOn) "On" else "Off",
-                    if (jarvisOn) QuotaGreen else null)
+                    if (codexState == com.example.gemini.data.agent.codex.CodexState.READY) QuotaGreen else c.warning) else null
             ),
             listOf(
                 row(SettingsSection.WEBVIEW_EXTENSIONS, Icons.Outlined.Extension, c.accentAlt),
@@ -8532,131 +8530,6 @@ private fun AboutSubScreen(
         // What's new: this version's changes, opens the full timeline
         WhatsNewCard(cardBg = cardBg, cardBorder = cardBorder, onClick = onOpenChangelog)
 
-        // 2. Package & Environment Details
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(14.dp),
-            colors = CardDefaults.cardColors(containerColor = cardBg),
-            border = cardBorder
-        ) {
-            Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text(
-                    text = "Build & Package Information",
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = MaterialTheme.colorScheme.onSurface
-                )
-
-                val bridgeVersion by com.example.gemini.data.remote.BridgeInfo.version.collectAsState()
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "IDE Bridge (connected)",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    val bv = bridgeVersion
-                    val bridgeMatches = bv != null && com.example.gemini.data.remote.BridgeInfo.compareBridgeToApp(bv) == 0
-                    Text(
-                        text = when {
-                            bv == null -> "not connected"
-                            bridgeMatches -> "v$bv"
-                            else -> "v$bv (app is v${BuildConfig.VERSION_NAME})"
-                        },
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace,
-                        color = if (bv == null || bridgeMatches) MaterialTheme.colorScheme.onSurface else com.example.gemini.theme.AppColors.warning
-                    )
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Application ID",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = BuildConfig.APPLICATION_ID,
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Build Type",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = BuildConfig.BUILD_TYPE.uppercase(Locale.ROOT),
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Variant",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = if (BuildConfig.IS_SHARED_USER_ID) "Termux (Shared UID)" else "Termux (Standalone)",
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = if (BuildConfig.IS_SHARED_USER_ID) QuotaGreen else MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                HorizontalDivider(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.08f))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Native Architecture",
-                        fontSize = 12.5.sp,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = Build.SUPPORTED_ABIS.firstOrNull() ?: "arm64-v8a",
-                        fontSize = 12.5.sp,
-                        fontWeight = FontWeight.Medium,
-                        fontFamily = FontFamily.Monospace,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-            }
-        }
 
         // 3. Updates Card
         Card(

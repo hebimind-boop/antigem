@@ -349,16 +349,12 @@ private fun ManualSetupCard(desktop: Desktop, cardBg: Color, cardBorder: BorderS
     }
 }
 
-private const val BOOPIDE_RELEASES = "https://github.com/Santoshkurmi/boopide/releases/latest"
-private const val BOOPIDE_README_SHARED_UID = "https://github.com/Santoshkurmi/boopide#termux-compatibility"
-
 /**
  * Shown on the standalone com.termux build in place of a feature that needs a companion app sharing
  * LimitX's UID: what the Shared UID build is and how to switch to it.
  */
 @Composable
 internal fun SharedUidRequiredCard(feature: String, cardBg: Color, cardBorder: BorderStroke) {
-    val context = LocalContext.current
     Card(shape = RoundedCornerShape(14.dp), colors = CardDefaults.cardColors(containerColor = cardBg), border = BorderStroke(1.dp, Amber.copy(alpha = 0.5f))) {
         Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -375,21 +371,9 @@ internal fun SharedUidRequiredCard(feature: String, cardBg: Color, cardBorder: B
             listOf(
                 "Back up what you want to keep (Settings → Backups & Restore). Uninstalling deletes LimitX's data, including the terminal and its files.",
                 "Uninstall this LimitX. Android can't switch an installed app to a shared UID with an update.",
-                "Download and install the Shared UID build (LimitX-termux-shared-….apk) from LimitX's releases.",
-                "Read the README's Termux compatibility section for the details."
+                "Download and install the Shared UID build (LimitX-termux-shared-….apk) from the LimitX update channel.",
+                "Install the companion Termux:X11 Shared UID app."
             ).forEachIndexed { i, step -> Hint("${i + 1}. $step") }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = { openUrl(context, BOOPIDE_RELEASES) }) {
-                    Icon(Icons.Outlined.Download, null, Modifier.size(18.dp)); Spacer(Modifier.width(8.dp)); Text("Releases")
-                }
-                OutlinedButton(onClick = { openUrl(context, BOOPIDE_README_SHARED_UID) }) { Text("Read the README") }
-            }
         }
-    }
-}
-
-private fun openUrl(context: android.content.Context, url: String) {
-    runCatching {
-        context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
     }
 }

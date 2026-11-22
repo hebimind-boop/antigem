@@ -102,6 +102,17 @@ object ChatCompletionMonitor {
         if (JarvisPreferences.isJarvisChat(c.id)) return
         if (_vibrate.value) buzz()
         _events.tryEmit(c)
+
+        if (!com.example.gemini.data.notification.AppLifecycleTracker.isAppInForeground) {
+            val title = c.title.takeIf { it.isNotBlank() && it != "New Chat" } ?: "LimitX AI Response"
+            val snippet = c.summary?.takeIf { it.isNotBlank() } ?: "AI response completed."
+            com.example.gemini.data.notification.AppNotificationHelper.postAiReplyNotification(
+                context = app,
+                conversationId = c.id,
+                title = title,
+                snippet = snippet
+            )
+        }
     }
 
     @Suppress("DEPRECATION")

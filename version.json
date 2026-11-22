@@ -1,11 +1,12 @@
 {
-  "version_code": 142,
-  "version_name": "1.4.1",
+  "version_code": 143,
+  "version_name": "1.4.2",
   "min_supported_version_code": 1,
   "changelog": [
-    "LimitX Studio v1.4.1: Compact, modern 2x2 'Add to Chat' action menu with concise hints and crisp icons",
-    "Clean Image Preview: Rounded square thumbnail preview directly inside prompt composer with circular close button",
-    "Refined Model Picker: Sleek compact model selection sheet with clean section headers, subtle quota pills, and crisp thinking controls"
+    "Removed floating assistant overlay bubble and streamlined settings menu",
+    "Background AI Notifications: System alerts when AI replies finish while in other apps, with direct one-tap return to chat",
+    "Update Notifications: System alerts when new LimitX updates are available, with streamlined update dialog",
+    "UI & Privacy Polish: Removed exposed repository links and cleaned internal build package information from About screen"
   ],
   "is_critical": true
 }

@@ -44,39 +44,7 @@ class UpdateCheckWorker(context: Context, params: WorkerParameters) : CoroutineW
     }
 
     private fun showNotification(info: AppUpdateInfo): Boolean {
-        val context = applicationContext
-        val manager = NotificationManagerCompat.from(context)
-        if (!manager.areNotificationsEnabled()) return false
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(CHANNEL_ID, "App Updates", NotificationManager.IMPORTANCE_DEFAULT).apply {
-                description = "Notifies when a new BoopIDE version is available"
-            }
-            context.getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        }
-
-        // Opening the app runs the existing launch-time update check, which shows the update dialog.
-        val launchIntent = context.packageManager.getLaunchIntentForPackage(context.packageName)
-            ?.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        val pendingIntent = launchIntent?.let {
-            PendingIntent.getActivity(context, 0, it, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        }
-
-        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher)
-            .setContentTitle("Update available: v${info.versionName}")
-            .setContentText(info.changelog.firstOrNull() ?: "Tap to update LimitX")
-            .setStyle(NotificationCompat.BigTextStyle().bigText(info.changelog.joinToString("\n") { "• $it" }))
-            .setContentIntent(pendingIntent)
-            .setAutoCancel(true)
-            .build()
-
-        return try {
-            manager.notify(NOTIFICATION_ID, notification)
-            true
-        } catch (_: SecurityException) {
-            false
-        }
+        return com.example.gemini.data.notification.AppNotificationHelper.postUpdateNotification(applicationContext, info)
     }
 
     companion object {

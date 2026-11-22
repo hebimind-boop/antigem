@@ -57,7 +57,7 @@ object JarvisPreferences {
      * The voice side of Jarvis: the floating button, the microphone, the wake phrase and replies read out loud. Off =
      * "chat only": Jarvis works only in the Jarvis chats the user opens from the chat list, silently.
      */
-    val voiceAssistant = pref("voice_assistant", true)
+    val voiceAssistant = pref("voice_assistant", false)
     /** "CLAUDE", "AGY", "OPENCODE" or "CODEX": which agent runs the hidden Jarvis chat; blank until the user picks one. */
     val agent = pref("agent", "")
     /** Model of the Jarvis chat; blank = the agent's default. */
@@ -248,6 +248,8 @@ object JarvisPreferences {
         val p = context.applicationContext.getSharedPreferences("jarvis_prefs", Context.MODE_PRIVATE)
         sp = p
         all.forEach { it.load(p) }
+        enabled.set(false)
+        voiceAssistant.set(false)
         _chatIds.value = p.getStringSet("chat_ids", emptySet())?.toSet().orEmpty()
     }
 

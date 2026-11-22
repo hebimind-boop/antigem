@@ -109,8 +109,8 @@ private fun defaultLabel(p: Phase, quiet: Boolean) = when (p) {
  */
 @Composable
 fun JarvisOverlay() {
-    val enabled by JarvisPreferences.enabled.state.collectAsState()
-    if (!enabled || !JarvisController.isAttached) return
+    // Disabled in LimitX: no floating bubble overlay
+    return
 
     val phase by JarvisController.phase.collectAsState()
     val heard by JarvisController.heard.collectAsState()

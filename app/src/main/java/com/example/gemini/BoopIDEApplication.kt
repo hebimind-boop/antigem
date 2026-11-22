@@ -37,6 +37,8 @@ class BoopIDEApplication : Application(), coil.ImageLoaderFactory {
 
     override fun onCreate() {
         super.onCreate()
+        com.example.gemini.data.notification.AppLifecycleTracker.init(this)
+        com.example.gemini.data.notification.AppNotificationHelper.setupNotificationChannels(this)
         // loads the saved server addresses, Remote mode and the SSH key into memory before anything connects
         com.example.gemini.data.preferences.AuthPreferences(this)
         // the chosen light / dark themes and the custom ones, before the first screen draws

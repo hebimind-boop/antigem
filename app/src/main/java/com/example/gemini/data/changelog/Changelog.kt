@@ -43,6 +43,18 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 143,
+                versionName = "1.4.2",
+                date = "2026-11-23",
+                changes = listOf(
+                    "Removed: Floating assistant overlay bubble and streamlined settings menu",
+                    "New: System notifications when AI replies complete while outside the app, with direct one-tap return to chat",
+                    "New: Automated system notifications when new LimitX updates are detected",
+                    "Improved: Streamlined update dialog without external repository buttons",
+                    "Improved: Hidden internal build package information from About screen"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 142,
                 versionName = "1.4.1",
                 date = "2026-11-22",

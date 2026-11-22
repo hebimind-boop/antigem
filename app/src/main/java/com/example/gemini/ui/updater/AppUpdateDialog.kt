@@ -360,48 +360,21 @@ fun AppUpdateDialog(
                     else -> {}
                 }
 
-                // Action Buttons Row with no-overflow arrangement
+                // Action Buttons Row with clean end alignment
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Visit GitHub Repository
-                    TextButton(
-                        onClick = {
-                            val intent = android.content.Intent(
-                                android.content.Intent.ACTION_VIEW,
-                                android.net.Uri.parse("https://github.com/hebimind-boop/antigem")
-                            ).apply {
-                                addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
-                            }
-                            context.startActivity(intent)
-                        },
-                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
-                        colors = ButtonDefaults.textButtonColors(contentColor = primaryColor)
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Rounded.OpenInNew,
-                            contentDescription = "GitHub",
-                            modifier = Modifier.size(14.dp)
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text("GitHub", fontSize = 12.5.sp, fontWeight = FontWeight.Medium)
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        if (!updateInfo.isCritical && downloadState !is DownloadState.Downloading) {
-                            TextButton(
-                                onClick = onDismiss,
-                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                                colors = ButtonDefaults.textButtonColors(contentColor = onSurfaceVariantColor)
-                            ) {
-                                Text("Later", fontSize = 13.sp)
-                            }
+                    if (!updateInfo.isCritical && downloadState !is DownloadState.Downloading) {
+                        TextButton(
+                            onClick = onDismiss,
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
+                            colors = ButtonDefaults.textButtonColors(contentColor = onSurfaceVariantColor)
+                        ) {
+                            Text("Later", fontSize = 13.sp)
                         }
+                    }
 
                             val btnContentColor = contrastContentColor(primaryColor)
                             Button(

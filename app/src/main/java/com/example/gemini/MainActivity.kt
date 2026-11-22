@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
         com.example.gemini.data.agent.ChatCompletionMonitor.start(application, chatViewModel)
         handleIncomingFileIntent(intent)
         handleJarvisIntent(intent)
+        handleNotificationIntent(intent)
 
         setContent {
             val initialThemeMode = remember { chatViewModel.authPreferences.getThemeModeSync() }
@@ -171,6 +172,9 @@ class MainActivity : ComponentActivity() {
             LaunchedEffect(Unit) {
                 updateManager.checkForUpdates().onSuccess { info ->
                     pendingUpdateInfo = info
+                    if (info != null && !com.example.gemini.data.notification.AppLifecycleTracker.isAppInForeground) {
+                        com.example.gemini.data.notification.AppNotificationHelper.postUpdateNotification(this@MainActivity, info)
+                    }
                 }
             }
 
@@ -639,8 +643,6 @@ class MainActivity : ComponentActivity() {
                                 // Floating Video Player Overlay for active background/in-app playback controls
                                 com.example.gemini.ui.components.FloatingVideoPlayerOverlay()
 
-                                // Jarvis: voice orb (only when Jarvis is turned on in Settings)
-                                com.example.gemini.ui.jarvis.JarvisOverlay()
 
                                 // Real-time floating live diagnostics overlay (JVM Threads, OkHttp queues, connections, lag)
                                 if (isFloatingDiagnosticsEnabled) {
@@ -694,6 +696,17 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         handleIncomingFileIntent(intent)
         handleJarvisIntent(intent)
+        handleNotificationIntent(intent)
+    }
+
+    private fun handleNotificationIntent(intent: Intent?) {
+        if (intent == null) return
+        val chatId = intent.getStringExtra(com.example.gemini.data.notification.AppNotificationHelper.EXTRA_CHAT_ID)
+        if (!chatId.isNullOrBlank()) {
+            chatViewModel.selectConversation(chatId)
+            chatViewModel.requestViewMode("CHAT")
+            intent.removeExtra(com.example.gemini.data.notification.AppNotificationHelper.EXTRA_CHAT_ID)
+        }
     }
 
     /**
