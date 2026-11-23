@@ -174,6 +174,7 @@ fun ChatScreen(
     }
 
     val conversations by viewModel.conversations.collectAsState()
+    val pinnedConversationIds by viewModel.pinnedConversationIds.collectAsState()
     val jarvisConversations by viewModel.jarvisConversations.collectAsState()
     val jarvisEnabled by com.example.gemini.data.jarvis.JarvisPreferences.enabled.state.collectAsState()
     val currentConv by viewModel.currentConversation.collectAsState()
@@ -1431,21 +1432,34 @@ fun ChatScreen(
                     showSettingsDialog = true
                     scope.launch { drawerState.close() }
                 },
-                // the sidebar stays open: the picker floats over it so the new look shows on the sidebar and the chat
-                onOpenThemes = { showThemePanel = !showThemePanel },
                 pcButton = if (pcConnectEnabled) ({ com.example.gemini.ui.pc.PcDrawerButton(onClick = { showPcSheet = true }) }) else null,
-                agyEnabled =com.example.gemini.domain.model.AgentKind.AGY in enabledAgents,
-                accountsButton = {
-                    com.example.gemini.ui.agents.AccountsButton(
-                        agy = agyEntry,
-                        claude = claudeEntry,
-                        agyAuth = agyAuthInfo,
-                        claudeStatus = claudeStatus,
-                        onClick = { showAccountsDialog = true },
-                        openCode = openCodeEntry,
-                        codex = codexEntry,
-                        codexEmail = codexAccount?.email
-                    )
+                agyEnabled = com.example.gemini.domain.model.AgentKind.AGY in enabledAgents,
+                pinnedConversationIds = pinnedConversationIds,
+                onToggleConversationPinned = { id -> viewModel.toggleConversationPinned(id) },
+                onNavigateToChat = { scope.launch { drawerState.close() } },
+                onNavigateToIde = {
+                    scope.launch { drawerState.close() }
+                    onNavigateToIde()
+                },
+                onNavigateToTerminal = {
+                    scope.launch { drawerState.close() }
+                    onNavigateToTerminal()
+                },
+                onNavigateToBrowser = {
+                    scope.launch { drawerState.close() }
+                    onNavigateToBrowser()
+                },
+                onNavigateToNotes = onNavigateToNotes?.let { nav ->
+                    {
+                        scope.launch { drawerState.close() }
+                        nav()
+                    }
+                },
+                onNavigateToFiles = onNavigateToFiles?.let { nav ->
+                    {
+                        scope.launch { drawerState.close() }
+                        nav()
+                    }
                 },
                 claudeActions = remember(viewModel) {
                     com.example.gemini.ui.drawer.ClaudeDrawerActions(
@@ -1851,10 +1865,10 @@ fun ChatScreen(
                                     onRestartServer = { com.example.gemini.data.local.LocalServerManager.restartServer(context) }
                                 )
                             }
-                            // shortcut icons chosen in Settings > Appearance > Chat Header Icons (default: just New chat)
+                            // shortcut icons chosen in Settings > Appearance > Chat Header Icons
                             val headerShortcuts = chatHeaderItems.filter { id ->
                                 when (id) {
-                                    "newchat", "ide", "terminal", "browser" -> true
+                                    "ide", "terminal", "browser" -> true
                                     "notes" -> onNavigateToNotes != null
                                     "files" -> onNavigateToFiles != null
                                     // the Run panel lives in the main window, not in the floating chat
@@ -1866,92 +1880,78 @@ fun ChatScreen(
                             val anyRunGoing = runsGoing.any { it.status == com.example.gemini.data.run.RunStatus.RUNNING }
                             if (headerShortcuts.isNotEmpty()) Spacer(modifier = Modifier.width(4.dp))
                             headerShortcuts.forEach { id ->
-                                if (id == "newchat") {
-                                    Surface(
-                                        onClick = {
-                                            val currentId = currentConv?.id
-                                            if (!currentId.isNullOrBlank() && feedItems.isNotEmpty()) {
-                                                ConversationScrollCache.save(currentId, listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset, isAtBottom)
-                                            }
-                                            conversationBackStack.clear()
-                                            viewModel.startNewChat()
-                                        },
-                                        shape = RoundedCornerShape(10.dp),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary,
-                                        modifier = Modifier.size(34.dp)
-                                    ) {
-                                        Box(contentAlignment = Alignment.Center) {
-                                            Icon(
-                                                imageVector = Icons.Default.Add,
-                                                contentDescription = "New Session",
-                                                tint = MaterialTheme.colorScheme.onPrimary,
-                                                modifier = Modifier.size(19.dp)
-                                            )
-                                        }
-                                    }
-                                } else {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(34.dp)
-                                            .clip(CircleShape)
-                                            .clickable {
-                                                when (id) {
-                                                    "ide" -> onNavigateToIde()
-                                                    "browser" -> onNavigateToBrowser()
-                                                    "notes" -> onNavigateToNotes?.invoke()
-                                                    "files" -> onNavigateToFiles?.invoke()
-                                                    "run" -> com.example.gemini.data.run.RunPanel.show()
-                                                    "terminal" -> {
-                                                        // like the floating switcher: needs SSH, server mode or the local Linux tools
-                                                        val ready = useSshTerminal || AuthPreferences.currentRemoteMode ||
-                                                            (isLocalToolsInstalled && isLocalToolsEnabled)
-                                                        when {
-                                                            ready -> onNavigateToTerminal()
-                                                            isLocalToolsInstalled -> {
-                                                                viewModel.setLocalToolsEnabled(true)
-                                                                onNavigateToTerminal()
-                                                            }
-                                                            else -> showLocalToolsInstallDialog = true
+                                Box(
+                                    modifier = Modifier
+                                        .size(34.dp)
+                                        .clip(CircleShape)
+                                        .clickable {
+                                            when (id) {
+                                                "ide" -> onNavigateToIde()
+                                                "browser" -> onNavigateToBrowser()
+                                                "notes" -> onNavigateToNotes?.invoke()
+                                                "files" -> onNavigateToFiles?.invoke()
+                                                "run" -> com.example.gemini.data.run.RunPanel.show()
+                                                "terminal" -> {
+                                                    // like the floating switcher: needs SSH, server mode or the local Linux tools
+                                                    val ready = useSshTerminal || AuthPreferences.currentRemoteMode ||
+                                                        (isLocalToolsInstalled && isLocalToolsEnabled)
+                                                    when {
+                                                        ready -> onNavigateToTerminal()
+                                                        isLocalToolsInstalled -> {
+                                                            viewModel.setLocalToolsEnabled(true)
+                                                            onNavigateToTerminal()
                                                         }
+                                                        else -> showLocalToolsInstallDialog = true
                                                     }
                                                 }
-                                            },
-                                        contentAlignment = Alignment.Center
-                                    ) {
-                                        // a command running: a ring around the Run icon
-                                        if (id == "run" && anyRunGoing) {
-                                            CircularProgressIndicator(
-                                                modifier = Modifier.size(30.dp),
-                                                strokeWidth = 2.dp,
-                                                color = ClaudeTerracotta
-                                            )
-                                        }
-                                        Icon(
-                                            imageVector = when (id) {
-                                                "run" -> Icons.Outlined.PlayCircle
-                                                "ide" -> Icons.Outlined.Code
-                                                "terminal" -> Icons.Outlined.Terminal
-                                                "browser" -> Icons.Outlined.Language
-                                                "notes" -> Icons.Outlined.EditNote
-                                                "files" -> Icons.Outlined.FolderOpen
-                                                else -> Icons.Outlined.AddComment
-                                            },
-                                            contentDescription = when (id) {
-                                                "ide" -> "Open IDE"
-                                                "terminal" -> "Open Terminal"
-                                                "browser" -> "Open Browser"
-                                                "notes" -> "Open Notes"
-                                                "files" -> "Open Files"
-                                                "run" -> if (anyRunGoing) "Run (a command is running)" else "Open Run panel"
-                                                else -> "New chat"
-                                            },
-                                            tint = if (id == "run" && anyRunGoing) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
-                                            modifier = Modifier.size(19.dp)
+                                            }
+                                        },
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    // a command running: a ring around the Run icon
+                                    if (id == "run" && anyRunGoing) {
+                                        CircularProgressIndicator(
+                                            modifier = Modifier.size(30.dp),
+                                            strokeWidth = 2.dp,
+                                            color = ClaudeTerracotta
                                         )
                                     }
+                                    Icon(
+                                        imageVector = when (id) {
+                                            "run" -> Icons.Outlined.PlayCircle
+                                            "ide" -> Icons.Outlined.Code
+                                            "terminal" -> Icons.Outlined.Terminal
+                                            "browser" -> Icons.Outlined.Language
+                                            "notes" -> Icons.Outlined.EditNote
+                                            "files" -> Icons.Outlined.FolderOpen
+                                            else -> Icons.Outlined.AddComment
+                                        },
+                                        contentDescription = when (id) {
+                                            "ide" -> "Open IDE"
+                                            "terminal" -> "Open Terminal"
+                                            "browser" -> "Open Browser"
+                                            "notes" -> "Open Notes"
+                                            "files" -> "Open Files"
+                                            "run" -> if (anyRunGoing) "Run (a command is running)" else "Open Run panel"
+                                            else -> "Tool"
+                                        },
+                                        tint = if (id == "run" && anyRunGoing) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                                        modifier = Modifier.size(19.dp)
+                                    )
                                 }
                             }
+                            // Top-Right Profile / Account Button (moved from sidebar bottom)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            com.example.gemini.ui.agents.AccountsButton(
+                                agy = agyEntry,
+                                claude = claudeEntry,
+                                agyAuth = agyAuthInfo,
+                                claudeStatus = claudeStatus,
+                                onClick = { showAccountsDialog = true },
+                                openCode = openCodeEntry,
+                                codex = codexEntry,
+                                codexEmail = codexAccount?.email
+                            )
                         }
                     },
                     navigationIcon = {

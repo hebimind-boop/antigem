@@ -1177,6 +1177,15 @@ class ChatViewModel(application: Application) : AndroidViewModel(application) {
     val isFloatingSwitcherEnabled: StateFlow<Boolean> = authPrefs.isFloatingSwitcherEnabled
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), authPrefs.getFloatingSwitcherEnabledSync())
 
+    val pinnedConversationIds: StateFlow<Set<String>> = authPrefs.pinnedConversationIds
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptySet())
+
+    fun toggleConversationPinned(id: String) {
+        viewModelScope.launch {
+            authPrefs.toggleConversationPinned(id)
+        }
+    }
+
     val floatingSwitcherOrientation: StateFlow<String> = authPrefs.floatingSwitcherOrientation
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), authPrefs.getFloatingSwitcherOrientationSync())
 

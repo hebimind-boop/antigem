@@ -1,13 +1,13 @@
 {
-  "version_code": 144,
-  "version_name": "1.4.3",
+  "version_code": 145,
+  "version_name": "1.4.4",
   "min_supported_version_code": 1,
   "changelog": [
-    "Complete LimitX Visual UI Redesign: Signature LimitX Studio command center, refined developer top bar, and redesigned studio prompt bubbles",
-    "Streamlined Studio Input Dock: Removed cluttered audio/mic buttons; dedicated high-contrast action button (Send/Stop) with sleek dictation trigger",
-    "LimitX Studio Drawer: Prominent '+ New Workspace Session' studio action and refined IDE workspace tree navigation",
-    "Standalone Private Repository Support: Created setup guide and automation script for standalone private repo migration without breaking updates",
-    "Zero Public Repo Exposure: Completely purged all third-party personal repository URLs and fork references across the app"
+    "LimitX Studio Navigation: Removed floating quick-action button and integrated tool switcher line-by-line in the sidebar (Chat, Logs/Code, Terminal, Browser, Notes, Workspace)",
+    "Top-Right Profile Access: Moved user profile and account status chip to top-right of Chat top bar, replacing the '+' button for instant 1-tap access",
+    "Streamlined Sidebar: Moved Themes to Settings & Preferences, removing redundant theme and app grid icons from drawer footer",
+    "Completely Removed Mini Apps: Purged Mini App activities, background services, manifest definitions, and developer MCP bridges",
+    "Simplified Chat History Menu: Streamlined conversation 3-dot options to strictly Copy ID, Share, and Pin/Unpin with pinned chat prioritization"
   ],
   "is_critical": true
 }

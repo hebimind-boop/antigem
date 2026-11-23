@@ -51,6 +51,10 @@ import com.example.gemini.ui.components.ChatToastType
 import android.widget.Toast
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.outlined.Settings
+import androidx.compose.material.icons.outlined.PushPin
+import androidx.compose.material.icons.outlined.Terminal
+import androidx.compose.material.icons.outlined.Language
+import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Palette
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -133,6 +137,14 @@ fun ChatHistoryDrawer(
     /** Starts a Jarvis text chat (the command center) with that agent, or Jarvis' own agent for null. */
     onNewJarvisChat: ((com.example.gemini.domain.model.AgentKind?) -> Unit)? = null,
     enabledAgents: Set<com.example.gemini.domain.model.AgentKind> = emptySet(),
+    onNavigateToChat: (() -> Unit)? = null,
+    onNavigateToIde: (() -> Unit)? = null,
+    onNavigateToTerminal: (() -> Unit)? = null,
+    onNavigateToBrowser: (() -> Unit)? = null,
+    onNavigateToNotes: (() -> Unit)? = null,
+    onNavigateToFiles: (() -> Unit)? = null,
+    pinnedConversationIds: Set<String> = emptySet(),
+    onToggleConversationPinned: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var searchQuery by remember { mutableStateOf("") }
@@ -205,11 +217,14 @@ fun ChatHistoryDrawer(
     }
 
     // Top-level conversations (conversations without a valid parent in the list)
-    val topLevelChats = remember(filtered, allFilteredIds) {
+    val topLevelChats = remember(filtered, allFilteredIds, pinnedConversationIds) {
         filtered.filter { conv ->
             val pId = conv.parentConversationId
             pId == null || pId == conv.id || !allFilteredIds.contains(pId)
-        }
+        }.sortedWith(
+            compareByDescending<Conversation> { it.id in pinnedConversationIds }
+                .thenByDescending { it.lastModified }
+        )
     }
 
     var expandedParentIds by remember { mutableStateOf(setOf<String>()) }
@@ -739,6 +754,48 @@ fun ChatHistoryDrawer(
                 }
             }
 
+            // ---------------- LimitX Studio Tools Navigation (Line-by-Line) ----------------
+            Spacer(modifier = Modifier.height(10.dp))
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(vertical = 4.dp, horizontal = 4.dp)) {
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.ChatBubbleOutline,
+                        label = "Chat",
+                        onClick = { onNavigateToChat?.invoke() }
+                    )
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.Code,
+                        label = "Logs / Code",
+                        onClick = { onNavigateToIde?.invoke() }
+                    )
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.Terminal,
+                        label = "Terminal",
+                        onClick = { onNavigateToTerminal?.invoke() }
+                    )
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.Language,
+                        label = "Browser",
+                        onClick = { onNavigateToBrowser?.invoke() }
+                    )
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.EditNote,
+                        label = "Notes",
+                        onClick = { onNavigateToNotes?.invoke() }
+                    )
+                    StudioToolNavItem(
+                        icon = Icons.Outlined.FolderOpen,
+                        label = "Workspace",
+                        onClick = { onNavigateToFiles?.invoke() }
+                    )
+                }
+            }
+
             // ---------------- search field: only after tapping the header's search icon ----------------
             val searchFocus = remember { androidx.compose.ui.focus.FocusRequester() }
             LaunchedEffect(isSearchActive) {
@@ -1073,6 +1130,8 @@ fun ChatHistoryDrawer(
 
                                     ChatHistoryItemRow(
                                         conv = conv,
+                                        isPinned = conv.id in pinnedConversationIds,
+                                        onTogglePin = { onToggleConversationPinned(conv.id) },
                                         isJarvis = conv.id in jarvisIds,
                                         isSelected = isSelected,
                                         activeInst = activeInst,
@@ -1183,6 +1242,8 @@ fun ChatHistoryDrawer(
 
                                         ChatHistoryItemRow(
                                             conv = conv,
+                                            isPinned = conv.id in pinnedConversationIds,
+                                            onTogglePin = { onToggleConversationPinned(conv.id) },
                                             isJarvis = conv.id in jarvisIds,
                                             isSelected = isSelected,
                                             activeInst = activeInst,
@@ -1259,231 +1320,39 @@ fun ChatHistoryDrawer(
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
             )
 
-            // Bottom Bar: Settings (Left) & Profile/Login (Right)
+            // Bottom Bar: Settings & Preferences (clean and minimal)
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                    .padding(horizontal = 8.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                // Settings on left: icon only, same style as the Themes button next to it
                 Surface(
                     onClick = onOpenSettings,
                     shape = RoundedCornerShape(8.dp),
                     color = Color.Transparent,
-                    modifier = Modifier.padding(end = 4.dp)
+                    modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Settings,
-                        contentDescription = "Settings",
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.padding(8.dp).size(20.dp)
-                    )
-                }
-
-                // Themes: a floating picker over the sidebar and chat, to try themes and see them live
-                if (onOpenThemes != null) {
-                    Surface(
-                        onClick = onOpenThemes,
-                        shape = RoundedCornerShape(8.dp),
-                        color = Color.Transparent,
-                        modifier = Modifier.padding(end = 4.dp)
+                    Row(
+                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.Palette,
-                            contentDescription = "Themes",
+                            imageVector = Icons.Outlined.Settings,
+                            contentDescription = "Settings",
                             tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                            modifier = Modifier.padding(8.dp).size(20.dp)
+                            modifier = Modifier.size(18.dp)
+                        )
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(
+                            text = "Settings & Preferences",
+                            fontSize = 12.5.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f)
                         )
                     }
                 }
-
-                // Mini Apps: the grid of on-device apps in ~/mini-apps
-                val miniAppsContext = androidx.compose.ui.platform.LocalContext.current
-                Surface(
-                    onClick = { miniAppsContext.startActivity(android.content.Intent(miniAppsContext, com.example.gemini.ui.miniapps.MiniAppsActivity::class.java)) },
-                    shape = RoundedCornerShape(8.dp),
-                    color = Color.Transparent,
-                    modifier = Modifier.padding(end = 4.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Apps,
-                        contentDescription = "Mini Apps",
-                        tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
-                        modifier = Modifier.padding(8.dp).size(20.dp)
-                    )
-                }
-
-                // Connect to PC: which PC is in use, switch, add one
                 pcButton?.invoke()
-
-                // keeps the profile / login button on the right
-                Spacer(modifier = Modifier.weight(1f))
-
-                // Profile / Login on right
-                if (accountsButton != null) {
-                    accountsButton()
-                } else if (isAuthBusy) {
-                    Surface(
-                        onClick = { showSigningInProgressDialog = true },
-                        shape = RoundedCornerShape(14.dp),
-                        color = ClaudeTerracotta.copy(alpha = 0.12f),
-                        modifier = Modifier.height(30.dp)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(6.dp)
-                                    .background(ClaudeTerracotta, CircleShape)
-                            )
-                            Spacer(modifier = Modifier.width(5.dp))
-                            Text(
-                                text = "Signing In...",
-                                fontSize = 11.5.sp,
-                                fontWeight = FontWeight.Medium,
-                                color = ClaudeTerracotta
-                            )
-                        }
-                    }
-                } else {
-                    when (systemConnectionState.status) {
-                        com.example.gemini.data.remote.SystemStatus.READY -> {
-                            // Profile avatar button with real display name
-                            Surface(
-                                onClick = { showProfileDialog = true },
-                                shape = RoundedCornerShape(20.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                border = androidx.compose.foundation.BorderStroke(
-                                    1.dp,
-                                    ClaudeTerracotta.copy(alpha = 0.4f)
-                                )
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    SubcomposeAsyncImage(
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data(parseProfileAvatarModel(authInfo.profilePictureUrl))
-                                            .crossfade(true)
-                                            .build(),
-                                        contentDescription = "Profile Picture",
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .clip(CircleShape),
-                                        contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                                        loading = {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .background(ClaudeTerracotta),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                val initial =
-                                                    authInfo.displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "U"
-                                                Text(
-                                                    text = initial,
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = Color.White
-                                                )
-                                            }
-                                        },
-                                        error = {
-                                            Box(
-                                                modifier = Modifier
-                                                    .fillMaxSize()
-                                                    .background(ClaudeTerracotta),
-                                                contentAlignment = Alignment.Center
-                                            ) {
-                                                val initial =
-                                                    authInfo.displayName.firstOrNull()?.uppercaseChar()?.toString() ?: "U"
-                                                Text(
-                                                    text = initial,
-                                                    fontSize = 11.sp,
-                                                    fontWeight = FontWeight.Bold,
-                                                    color = Color.White
-                                                )
-                                            }
-                                        }
-                                    )
-                                    val nameToShow = authInfo.displayName
-                                    if (nameToShow.isNotBlank()) {
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = nameToShow,
-                                            fontSize = 12.sp,
-                                            fontWeight = FontWeight.SemiBold,
-                                            maxLines = 1,
-                                            overflow = TextOverflow.Ellipsis,
-                                            modifier = Modifier.widthIn(max = 110.dp),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                    }
-                                }
-                            }
-                        }
-
-                        com.example.gemini.data.remote.SystemStatus.UNAUTHENTICATED -> {
-                            // Not logged in (UNAUTHENTICATED) -> Sign In button
-                            FilledTonalButton(
-                                onClick = onLogin,
-                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
-                                shape = RoundedCornerShape(14.dp),
-                                colors = ButtonDefaults.filledTonalButtonColors(
-                                    containerColor = ClaudeTerracotta.copy(alpha = 0.15f),
-                                    contentColor = ClaudeTerracotta
-                                ),
-                                modifier = Modifier.height(32.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.AutoMirrored.Outlined.Login,
-                                    contentDescription = "Sign In",
-                                    modifier = Modifier.size(15.dp)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = "Sign In",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-                            }
-                        }
-
-                        else -> {
-                            // All intermediate or offline states (OFFLINE, STARTING, ACQUIRING_CSRF, CHECKING_AUTH, ERROR)
-                            val statusObj = systemConnectionState.status
-                            Surface(
-                                onClick = if (statusObj == com.example.gemini.data.remote.SystemStatus.OFFLINE || statusObj == com.example.gemini.data.remote.SystemStatus.ERROR) onRetry else onCheckAuth,
-                                shape = RoundedCornerShape(14.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
-                                modifier = Modifier.height(30.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .size(6.dp)
-                                            .background(statusObj.dotColor, CircleShape)
-                                    )
-                                    Spacer(modifier = Modifier.width(5.dp))
-                                    Text(
-                                        text = statusObj.label,
-                                        fontSize = 11.5.sp,
-                                        fontWeight = FontWeight.Normal,
-                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
             if (showProfileDialog) {
@@ -1583,7 +1452,9 @@ private fun ChatHistoryItemRow(
     onForkConversation: (String) -> Unit,
     onRequestDelete: (Conversation) -> Unit,
     onTerminateInstance: (com.example.gemini.data.remote.AgyActiveInstance, String) -> Unit,
-    claudeActions: ClaudeDrawerActions? = null
+    claudeActions: ClaudeDrawerActions? = null,
+    isPinned: Boolean = false,
+    onTogglePin: () -> Unit = {}
 ) {
     val isSubagent = depth > 0
     val startPadding = if (isSubagent) (12 + (depth * 14)).dp else 0.dp
@@ -1681,15 +1552,28 @@ private fun ChatHistoryItemRow(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = displayName,
-                fontSize = if (isSubagent) 12.8.sp else 13.5.sp,
-                fontWeight = if (isSelected) FontWeight.SemiBold else if (isSubagent) FontWeight.Medium else FontWeight.Normal,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = if (isSubagent && isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.weight(1f, fill = false)
-            )
+            Row(
+                modifier = Modifier.weight(1f, fill = false),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isPinned) {
+                    Icon(
+                        imageVector = Icons.Outlined.PushPin,
+                        contentDescription = "Pinned",
+                        tint = ClaudeTerracotta,
+                        modifier = Modifier.size(13.dp)
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                }
+                Text(
+                    text = displayName,
+                    fontSize = if (isSubagent) 12.8.sp else 13.5.sp,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else if (isSubagent) FontWeight.Medium else FontWeight.Normal,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = if (isSubagent && isSelected) ClaudeTerracotta else MaterialTheme.colorScheme.onSurface
+                )
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -1832,7 +1716,7 @@ private fun ChatHistoryItemRow(
                 shape = RoundedCornerShape(12.dp),
                 containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
                 border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f)),
-                modifier = Modifier.widthIn(min = 210.dp)
+                modifier = Modifier.widthIn(min = 200.dp)
             ) {
                 DropdownMenuItem(
                     text = { Text("Copy Conversation ID", fontSize = 13.5.sp) },
@@ -1851,111 +1735,6 @@ private fun ChatHistoryItemRow(
                     }
                 )
                 DropdownMenuItem(
-                    text = { Text("Fork Conversation", fontSize = 13.5.sp) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.CallSplit,
-                            contentDescription = null,
-                            tint = ClaudeTerracotta,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        onForkConversation(conv.id)
-                    }
-                )
-                if (claudeActions != null) {  // every agent: AGY renames go to the daemon annotations
-                    DropdownMenuItem(
-                        text = { Text("Rename", fontSize = 13.5.sp) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Edit,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            showRename = true
-                        }
-                    )
-                }
-                if (isClaudeConv && claudeActions != null) {
-                    DropdownMenuItem(
-                        text = { Text("Restart chat", fontSize = 13.5.sp) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Outlined.Refresh,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            claudeActions.restart(conv.id) { msg ->
-                                scope.launch { android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_LONG).show() }
-                            }
-                        }
-                    )
-                }
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-                DropdownMenuItem(
-                    text = { Text("Export Markdown (.md)", fontSize = 13.5.sp) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Description,
-                            contentDescription = null,
-                            tint = GeminiBlue,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        com.example.gemini.ui.components.AppToastHelper.showToast("Exporting Markdown...", com.example.gemini.ui.components.ChatToastType.INFO)
-                        scope.launch(Dispatchers.IO) {
-                            ConversationExportHelper.exportConversation(
-                                context = context,
-                                conversationId = conv.id,
-                                title = conv.title,
-                                activeMessages = if (isAgentConv) claudeActions?.loadMessages?.invoke(conv.id) else null,
-                                format = ConversationExportHelper.ExportFormat.MARKDOWN,
-                                snackbarHostState = snackbarHostState
-                            )
-                        }
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("Export Standalone HTML", fontSize = 13.5.sp) },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Outlined.Code,
-                            contentDescription = null,
-                            tint = com.example.gemini.theme.AppColors.success,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    },
-                    onClick = {
-                        menuExpanded = false
-                        com.example.gemini.ui.components.AppToastHelper.showToast("Exporting HTML...", com.example.gemini.ui.components.ChatToastType.INFO)
-                        scope.launch(Dispatchers.IO) {
-                            ConversationExportHelper.exportConversation(
-                                context = context,
-                                conversationId = conv.id,
-                                title = conv.title,
-                                activeMessages = if (isAgentConv) claudeActions?.loadMessages?.invoke(conv.id) else null,
-                                format = ConversationExportHelper.ExportFormat.HTML,
-                                snackbarHostState = snackbarHostState
-                            )
-                        }
-                    }
-                )
-                DropdownMenuItem(
                     text = { Text("Share", fontSize = 13.5.sp) },
                     leadingIcon = {
                         Icon(
@@ -1967,7 +1746,7 @@ private fun ChatHistoryItemRow(
                     },
                     onClick = {
                         menuExpanded = false
-                        com.example.gemini.ui.components.AppToastHelper.showToast("Preparing .boopide share...", com.example.gemini.ui.components.ChatToastType.INFO)
+                        AppToastHelper.showToast("Preparing .boopide share...", ChatToastType.INFO)
                         scope.launch(Dispatchers.IO) {
                             ConversationShareHelper.shareConversation(
                                 context = context,
@@ -1979,47 +1758,20 @@ private fun ChatHistoryItemRow(
                         }
                     }
                 )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f),
-                    modifier = Modifier.padding(vertical = 4.dp)
-                )
-                if (claudeActions != null) {
-                    DropdownMenuItem(
-                        text = { Text(if (conv.archived) "Unarchive" else "Archive", fontSize = 13.5.sp) },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = if (conv.archived) Icons.Outlined.Unarchive else Icons.Outlined.Archive,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.size(18.dp)
-                            )
-                        },
-                        onClick = {
-                            menuExpanded = false
-                            claudeActions.archive(conv.id, !conv.archived)
-                            AppToastHelper.showToast(if (conv.archived) "Chat unarchived" else "Chat archived", ChatToastType.SUCCESS)
-                        }
-                    )
-                }
                 DropdownMenuItem(
-                    text = {
-                        Text(
-                            "Delete Conversation",
-                            fontSize = 13.5.sp,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    },
+                    text = { Text(if (isPinned) "Unpin" else "Pin", fontSize = 13.5.sp) },
                     leadingIcon = {
                         Icon(
-                            imageVector = Icons.Default.Delete,
+                            imageVector = Icons.Outlined.PushPin,
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.error,
+                            tint = if (isPinned) ClaudeTerracotta else MaterialTheme.colorScheme.onSurfaceVariant,
                             modifier = Modifier.size(18.dp)
                         )
                     },
                     onClick = {
                         menuExpanded = false
-                        onRequestDelete(conv)
+                        onTogglePin()
+                        AppToastHelper.showToast(if (isPinned) "Conversation unpinned" else "Conversation pinned", ChatToastType.SUCCESS)
                     }
                 )
             }
@@ -2534,3 +2286,53 @@ private fun JarvisNewChatRow(
         Icon(Icons.Filled.Add, contentDescription = "New Jarvis chat", tint = accent)
     }
 }
+
+@Composable
+private fun StudioToolNavItem(
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    label: String,
+    badge: String? = null,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        shape = RoundedCornerShape(8.dp),
+        color = Color.Transparent,
+        modifier = Modifier.fillMaxWidth().height(36.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.8f),
+                modifier = Modifier.size(17.dp)
+            )
+            Spacer(modifier = Modifier.width(10.dp))
+            Text(
+                text = label,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.9f),
+                modifier = Modifier.weight(1f)
+            )
+            if (badge != null) {
+                Surface(
+                    shape = RoundedCornerShape(4.dp),
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
+                ) {
+                    Text(
+                        text = badge,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp)
+                    )
+                }
+            }
+        }
+    }
+}
+

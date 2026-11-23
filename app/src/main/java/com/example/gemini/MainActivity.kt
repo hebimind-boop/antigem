@@ -540,54 +540,7 @@ class MainActivity : ComponentActivity() {
                                         switcherLastSeenMode = currentViewMode
                                     }
                                 }
-                                com.example.gemini.ui.components.FloatingSwitcherWidget(
-                                    currentViewMode = currentViewMode,
-                                    orientation = floatingSwitcherOrientation,
-                                    items = floatingSwitcherItems,
-                                    autoCollapseTimeoutSec = floatingSwitcherAutoCollapseSec,
-                                    savedPosXRatio = floatingSwitcherPosX,
-                                    savedPosYRatio = floatingSwitcherPosY,
-                                    onNavigateToChat = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.CHAT
-                                    },
-                                    onNavigateToIde = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.IDE
-                                    },
-                                    onNavigateToBrowser = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.BROWSER
-                                    },
-                                    onNavigateToTerminal = openTerminalFromSwitcher,
-                                    onNavigateToNotes = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.NOTES
-                                    },
-                                    onNavigateToFiles = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.FILES
-                                    },
-                                    onNavigateToRun = {
-                                        previousViewMode = currentViewMode
-                                        currentViewMode = AppViewMode.RUN
-                                    },
-                                    onNavigateBack = {
-                                        val target = switcherBackTarget
-                                        when {
-                                            target == null || target == currentViewMode -> Unit
-                                            target == AppViewMode.TERMINAL -> openTerminalFromSwitcher()
-                                            else -> {
-                                                previousViewMode = currentViewMode
-                                                currentViewMode = target
-                                            }
-                                        }
-                                    },
-                                    onPositionSaved = { x, y ->
-                                        chatViewModel.saveFloatingSwitcherPosition(x, y)
-                                    },
-                                    onOrientationChange = { chatViewModel.setFloatingSwitcherOrientation(it) }
-                                )
+                                 // Floating switcher removed: tool navigation is placed line-by-line inside the Navigation Drawer
                                 if (showSwitcherToolsInstall) {
                                     com.example.gemini.ui.settings.LocalToolsInstallDialog(
                                         authPreferences = chatViewModel.authPreferences,
@@ -759,12 +712,6 @@ class MainActivity : ComponentActivity() {
             val lower = item.name.lowercase()
             if (lower.endsWith(".boopide")) {
                 chatViewModel.loadSharedConversationFromUri(this, item.uri!!)
-                return
-            }
-            // a mini app package opened with / shared to "BoopIDE" instead of "Mini app installer": install it
-            if (lower.endsWith(".agapp") || intent.type == com.example.gemini.data.miniapps.MiniAppSigning.MIME) {
-                startActivity(Intent(this, com.example.gemini.ui.miniapps.MiniAppInstallActivity::class.java).setAction(Intent.ACTION_VIEW)
-                    .setDataAndType(item.uri, com.example.gemini.data.miniapps.MiniAppSigning.MIME).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
                 return
             }
             // exported trajectories can arrive without the .boopide name: peek at the header

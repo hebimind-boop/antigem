@@ -98,6 +98,7 @@ class AuthPreferences(private val context: Context) {
         val HAS_SEEN_TERMINAL_LAUNCHER_ONBOARDING = androidx.datastore.preferences.core.booleanPreferencesKey("has_seen_terminal_launcher_onboarding")
         val TERMINAL_LAUNCHER_STYLE = stringPreferencesKey("terminal_launcher_style") // "BOOPTERM" or "TERMUX"
         val IS_TERMINAL_LAUNCHER_ENABLED = androidx.datastore.preferences.core.booleanPreferencesKey("is_terminal_launcher_enabled")
+        val PINNED_CONVERSATION_IDS = androidx.datastore.preferences.core.stringSetPreferencesKey("pinned_conversation_ids")
 
         const val DEFAULT_BRIDGE_BINARY_PATH = "~/../usr/bin/agy_ide_bridge"
         const val DEFAULT_UBUNTU_BRIDGE_BINARY_PATH = "/antigem/bin/agy_ide_bridge"
@@ -1178,6 +1179,21 @@ class AuthPreferences(private val context: Context) {
 
     suspend fun setTerminalLauncherEnabled(enabled: Boolean) {
         context.dataStore.edit { it[IS_TERMINAL_LAUNCHER_ENABLED] = enabled }
+    }
+
+    val pinnedConversationIds: Flow<Set<String>> = context.dataStore.data.map { prefs ->
+        prefs[PINNED_CONVERSATION_IDS] ?: emptySet()
+    }
+
+    suspend fun toggleConversationPinned(id: String) {
+        context.dataStore.edit { prefs ->
+            val current = prefs[PINNED_CONVERSATION_IDS] ?: emptySet()
+            if (id in current) {
+                prefs[PINNED_CONVERSATION_IDS] = current - id
+            } else {
+                prefs[PINNED_CONVERSATION_IDS] = current + id
+            }
+        }
     }
 
     suspend fun clearAuth() {

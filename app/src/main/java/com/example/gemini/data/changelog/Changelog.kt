@@ -43,6 +43,18 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 145,
+                versionName = "1.4.4",
+                date = "2026-11-23",
+                changes = listOf(
+                    "New: Integrated LimitX Studio navigation line-by-line inside sidebar drawer",
+                    "Improved: Moved Profile & account status button to top-right of chat bar, replacing '+' button",
+                    "Improved: Moved Themes cleanly to Settings & Preferences and streamlined drawer footer",
+                    "Removed: Completely removed Mini Apps feature, background workers, and MCP tools",
+                    "Improved: Simplified conversation 3-dot menu strictly to Copy ID, Share, and Pin/Unpin"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 144,
                 versionName = "1.4.3",
                 date = "2026-11-23",
