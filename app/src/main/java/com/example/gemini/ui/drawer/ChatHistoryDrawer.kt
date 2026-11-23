@@ -223,7 +223,7 @@ fun ChatHistoryDrawer(
             pId == null || pId == conv.id || !allFilteredIds.contains(pId)
         }.sortedWith(
             compareByDescending<Conversation> { it.id in pinnedConversationIds }
-                .thenByDescending { it.lastModified }
+                .thenByDescending { it.updatedAt }
         )
     }
 
