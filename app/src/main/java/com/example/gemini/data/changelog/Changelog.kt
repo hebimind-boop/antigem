@@ -43,6 +43,18 @@ object Changelog {
     val versions: List<ChangelogVersion> by lazy {
         val cleanEntries = listOf(
             ChangelogEntry(
+                versionCode = 144,
+                versionName = "1.4.3",
+                date = "2026-11-23",
+                changes = listOf(
+                    "New: Complete LimitX Studio visual architecture redesign with distinctive developer command center",
+                    "Improved: Streamlined bottom input dock with dedicated Send/Stop controls and studio dictation trigger",
+                    "New: Prominent '+ New Workspace Session' studio action in navigation drawer",
+                    "New: Standalone private repository migration script and documentation",
+                    "Improved: Purged third-party repository URLs and personal upstream references across the app"
+                )
+            ),
+            ChangelogEntry(
                 versionCode = 143,
                 versionName = "1.4.2",
                 date = "2026-11-23",

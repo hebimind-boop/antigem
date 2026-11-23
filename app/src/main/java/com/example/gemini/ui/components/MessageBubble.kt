@@ -138,21 +138,25 @@ fun MessageBubble(
         // Message Content Bubble
         if (isUser) {
             Column(horizontalAlignment = Alignment.End) {
-                Box(
+                Surface(
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.55f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)),
                     modifier = Modifier
-                        .widthIn(max = 320.dp)
-                        .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 4.dp))
-                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .widthIn(min = 80.dp, max = 340.dp)
                         .clickable { showUserActions = !showUserActions }
-                        .padding(horizontal = 14.dp, vertical = 10.dp)
                 ) {
-                    SelectionContainer {
-                        Text(
-                            text = message.content,
-                            fontSize = 15.sp,
-                            lineHeight = 22.sp,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                    Box(
+                        modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp)
+                    ) {
+                        SelectionContainer {
+                            Text(
+                                text = message.content,
+                                fontSize = 15.sp,
+                                lineHeight = 22.sp,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
                     }
                 }
 

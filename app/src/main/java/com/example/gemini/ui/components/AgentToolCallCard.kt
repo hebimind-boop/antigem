@@ -140,7 +140,7 @@ fun AgentToolCallCard(
         isRunning && isGenImg -> "Generating image..."
         isRunning && isMcp -> "Executing MCP tool..."
         isRunning && isSystemNotice -> "System event..."
-        isRunning -> "Executing in Termux..."
+        isRunning -> "Executing command..."
 
         isSuccess && isSystemNotice -> "System:"
         isSuccess && isSearch -> "Web search"

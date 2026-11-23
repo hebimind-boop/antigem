@@ -1287,7 +1287,7 @@ private fun TermuxApiSubScreen(cardBg: Color, cardBorder: BorderStroke) {
                                     OutlinedButton(
                                         onClick = {
                                             try {
-                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/santoshkurmi/termux-api/releases"))
+                                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/termux/termux-api/releases"))
                                                 context.startActivity(intent)
                                             } catch (_: Exception) {}
                                         },
@@ -1374,7 +1374,7 @@ private fun TermuxApiSubScreen(cardBg: Color, cardBorder: BorderStroke) {
                     OutlinedButton(
                         onClick = {
                             try {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/santoshkurmi/termux-api/releases"))
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/termux/termux-api/releases"))
                                 context.startActivity(intent)
                             } catch (_: Exception) {}
                         },

@@ -58,10 +58,7 @@ object PluginRepositories {
      * The official repositories, each added once (for new and existing users) under its own "added" flag, so a
      * repository added later still reaches users who already got the earlier ones. A removed one stays removed.
      */
-    private val DEFAULT_REPOS = listOf(
-        "dipeshkrydv/boopide_plugins" to "default_repo_added",
-        "Santoshkurmi/boopide_plugins" to "default_repo_added_santoshkurmi"
-    )
+    private val DEFAULT_REPOS = emptyList<Pair<String, String>>()
     private val NAME = "[A-Za-z0-9_.-]+"
 
     val repos = mutableStateListOf<PluginRepo>()

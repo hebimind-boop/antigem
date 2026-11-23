@@ -639,15 +639,16 @@ fun ChatHistoryDrawer(
                 Spacer(modifier = Modifier.width(10.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "LimitX",
-                        fontSize = 18.sp,
+                        text = "LIMITX",
+                        fontSize = 17.sp,
                         fontWeight = FontWeight.Bold,
-                        letterSpacing = (-0.3).sp,
+                        letterSpacing = 0.8.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         text = "Studio Workspace",
                         fontSize = 11.sp,
+                        fontFamily = FontFamily.Monospace,
                         color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.65f)
                     )
                 }
@@ -701,6 +702,38 @@ fun ChatHistoryDrawer(
                         contentDescription = "Exit App",
                         tint = MaterialTheme.colorScheme.error.copy(alpha = 0.75f),
                         modifier = Modifier.size(19.dp)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(14.dp))
+
+            // Primary Studio Action: New Workspace Session
+            Surface(
+                onClick = onNewChat,
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(42.dp)
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxSize().padding(horizontal = 14.dp),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = null,
+                        modifier = Modifier.size(17.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = "New Workspace Session",
+                        fontSize = 13.5.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = (-0.1).sp
                     )
                 }
             }

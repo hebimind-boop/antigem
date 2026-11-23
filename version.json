@@ -1,12 +1,13 @@
 {
-  "version_code": 143,
-  "version_name": "1.4.2",
+  "version_code": 144,
+  "version_name": "1.4.3",
   "min_supported_version_code": 1,
   "changelog": [
-    "Removed floating assistant overlay bubble and streamlined settings menu",
-    "Background AI Notifications: System alerts when AI replies finish while in other apps, with direct one-tap return to chat",
-    "Update Notifications: System alerts when new LimitX updates are available, with streamlined update dialog",
-    "UI & Privacy Polish: Removed exposed repository links and cleaned internal build package information from About screen"
+    "Complete LimitX Visual UI Redesign: Signature LimitX Studio command center, refined developer top bar, and redesigned studio prompt bubbles",
+    "Streamlined Studio Input Dock: Removed cluttered audio/mic buttons; dedicated high-contrast action button (Send/Stop) with sleek dictation trigger",
+    "LimitX Studio Drawer: Prominent '+ New Workspace Session' studio action and refined IDE workspace tree navigation",
+    "Standalone Private Repository Support: Created setup guide and automation script for standalone private repo migration without breaking updates",
+    "Zero Public Repo Exposure: Completely purged all third-party personal repository URLs and fork references across the app"
   ],
   "is_critical": true
 }

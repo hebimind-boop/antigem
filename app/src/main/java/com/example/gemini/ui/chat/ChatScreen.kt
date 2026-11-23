@@ -1649,7 +1649,7 @@ fun ChatScreen(
                             val activeTitle = currentConv?.title?.takeIf {
                                 it.isNotBlank() && it != "New Chat" && it != "Conversation"
                             }
-                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "LimitX Chat"
+                            listTitle ?: activeTitle ?: currentConv?.title?.takeIf { it.isNotBlank() } ?: "LimitX Studio"
                         }
 
                         val isChatStarted = messages.isNotEmpty()
@@ -4155,30 +4155,30 @@ private fun LimitXCommandCenterWelcome(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // LimitX circular emblem with glowing subtle outline
+        // LimitX emblem with glowing subtle studio border
         Box(
             modifier = Modifier
                 .size(64.dp)
-                .clip(CircleShape)
+                .clip(RoundedCornerShape(20.dp))
                 .background(MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f))
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f), CircleShape),
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f), RoundedCornerShape(20.dp)),
             contentAlignment = Alignment.Center
         ) {
             com.example.gemini.ui.components.AppIconImage(
                 contentDescription = "LimitX",
                 modifier = Modifier
-                    .size(44.dp)
-                    .clip(CircleShape)
+                    .size(46.dp)
+                    .clip(RoundedCornerShape(14.dp))
             )
         }
 
         Spacer(modifier = Modifier.height(14.dp))
 
         Text(
-            text = "LimitX Studio",
-            fontSize = 22.sp,
+            text = "LIMITX STUDIO",
+            fontSize = 20.sp,
             fontWeight = FontWeight.Bold,
-            letterSpacing = (-0.3).sp,
+            letterSpacing = 1.sp,
             color = MaterialTheme.colorScheme.onSurface,
             textAlign = TextAlign.Center
         )
@@ -4187,21 +4187,21 @@ private fun LimitXCommandCenterWelcome(
 
         Text(
             text = "Autonomous AI Coding & Mobile Engine",
-            fontSize = 13.5.sp,
+            fontSize = 13.sp,
             color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
             textAlign = TextAlign.Center
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Status Strip
+        // Status Strip Console Pill
         Surface(
             shape = RoundedCornerShape(16.dp),
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.05f),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.25f))
         ) {
             Row(
-                modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 5.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(
@@ -4212,15 +4212,16 @@ private fun LimitXCommandCenterWelcome(
                 )
                 Spacer(modifier = Modifier.width(6.dp))
                 Text(
-                    text = "ARM64 Ubuntu • Local Hub • Antigravity agy",
-                    fontSize = 11.5.sp,
+                    text = "UBUNTU ARM64 • AGY 2.0 • HUB ONLINE",
+                    fontSize = 11.sp,
                     fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.SemiBold,
                     color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f)
                 )
             }
         }
 
-        Spacer(modifier = Modifier.height(22.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         // 4 Interactive Quick Action Cards (2x2 grid)
         Row(
@@ -4231,6 +4232,7 @@ private fun LimitXCommandCenterWelcome(
                 icon = Icons.Outlined.Layers,
                 title = "Create Full-Stack App",
                 description = "Scaffold React, Node, or Python app",
+                tag = "PROJECT",
                 onClick = { onPromptSelected("Create a modern full-stack web application with a responsive UI.") },
                 modifier = Modifier.weight(1f)
             )
@@ -4238,6 +4240,7 @@ private fun LimitXCommandCenterWelcome(
                 icon = Icons.Default.AutoFixHigh,
                 title = "Fix & Refactor Code",
                 description = "Analyze and optimize codebase",
+                tag = "REVIEW",
                 onClick = { onPromptSelected("Review the current codebase, find bugs or bottlenecks, and optimize the architecture.") },
                 modifier = Modifier.weight(1f)
             )
@@ -4253,6 +4256,7 @@ private fun LimitXCommandCenterWelcome(
                 icon = Icons.Outlined.Terminal,
                 title = "Run Shell Command",
                 description = "Execute bash in Linux terminal",
+                tag = "TERMINAL",
                 onClick = { onPromptSelected("Run a shell command to inspect the system environment, installed packages, and active ports.") },
                 modifier = Modifier.weight(1f)
             )
@@ -4260,9 +4264,50 @@ private fun LimitXCommandCenterWelcome(
                 icon = Icons.Outlined.AccountTree,
                 title = "Clone & Inspect Repo",
                 description = "Clone repository and explore files",
+                tag = "GIT",
                 onClick = { onPromptSelected("Help me clone a GitHub repository and inspect its project structure.") },
                 modifier = Modifier.weight(1f)
             )
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Quick developer shortcut chips
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            val chips = listOf(
+                "⚡ Next.js" to "Scaffold a modern Next.js web application with Tailwind CSS.",
+                "🔍 Audit" to "Review the project for bugs, security issues, and bottlenecks.",
+                "🛠 Shell" to "Inspect the system environment, installed packages, and active ports.",
+                "🧪 Test" to "Run test suites across the repository."
+            )
+            chips.forEach { (label, prompt) ->
+                Surface(
+                    onClick = { onPromptSelected(prompt) },
+                    shape = RoundedCornerShape(8.dp),
+                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.35f),
+                    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.2f)),
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Box(
+                        modifier = Modifier.padding(vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = label,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Medium,
+                            fontFamily = FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -4272,6 +4317,7 @@ private fun QuickActionPromptCard(
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     title: String,
     description: String,
+    tag: String = "",
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -4285,19 +4331,40 @@ private fun QuickActionPromptCard(
         Column(
             modifier = Modifier.padding(12.dp)
         ) {
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
-                contentAlignment = Alignment.Center
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(15.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(15.dp)
+                    )
+                }
+                if (tag.isNotBlank()) {
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.06f)
+                    ) {
+                        Text(
+                            text = tag,
+                            fontSize = 9.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontFamily = FontFamily.Monospace,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f),
+                            modifier = Modifier.padding(horizontal = 5.dp, vertical = 2.dp)
+                        )
+                    }
+                }
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
